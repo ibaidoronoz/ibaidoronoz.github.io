@@ -1,0 +1,18 @@
+---
+// Animated pipeline: nodes connected by a moving gradient pulse.
+// Horizontal on desktop, vertical on mobile. Pure CSS animation.
+interface Props {
+  steps: { label: string; sub: string }[];
+}
+const { steps } = Astro.props;
+---
+
+<ol class="flow-pipe reveal" style={`--n:${steps.length}`}>
+  {steps.map((s, i) => (
+    <li style={`--i:${i}`}>
+      <span class="flow-idx">{String(i + 1).padStart(2, '0')}</span>
+      <strong>{s.label}</strong>
+      <span class="flow-sub">{s.sub}</span>
+    </li>
+  ))}
+</ol>

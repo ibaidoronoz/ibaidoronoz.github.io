@@ -1,0 +1,8 @@
+---
+interface Props {
+  items: readonly string[];
+}
+const { items } = Astro.props;
+---
+
+<ul class="chips">{items.map((item) => <li class="chip">{item}</li>)}</ul>

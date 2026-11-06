@@ -1,0 +1,87 @@
+---
+import { getCollection, getEntry, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Chips from '../../components/Chips.astro';
+import AiRole from '../../components/AiRole.astro';
+import Flow from '../../components/Flow.astro';
+import { AREAS, STATUS } from '../../data/taxonomy';
+import { assertCaseStudies, projectsByTier } from '../../lib/projects';
+
+export async function getStaticPaths() {
+  await assertCaseStudies();
+  const studies = await getCollection('caseStudies');
+  return studies.map((study) => ({ params: { id: study.data.project }, props: { study } }));
+}
+
+const { study } = Astro.props;
+const project = await getEntry('projects', study.data.project);
+if (!project) throw new Error(`Unknown project: ${study.data.project}`);
+const { Content } = await render(study);
+const p = project.data;
+
+// Link to the next featured case study, wrapping around.
+const featured = await projectsByTier('featured');
+const idx = featured.findIndex((f) => f.id === project.id);
+const next = featured[(idx + 1) % featured.length];
+---
+
+<Base title={p.name} description={p.oneLiner}>
+  <div class="wrap" style={`--accent:${p.accent}`}>
+    <header class="cs-hero">
+      <a class="back" href="/#work">← All work</a>
+      <span class="name reveal">
+        {p.logo && <img class="logo logo-md" src={p.logo} alt="" width="56" height="56" />}
+        {p.name}
+      </span>
+      <h1 class="reveal" style="--d:.05s">{study.data.title}</h1>
+      <p class="lead reveal" style="--d:.1s">{p.oneLiner}</p>
+      <div class="reveal" style="--d:.15s"><AiRole role={p.aiRole} /></div>
+    </header>
+
+    {study.data.stats.length > 0 && (
+      <div class="cs-stats">
+        {study.data.stats.map((st, i) => (
+          <div class="cs-stat reveal" style={`--d:${i * 0.07}s`}>
+            <b>{st.value}</b>
+            <span>{st.label}</span>
+          </div>
+        ))}
+      </div>
+    )}
+
+    {study.data.flow.length > 0 && <Flow steps={study.data.flow} />}
+
+    <div class="cs-meta reveal">
+      <div>
+        <span class="eyebrow">Area</span>
+        <p>{p.areas.map((a) => AREAS[a]).join(' · ')}</p>
+      </div>
+      <div>
+        <span class="eyebrow">Status</span>
+        <p><span class="status" data-status={p.status}>{STATUS[p.status]}</span></p>
+      </div>
+      <div>
+        <span class="eyebrow">Stack</span>
+        <Chips items={p.stack} />
+      </div>
+    </div>
+
+    {study.data.draft && (
+      <p class="draft-banner">Draft — this case study is still being written.</p>
+    )}
+
+    <article class="prose">
+      <Content />
+    </article>
+
+    {next && next.id !== project.id && (
+      <a class="next-cta" href={`/projects/${next.id}/`} style={`--accent:${next.data.accent}`}>
+        <div>
+          <span class="eyebrow">Next case study</span>
+          <h3>{next.data.name}</h3>
+        </div>
+        <span class="btn primary">Read →</span>
+      </a>
+    )}
+  </div>
+</Base>

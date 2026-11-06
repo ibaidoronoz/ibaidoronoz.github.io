@@ -1,0 +1,12 @@
+---
+interface Props {
+  role: { spec: string; impl: string; audit: string };
+}
+const { role } = Astro.props;
+---
+
+<div class="ai-role" aria-label="Division of work between me and AI agents">
+  <span>Spec & architecture: <b>{role.spec}</b></span>
+  <span>Implementation: <b>{role.impl}</b></span>
+  <span>Audit: <b>{role.audit}</b></span>
+</div>

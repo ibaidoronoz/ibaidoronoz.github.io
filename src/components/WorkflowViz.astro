@@ -1,0 +1,46 @@
+---
+// Illustrative diagram of the governed agent workflow (the idea behind Kizuna).
+// Pure SVG + CSS animation; no data is fabricated.
+const nodes = [
+  { x: 20, y: 30, t: 'Ticket', s: 'Jira · GitHub', c: '#4f6bff' },
+  { x: 200, y: 30, t: 'Playbook', s: 'versioned · md', c: '#8b5cf6', glow: true },
+  { x: 20, y: 150, t: 'Agent', s: 'any runtime', c: '#e04fb8' },
+  { x: 200, y: 150, t: 'Human gate', s: 'approve · reject', c: '#a957f2', glow: true },
+  { x: 110, y: 270, t: 'Pull request', s: 'audited · traced', c: '#6a63fb', glow: true },
+];
+const W = 140;
+const H = 54;
+const paths = [
+  'M160 57 H200',
+  'M270 84 V110 Q270 120 260 120 H100 Q90 120 90 130 V150',
+  'M160 177 H200',
+  'M270 204 V230 Q270 240 260 240 H190 Q180 240 180 250 V270',
+];
+---
+
+<div class="viz reveal" style="--d:.15s">
+  <div class="viz-head">
+    <span class="lights"><i></i><i></i><i></i></span>
+    <span>governed-agent-workflow</span>
+  </div>
+  <svg viewBox="0 0 360 340" role="img" aria-label="Ticket to playbook to agent to human gate to pull request">
+    <defs>
+      <linearGradient id="flowGrad" x1="0" x2="1">
+        <stop offset="0" stop-color="#4f6bff" />
+        <stop offset=".5" stop-color="#8b5cf6" />
+        <stop offset="1" stop-color="#e04fb8" />
+      </linearGradient>
+    </defs>
+    {paths.map((d) => <path class="edge" d={d} />)}
+    {paths.map((d, i) => <path class={`flow d${(i % 3) + 1}`} d={d} />)}
+    {nodes.map((n) => (
+      <g class={`node${n.glow ? ' glow' : ''}`} style={`--c:${n.c}`}>
+        <rect x={n.x} y={n.y} width={W} height={H} rx="12" />
+        <circle cx={n.x + 18} cy={n.y + 27} r="5" fill={n.c} />
+        <text x={n.x + 32} y={n.y + 24}>{n.t}</text>
+        <text class="sub" x={n.x + 32} y={n.y + 39}>{n.s}</text>
+      </g>
+    ))}
+  </svg>
+  <p class="viz-foot">every step journaled · budgets on tokens, cost and time</p>
+</div>

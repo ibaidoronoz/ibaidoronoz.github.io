@@ -1,0 +1,92 @@
+---
+import '../styles/global.css';
+import { site } from '../data/site';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { title, description = site.tagline } = Astro.props;
+const fullTitle = title ? `${title} — ${site.name}` : `${site.name} — ${site.role}, ${site.focus}`;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#07070c" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={new URL('/icon-512.png', Astro.site)} />
+    <link rel="icon" href="/favicon.ico" sizes="256x256" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <script is:inline>document.documentElement.classList.add('js');</script>
+  </head>
+  <body>
+    <div class="aurora" aria-hidden="true"><span></span><span></span><span></span></div>
+    <div class="grid-bg" aria-hidden="true"></div>
+
+    <header class="site-header">
+      <div class="wrap">
+        <a class="brand" href="/"><img src="/brand.png" alt="" width="32" height="32" />ibai.d.oronoz</a>
+        <nav class="nav" aria-label="Main">
+          <a href="/#work" class="nav-keep">Work</a>
+          <a href="/#method">How I build</a>
+          <a href="/#projects">Projects</a>
+          <a href="/#experience">Experience</a>
+          <a href={site.links.linkedin} class="nav-keep">LinkedIn ↗</a>
+          <a href={site.links.github} class="nav-keep">GitHub ↗</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <slot />
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap">
+        <span>© {new Date().getFullYear()} {site.name}</span>
+        <span>Static site · no cookies · no tracking</span>
+      </div>
+    </footer>
+
+    <script>
+      // Reveal elements as they enter the viewport.
+      const reveals = document.querySelectorAll<HTMLElement>('.reveal');
+      if ('IntersectionObserver' in window) {
+        const io = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('in');
+                io.unobserve(entry.target);
+              }
+            }
+          },
+          { rootMargin: '0px 0px -8% 0px' },
+        );
+        reveals.forEach((el) => io.observe(el));
+      } else {
+        reveals.forEach((el) => el.classList.add('in'));
+      }
+
+      // Cursor spotlight on featured cards.
+      for (const card of document.querySelectorAll<HTMLElement>('.feature')) {
+        card.addEventListener('pointermove', (e) => {
+          const r = card.getBoundingClientRect();
+          card.style.setProperty('--mx', `${e.clientX - r.left}px`);
+          card.style.setProperty('--my', `${e.clientY - r.top}px`);
+        });
+      }
+    </script>
+  </body>
+</html>

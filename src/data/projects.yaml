@@ -1,0 +1,222 @@
+# Single source of truth for every project shown on the site.
+# tier: featured (needs a case study in src/content/case-studies/<id>.md) | selected | archive
+# Nothing in this file may reveal LAN hosts, real financial data, secrets or employer information.
+
+# ───────────── Featured ─────────────
+- id: kizuna
+  logo: /logos/kizuna.png
+  accent: '#8b5cf6'
+  name: Kizuna
+  tier: featured
+  order: 1
+  areas: [ai-agents, platform]
+  status: active
+  oneLiner: Self-hosted control plane that orchestrates AI coding agents across the ticket lifecycle.
+  highlights:
+    - Workflows whose nodes are runtime-agnostic playbooks
+    - Durable orchestrator with human gates, budgets and an audit journal
+    - Self-audited by agents across nine dimensions, from security to performance
+  stack: [TypeScript, Node.js, Fastify, Drizzle, SQLite/libSQL, Zod, React, Vite, Vitest, Playwright]
+  includes: [Kizuna Playbooks]
+
+- id: plutus
+  logo: /logos/plutus.png
+  accent: '#4f6bff'
+  name: Plutus
+  tier: featured
+  order: 2
+  areas: [fintech-data]
+  status: personal-production
+  oneLiner: Tax engine for Spain that reconciles exchanges, brokers and on-chain wallets into correct FIFO reports.
+  highlights:
+    - Ingestion from six exchanges (APIs + CSV) and wallets on 17 blockchains
+    - FIFO cost basis for Spanish IRPF and Modelo 721
+    - Agent audits on an isolated DB copy caught critical engine bugs
+  stack: [Python, FastAPI, SQLAlchemy (async), SQLite, React, TypeScript, Vite, Tailwind]
+
+- id: engineering-platform
+  logo: /logos/engineering-platform.png
+  accent: '#d8590e'
+  name: Engineering Platform
+  tier: featured
+  order: 3
+  areas: [ai-agents, platform]
+  status: active
+  oneLiner: The system I build everything else with — shared AI context, fleet validation, gateway and ops panel.
+  highlights:
+    - Prometheus — Claude Code plugin marketplace and shared agent playbooks, validated across every repo
+    - Torii — Caddy gateway routing all local services by hostname
+    - Oracle — service control panel (status, logs, metrics, deploys)
+    - Festive — shared UI engine vendored across apps, with a drift check
+  stack: [Markdown, JSON manifests, Python, Caddy, C#, .NET, ASP.NET Core, React, TypeScript]
+  includes: [Prometheus, Torii, Oracle, Festive]
+
+- id: kairos
+  logo: /logos/kairos.png
+  accent: '#00cfee'
+  name: Kairos
+  tier: featured
+  order: 4
+  areas: [fintech-data]
+  status: active
+  oneLiner: Market-intelligence system for dynamic DCA decisions, from data pipeline to backtesting.
+  highlights:
+    - Rule-based regime detection (VIX, yield curve, liquidity)
+    - Walk-forward backtesting against plain DCA
+    - Removed its own headline feature when the backtest said no
+  stack: [Python, FastAPI, SQLAlchemy, SQLite, React, Vite, Plotly]
+
+# ───────────── Selected ─────────────
+- id: tanko
+  logo: /logos/tanko.png
+  accent: '#8658dc'
+  name: Tanko
+  tier: selected
+  order: 10
+  areas: [ai-agents, tools]
+  status: personal-production
+  oneLiner: Manga and comic tracker with per-unit progress, external catalogue search and LLM features.
+  highlights:
+    - Searches AniList, ComicVine and Metron
+    - LLM features via Groq with a local LM Studio option
+  stack: [Next.js, TypeScript, Prisma, SQLite, Tailwind]
+
+- id: forge
+  logo: /logos/forge.png
+  accent: '#dc5a08'
+  name: Forge
+  tier: selected
+  order: 11
+  areas: [mobile-desktop]
+  status: active
+  oneLiner: Android gym app, migrated from a PWA + Capacitor to native Kotlin through a written ADR.
+  highlights:
+    - Native rewrite in Kotlin, Jetpack Compose and Room
+    - Migration decision documented as an ADR
+  stack: [Kotlin, Jetpack Compose, Room, React, TypeScript, Capacitor]
+
+- id: txango
+  logo: /logos/txango.png
+  accent: '#d8bb56'
+  name: Txango
+  tier: selected
+  order: 12
+  areas: [mobile-desktop]
+  status: active
+  oneLiner: Native Android hiking and GPX navigation app that works 100% offline in the mountains.
+  highlights:
+    - Offline vector maps with Mapsforge
+    - GPS through LocationManager, no Google Play Services
+  stack: [Kotlin, Jetpack Compose, Room, Mapsforge]
+
+- id: atlas
+  logo: /logos/atlas.png
+  accent: '#3b82f6'
+  name: Atlas
+  tier: selected
+  order: 13
+  areas: [fintech-data]
+  status: active
+  oneLiner: Market-analysis dashboard for ~100 instruments across crypto, equities, forex and indices.
+  highlights:
+    - Timeframes from 5m to 1W with indicators and drawing tools
+    - Correlation, regime, breadth and seasonality analysis
+  stack: [Python, SQLite, TypeScript, lightweight-charts]
+
+- id: fortuna
+  logo: /logos/fortuna.png
+  accent: '#d8972a'
+  name: Fortuna
+  tier: selected
+  order: 14
+  areas: [fintech-data, ai-agents]
+  status: experiment
+  oneLiner: ML trading engine with a headless 24/7 core — and a strict GO/NO-GO audit before any live use.
+  highlights:
+    - Headless engine with IPC, FastAPI bridge and PyQt6 UI
+    - XGBoost / LightGBM models tuned with Optuna
+    - GO/NO-GO audit gate before any real money moves
+  stack: [Python, PyQt6, FastAPI, SQLAlchemy, XGBoost, LightGBM, Optuna]
+  includes: [trading-bot]
+
+- id: monban
+  logo: /logos/monban.png
+  accent: '#e2e8f0'
+  name: Monban
+  tier: selected
+  order: 15
+  areas: [mobile-desktop, tools]
+  status: personal-production
+  oneLiner: Windows tray guardian that alerts when an executable lands in watched folders, even disguised.
+  highlights:
+    - Detects executables disguised as media files
+    - Single self-contained binary, no admin rights
+  stack: [C#, .NET, WinForms, WPF, xUnit]
+
+- id: striker
+  logo: /logos/striker.png
+  accent: '#2f7ed8'
+  name: Striker
+  tier: selected
+  order: 16
+  areas: [mobile-desktop, fintech-data]
+  status: experiment
+  oneLiner: Desktop app that predicts fantasy-football scores and builds optimal lineups per game week.
+  highlights:
+    - Multi-signal player matching across 40+ leagues
+    - Handles TOTP and email-OTP authentication flows
+  stack: [Tauri, React, TypeScript, Node.js, SQLite]
+
+# ───────────── Archive ─────────────
+- id: kitto
+  accent: '#0dd8b0'
+  logo: /logos/kitto.png
+  name: Kitto
+  tier: archive
+  order: 20
+  areas: [fintech-data]
+  status: personal-production
+  oneLiner: Household expense manager with proportional cost sharing and bank-export import.
+  stack: [React, TypeScript, Vite, Zustand, Recharts]
+
+- id: yojo
+  accent: '#9fd83d'
+  logo: /logos/yojo.png
+  name: Yojo
+  tier: archive
+  order: 21
+  areas: [tools]
+  status: personal-production
+  oneLiner: Meal-plan tracker shared across devices, with a zero-dependency Node server.
+  stack: [HTML, CSS, JavaScript, Node.js]
+
+- id: folia
+  accent: '#e879a8'
+  logo: /logos/folia.png
+  name: Folia
+  tier: archive
+  order: 22
+  areas: [mobile-desktop]
+  status: personal-production
+  oneLiner: Desktop slideshow for images and video with crossfade transitions.
+  stack: [Python, PySide6]
+
+- id: lethe
+  logo: /logos/lethe.png
+  name: Lethe
+  tier: archive
+  order: 23
+  areas: [tools]
+  status: personal-production
+  oneLiner: Chrome extension that clears cookies and cache in one click.
+  stack: [JavaScript, Chrome MV3]
+
+- id: argus
+  logo: /logos/argus.png
+  name: Argus
+  tier: archive
+  order: 24
+  areas: [tools]
+  status: experiment
+  oneLiner: Chrome extension with developer tooling, shipped without a build step.
+  stack: [JavaScript, Chrome MV3]
