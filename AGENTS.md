@@ -32,7 +32,7 @@ npm run verify    # check + build: the gate before any commit
   - anything about the employer beyond what `src/data/site.ts → experience` already states
   - email, phone or any contact detail other than the LinkedIn link
 - **No source maps** in production (enforced in `astro.config.mjs` and in the deploy workflow).
-- **Excluded projects:** Mugen, Kaizoku, Senko, Aether. Do not add them.
+- **Excluded projects:** Mugen, Kaizoku, Senko. Do not add them.
 
 ## Structure
 
