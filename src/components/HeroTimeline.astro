@@ -1,0 +1,34 @@
+---
+import { site } from '../data/site';
+---
+
+<div class="timeline-wrap">
+  <ol class="timeline-hero reveal" aria-label="Career timeline">
+    {site.timeline.map((stop, i) => (
+      <li class="tl-stop" style={`--i:${i}`}>
+        <span class="tl-dot" aria-hidden="true"></span>
+        <span class="tl-year">{stop.years}</span>
+        <span class="tl-label">{stop.label}</span>
+        <ul class="tl-stack">{stop.stack.map((tool) => <li>{tool}</li>)}</ul>
+      </li>
+    ))}
+
+    <li class="tl-stop tl-now" style={`--i:${site.timeline.length}`}>
+      <span class="tl-dot" aria-hidden="true"></span>
+      <span class="tl-year">{site.now.years}</span>
+      <div class="tl-branches">
+        {site.now.branches.map((branch) => (
+          <div class="tl-branch">
+            <span class="tl-label">{branch.label}</span>
+            <span class="tl-sub">{branch.sub}</span>
+            <ul class="tl-stack">{branch.stack.map((tool) => <li>{tool}</li>)}</ul>
+          </div>
+        ))}
+      </div>
+    </li>
+  </ol>
+
+  <p class="own-rail">
+    <a href="#work">{site.ownProducts} →</a>
+  </p>
+</div>

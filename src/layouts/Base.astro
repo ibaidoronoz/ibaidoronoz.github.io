@@ -1,15 +1,35 @@
 ---
 import '../styles/global.css';
+import { ClientRouter } from 'astro:transitions';
 import { site } from '../data/site';
 
 interface Props {
   title?: string;
   description?: string;
+  image?: string;
 }
 
-const { title, description = site.tagline } = Astro.props;
+const { title, description = site.tagline, image = '/og/home.png' } = Astro.props;
 const fullTitle = title ? `${title} — ${site.name}` : `${site.name} — ${site.role}, ${site.focus}`;
 const canonical = new URL(Astro.url.pathname, Astro.site);
+const ogImage = new URL(image, Astro.site);
+const path = Astro.url.pathname;
+const isWork = path.startsWith('/work') || path.startsWith('/projects');
+const person = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: site.name,
+  jobTitle: `${site.role} — ${site.focus}`,
+  url: new URL('/', Astro.site).href,
+  image: new URL('/icon-512.png', Astro.site).href,
+  sameAs: [site.links.github, site.links.linkedin],
+  knowsAbout: ['Payments', 'Payment orchestration', 'SWIFT', 'FIX', 'AI agents', 'Software engineering'],
+  address: {
+    '@type': 'PostalAddress',
+    addressRegion: 'Basque Country',
+    addressCountry: 'ES',
+  },
+};
 ---
 
 <!doctype html>
@@ -25,68 +45,117 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
-    <meta property="og:image" content={new URL('/icon-512.png', Astro.site)} />
-    <link rel="icon" href="/favicon.ico" sizes="256x256" />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    <link rel="icon" href="/favicon-64.png" sizes="64x64" type="image/png" />
+    <link rel="icon" href="/icon-512.png" sizes="512x512" type="image/png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <script type="application/ld+json" set:html={JSON.stringify(person)} />
+    <ClientRouter />
     <script is:inline>document.documentElement.classList.add('js');</script>
   </head>
   <body>
+    <a class="skip" href="#main">Skip to content</a>
     <div class="aurora" aria-hidden="true"><span></span><span></span><span></span></div>
     <div class="grid-bg" aria-hidden="true"></div>
 
-    <header class="site-header">
+    <header class="site-header" transition:persist>
       <div class="wrap">
         <a class="brand" href="/"><img src="/brand.png" alt="" width="32" height="32" />ibai.d.oronoz</a>
         <nav class="nav" aria-label="Main">
-          <a href="/#work" class="nav-keep">Work</a>
+          <a href="/work" class="nav-keep" aria-current={isWork ? 'page' : undefined}>Work</a>
           <a href="/#method">How I build</a>
-          <a href="/#projects">Projects</a>
+          <a href="/#projects">Workshop</a>
           <a href="/#experience">Experience</a>
           <a href={site.links.linkedin} class="nav-keep">LinkedIn ↗</a>
           <a href={site.links.github} class="nav-keep">GitHub ↗</a>
         </nav>
+        <details class="nav-mobile">
+          <summary>Menu</summary>
+          <div class="nav-panel">
+            <a href="/work">Work</a>
+            <a href="/#method">How I build</a>
+            <a href="/#projects">Workshop</a>
+            <a href="/#experience">Experience</a>
+            <a href={site.links.linkedin}>LinkedIn ↗</a>
+            <a href={site.links.github}>GitHub ↗</a>
+          </div>
+        </details>
       </div>
     </header>
 
-    <main>
+    <main id="main">
       <slot />
     </main>
 
-    <footer class="site-footer">
-      <div class="wrap">
-        <span>© {new Date().getFullYear()} {site.name}</span>
-        <span>Static site · no cookies · no tracking</span>
+    <footer class="site-footer" transition:persist>
+      <div class="wrap footer-grid">
+        <div>
+          <span class="footer-brand">ibai.d.oronoz</span>
+          <p class="footer-note">{site.pill}</p>
+        </div>
+        <nav aria-label="Footer">
+          <span class="eyebrow">Explore</span>
+          <a href="/work">Work</a>
+          <a href="/#method">How I build</a>
+          <a href="/#projects">Workshop</a>
+          <a href="/#experience">Experience</a>
+        </nav>
+        <div>
+          <span class="eyebrow">Elsewhere</span>
+          <a href={site.links.github}>GitHub ↗</a>
+          <a href={site.links.linkedin}>LinkedIn ↗</a>
+        </div>
+        <div>
+          <span class="eyebrow">Colophon</span>
+          <span>Static site · no cookies · no tracking</span>
+          <span>© {new Date().getFullYear()} {site.name}</span>
+        </div>
       </div>
     </footer>
 
     <script>
-      // Reveal elements as they enter the viewport.
-      const reveals = document.querySelectorAll<HTMLElement>('.reveal');
-      if ('IntersectionObserver' in window) {
-        const io = new IntersectionObserver(
-          (entries) => {
-            for (const entry of entries) {
-              if (entry.isIntersecting) {
-                entry.target.classList.add('in');
-                io.unobserve(entry.target);
-              }
-            }
-          },
-          { rootMargin: '0px 0px -8% 0px' },
-        );
-        reveals.forEach((el) => io.observe(el));
-      } else {
-        reveals.forEach((el) => el.classList.add('in'));
-      }
+      const initBase = () => {
+        document.documentElement.classList.add('js');
 
-      // Cursor spotlight on featured cards.
-      for (const card of document.querySelectorAll<HTMLElement>('.feature')) {
-        card.addEventListener('pointermove', (e) => {
-          const r = card.getBoundingClientRect();
-          card.style.setProperty('--mx', `${e.clientX - r.left}px`);
-          card.style.setProperty('--my', `${e.clientY - r.top}px`);
-        });
-      }
+        // Reveal elements as they enter the viewport.
+        const reveals = document.querySelectorAll<HTMLElement>('.reveal');
+        for (const element of reveals) element.classList.remove('in');
+        if ('IntersectionObserver' in window) {
+          const io = new IntersectionObserver(
+            (entries) => {
+              for (const entry of entries) {
+                if (entry.isIntersecting) {
+                  entry.target.classList.add('in');
+                  io.unobserve(entry.target);
+                }
+              }
+            },
+            { rootMargin: '0px 0px -8% 0px' },
+          );
+          reveals.forEach((el) => io.observe(el));
+        } else {
+          reveals.forEach((el) => el.classList.add('in'));
+        }
+
+        // Cursor spotlight on featured cards.
+        for (const card of document.querySelectorAll<HTMLElement>('.feature')) {
+          if (card.dataset.spotlight) continue;
+          card.dataset.spotlight = '1';
+          card.addEventListener('pointermove', (event) => {
+            const rect = card.getBoundingClientRect();
+            card.style.setProperty('--mx', `${event.clientX - rect.left}px`);
+            card.style.setProperty('--my', `${event.clientY - rect.top}px`);
+          });
+        }
+      };
+
+      document.addEventListener('astro:page-load', initBase);
     </script>
   </body>
 </html>
