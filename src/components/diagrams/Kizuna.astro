@@ -1,0 +1,86 @@
+---
+// Three runs in flight, one workflow each. The active run is waiting at a human gate
+// after its second node; the other two advance in parallel.
+const runs = [
+  { id: '4f2a', ticket: 'PAY-412 · Jira', status: 'at a human gate', tone: 'amber', y: 150 },
+  { id: '9c11', ticket: 'PAY-409 · GitHub', status: 'running', tone: 'green', y: 226 },
+  { id: '7d03', ticket: 'PAY-418 · Jira', status: 'queued', tone: 'grey', y: 302 },
+];
+
+const nodes = [
+  { title: 'Plan', sub: 'playbook v3', state: 'done', x: 330 },
+  { title: 'Build', sub: 'playbook v5', state: 'done', x: 540 },
+  { title: 'Review', sub: 'playbook v2', state: 'next', x: 750 },
+  { title: 'Ship', sub: 'pull request', state: 'next', x: 960 },
+];
+
+const gates = [
+  { cx: 525, label: 'auto', tone: 'muted' },
+  { cx: 735, label: 'human', tone: 'amber' },
+  { cx: 945, label: 'auto', tone: 'muted' },
+];
+---
+
+<svg viewBox="0 0 1200 640" role="img" aria-label="Kizuna: three runs in parallel, each a workflow of playbooks and agent sessions with human gates">
+  <text x="40" y="46" fill="#8b88a3" font-family="ui-monospace, Consolas, monospace" font-size="12" letter-spacing="2.4">KIZUNA · ORCHESTRATOR</text>
+  <text x="40" y="82" fill="#e9e8f2" font-family="system-ui, Segoe UI, sans-serif" font-size="22" font-weight="700" letter-spacing="-0.4">Three runs in flight, each on its own workflow.</text>
+
+  <text x="40" y="132" fill="#6f6c85" font-family="ui-monospace, Consolas, monospace" font-size="10" letter-spacing="1.8">RUNS</text>
+
+  <g font-family="system-ui, Segoe UI, sans-serif">
+    {runs.map((run) => (
+      <g>
+        <rect x="40" y={run.y} width="250" height="66" rx="12" fill="#0d0d18" stroke="#ffffff" stroke-opacity={run.tone === 'amber' ? '0.28' : '0.12'}/>
+        <circle class={`kz-dot ${run.tone}`} cx="62" cy={run.y + 24} r="4"/>
+        <text x="78" y={run.y + 28} fill="#f2f1f7" font-family="ui-monospace, Consolas, monospace" font-size="12">{run.id}</text>
+        <text x="78" y={run.y + 48} fill="#8b88a3" font-family="ui-monospace, Consolas, monospace" font-size="10">{run.ticket}</text>
+        <text class={`kz-state ${run.tone}`} x="270" y={run.y + 28} text-anchor="end">{run.status}</text>
+      </g>
+    ))}
+  </g>
+
+  {nodes.map((node, i) => (
+    <g>
+      <rect x={node.x} y="150" width="180" height="70" rx="12" fill="#0d0d18" stroke="#ffffff" stroke-opacity={node.state === 'next' ? '0.1' : '0.18'}/>
+      <text x={node.x + 16} y="180" fill={node.state === 'next' ? '#8b88a3' : '#f2f1f7'} font-family="system-ui, Segoe UI, sans-serif" font-size="15" font-weight="700">{node.title}</text>
+      <text x={node.x + 16} y="202" fill="#6f6c85" font-family="ui-monospace, Consolas, monospace" font-size="10">{node.sub}</text>
+      <line x1={node.x + 90} y1="220" x2={node.x + 90} y2="232" stroke="#ffffff" stroke-opacity="0.14"/>
+      <rect x={node.x + 20} y="232" width="140" height="26" rx="13" fill="#101019" stroke="#ffffff" stroke-opacity="0.1"/>
+      <circle class={`kz-dot ${node.state === 'done' ? 'green' : 'grey'}`} cx={node.x + 36} cy="245" r="3"/>
+      <text x={node.x + 46} y="249" fill="#8b88a3" font-family="ui-monospace, Consolas, monospace" font-size="9.5">agent session</text>
+      {i < nodes.length - 1 && (
+        <line x1={node.x + 180} y1="185" x2={node.x + 210} y2="185" stroke="#ffffff" stroke-opacity="0.14"/>
+      )}
+    </g>
+  ))}
+
+  {gates.map((gate) => (
+    <g>
+      <rect class={`kz-gate ${gate.tone}`} x={gate.cx - 11} y="174" width="22" height="22" rx="3" transform={`rotate(45 ${gate.cx} 185)`}/>
+      <text class={`kz-gate-label ${gate.tone}`} x={gate.cx} y="162" text-anchor="middle">{gate.label}</text>
+    </g>
+  ))}
+
+  <text x="330" y="330" fill="#6f6c85" font-family="ui-monospace, Consolas, monospace" font-size="10" letter-spacing="1.8">IN PARALLEL</text>
+
+  <g font-family="ui-monospace, Consolas, monospace" font-size="10">
+    <text x="330" y="366" fill="#b7b5c8">9c11</text>
+    <rect x="380" y="357" width="720" height="8" rx="4" fill="#161622"/>
+    <rect class="kz-bar" x="380" y="357" width="360" height="8" rx="4" fill="#34d399" fill-opacity="0.7"/>
+    <text x="1120" y="366" fill="#6f6c85" text-anchor="end">node 2 of 4</text>
+
+    <text x="330" y="402" fill="#b7b5c8">7d03</text>
+    <rect x="380" y="393" width="720" height="8" rx="4" fill="#161622"/>
+    <text x="1120" y="402" fill="#6f6c85" text-anchor="end">queued</text>
+  </g>
+
+  <rect x="40" y="470" width="1120" height="66" rx="12" fill="#0b0b14" stroke="#ffffff" stroke-opacity="0.1"/>
+  <g font-family="ui-monospace, Consolas, monospace" font-size="10.5" fill="#8b88a3">
+    <text x="64" y="508">journal per transition</text>
+    <text x="300" y="508">budget per run: tokens · cost · time · steps</text>
+    <text x="700" y="508">cooperative cancel</text>
+    <text x="880" y="508">immutable graph snapshot</text>
+  </g>
+
+  <text x="40" y="590" fill="#6f6c85" font-family="ui-monospace, Consolas, monospace" font-size="11">a run can wait, retry or stop — the workflow never depends on which agent runtime is behind the port</text>
+</svg>

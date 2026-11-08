@@ -1,0 +1,30 @@
+---
+import ProjectLogo from './ProjectLogo.astro';
+
+interface Props {
+  id: string;
+  name: string;
+  accent: string;
+  logo?: string;
+  fact?: { value: string; label: string };
+}
+
+const { id, name, accent, logo, fact } = Astro.props;
+---
+
+<div class="poster" style={`--accent:${accent}`}>
+  <img class="poster-art" src={`/art/${id}.svg`} alt="" aria-hidden="true" width="400" height="250" loading="lazy" />
+
+  <div class="poster-top">
+    <span transition:name={`logo-${id}`}>
+      <ProjectLogo name={name} logo={logo} accent={accent} size="md" />
+    </span>
+  </div>
+
+  {fact && (
+    <div class="poster-fact">
+      <b>{fact.value}</b>
+      <span>{fact.label}</span>
+    </div>
+  )}
+</div>

@@ -1,0 +1,22 @@
+---
+interface Props {
+  items: { title: string; body: string; why?: string }[];
+}
+
+const { items } = Astro.props;
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+
+<div class="decisions">
+  {items.map((item, i) => (
+    <details class="decision reveal" style={`--d:${(i % 2) * 0.06}s`}>
+      <summary>
+        <span class="d-idx">{pad(i + 1)}</span>
+        <span class="d-title">{item.title}</span>
+        <span class="d-toggle">{item.why ? 'Why' : 'Open'}</span>
+      </summary>
+      <p class="d-body">{item.body}</p>
+      {item.why && <p class="d-why">{item.why}</p>}
+    </details>
+  ))}
+</div>
