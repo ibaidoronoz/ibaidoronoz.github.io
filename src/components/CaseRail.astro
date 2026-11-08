@@ -1,0 +1,59 @@
+---
+interface Props {
+  headings: { depth: number; slug: string; text: string }[];
+  nodes?: { title: string }[];
+}
+
+const { headings, nodes = [] } = Astro.props;
+const items = headings.filter((h) => h.depth === 2 && h.text.toLowerCase() !== 'key decisions');
+---
+
+<nav class="case-rail" aria-label="Sections" data-rail>
+  {nodes.length > 0 && (
+    <div class="rail-flow">
+      <span class="eyebrow">Flow</span>
+      <ol>
+        {nodes.map((node, i) => (
+          <li data-rail-node={i}>
+            <span>{String(i + 1).padStart(2, '0')}</span>
+            {node.title}
+          </li>
+        ))}
+      </ol>
+    </div>
+  )}
+
+  <span class="eyebrow">On this page</span>
+  {items.map((h) => (
+    <a href={`#${h.slug}`} data-rail-link={h.slug}>{h.text}</a>
+  ))}
+</nav>
+
+<script>
+  const initRail = () => {
+    const rail = document.querySelector<HTMLElement>('[data-rail]');
+    if (!rail || !('IntersectionObserver' in window) || rail.dataset.ready) return;
+    rail.dataset.ready = '1';
+
+    const links = [...rail.querySelectorAll<HTMLAnchorElement>('[data-rail-link]')];
+    const targets = links
+      .map((link) => document.getElementById(link.dataset.railLink ?? ''))
+      .filter((element): element is HTMLElement => element !== null);
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          for (const link of links) {
+            link.toggleAttribute('aria-current', link.dataset.railLink === entry.target.id);
+          }
+        }
+      },
+      { rootMargin: '-20% 0px -70% 0px' },
+    );
+    targets.forEach((target) => io.observe(target));
+  };
+
+  document.addEventListener('astro:page-load', initRail);
+  initRail();
+</script>

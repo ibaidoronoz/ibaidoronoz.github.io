@@ -1,8 +1,13 @@
 ---
+import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import Chips from '../components/Chips.astro';
 import AiRole from '../components/AiRole.astro';
-import WorkflowViz from '../components/WorkflowViz.astro';
+import HeroTimeline from '../components/HeroTimeline.astro';
+import MethodPipeline from '../components/MethodPipeline.astro';
+import ModelPrinciples from '../components/ModelPrinciples.astro';
+import ProjectPoster from '../components/ProjectPoster.astro';
+import ProjectLogo from '../components/ProjectLogo.astro';
 import { site } from '../data/site';
 import { AREAS, STATUS } from '../data/taxonomy';
 import { projectsByTier, assertCaseStudies } from '../lib/projects';
@@ -12,23 +17,14 @@ const featured = await projectsByTier('featured');
 const selected = await projectsByTier('selected');
 const archive = await projectsByTier('archive');
 const all = [...featured, ...selected, ...archive];
+const withPage = new Set((await getCollection('caseStudies')).map((s) => s.data.project));
 
 // Only offer filters for areas that actually have projects below the fold.
 const usedAreas = new Set([...selected, ...archive].flatMap((p) => p.data.areas));
 const filters = Object.entries(AREAS).filter(([key]) => usedAreas.has(key as keyof typeof AREAS));
 
-// Two marquee rows: professional stack (CV), then what the projects add on top.
-const cvStack = [...site.cvStack];
-const cvSet = new Set(cvStack.map((t) => t.toLowerCase()));
-const projectStack = [...new Set(all.flatMap((p) => p.data.stack))].filter((t) => !cvSet.has(t.toLowerCase()));
-const rows = [
-  { label: 'At work', items: cvStack, reverse: false },
-  { label: 'In my projects', items: projectStack, reverse: true },
-];
-
-const pad = (n: number) => String(n).padStart(2, '0');
-// Brand ramp (blue -> violet -> magenta) across the six principles.
-const methodColors = ['#4f6bff', '#6a63fb', '#8b5cf6', '#a957f2', '#c552d6', '#e04fb8'];
+// Technologies that at least one project declares, so the map only links where it can.
+const techSet = new Set(all.flatMap((p) => p.data.stack).map((t) => t.toLowerCase()));
 
 // "2,400+" -> { count: 2400, suffix: "+" } for the animated counters.
 const parseStat = (v: string) => {
@@ -40,23 +36,20 @@ const { links } = site;
 
 <Base>
   <section class="hero wrap">
-    <div>
+    <div class="hero-copy">
       <span class="pill reveal"><span class="dot"></span>{site.pill}</span>
       <h1 class="reveal" style="--d:.05s">
         <span class="role">{site.role}</span>
         <span class="grad-text">{site.focus}</span>
       </h1>
-      <p class="rotator reveal" style="--d:.1s" aria-live="polite">
-        &gt; building <b data-rotate={JSON.stringify(site.rotate)}>{site.rotate[0]}</b><span class="caret"></span>
-      </p>
-      <p class="tagline reveal" style="--d:.15s">{site.tagline}</p>
+      <p class="tagline reveal" style="--d:.1s">{site.tagline}</p>
       <div class="cta reveal" style="--d:.2s">
         <a class="btn primary" href="#work">See the work ↓</a>
         <a class="btn" href={links.linkedin}>LinkedIn ↗</a>
         <a class="btn" href={links.github}>GitHub ↗</a>
       </div>
     </div>
-    <WorkflowViz />
+    <HeroTimeline />
   </section>
 
   <div class="wrap">
@@ -76,40 +69,28 @@ const { links } = site;
     </div>
   </div>
 
-  <div class="marquees">
-    {rows.map((row) => (
-      <div class="marquee-row">
-        <span class="marquee-label">{row.label}</span>
-        <div class="marquee" aria-label={`Technologies — ${row.label}`}>
-          <div class={`marquee-track${row.reverse ? ' reverse' : ''}`}>
-            {[...row.items, ...row.items].map((t, i) => (
-              <span aria-hidden={i >= row.items.length ? 'true' : undefined}>{t}</span>
-            ))}
-          </div>
-        </div>
-      </div>
-    ))}
-  </div>
-
   <section id="work" class="section wrap">
     <div class="section-head reveal">
       <div>
         <span class="kicker">Featured work</span>
         <h2>Systems, not demos.</h2>
       </div>
-      <span class="eyebrow">Source is private · walkthroughs on request</span>
+      <div class="section-aside">
+        <span class="eyebrow">Source is private · walkthroughs on request</span>
+        <a class="section-link" href="/work">All {all.length} projects →</a>
+      </div>
     </div>
     <div class="featured">
       {featured.map((p, i) => (
         <a class="feature reveal" href={`/projects/${p.id}/`} style={`--accent:${p.data.accent};--d:${(i % 2) * 0.08}s`}>
-          <span class="num">{pad(i + 1)}</span>
-          {p.data.logo && <img class="logo logo-lg" src={p.data.logo} alt="" width="64" height="64" loading="lazy" />}
-          <span class="area">{p.data.areas.map((a) => AREAS[a]).join(' · ')}</span>
-          <h3>{p.data.name}</h3>
-          <p>{p.data.oneLiner}</p>
-          <ul>{p.data.highlights.map((h) => <li>{h}</li>)}</ul>
-          <Chips items={p.data.stack.slice(0, 6)} />
-          <span class="more">Read the case study</span>
+          <ProjectPoster id={p.id} name={p.data.name} logo={p.data.logo} accent={p.data.accent} fact={p.data.fact} />
+          <div class="feature-body">
+            <span class="area">{p.data.areas.map((a) => AREAS[a]).join(' · ')}</span>
+            <h3>{p.data.name}</h3>
+            <p>{p.data.oneLiner}</p>
+            <ul>{p.data.highlights.slice(0, 2).map((h) => <li>{h}</li>)}</ul>
+            <span class="more">Read the case study</span>
+          </div>
         </a>
       ))}
     </div>
@@ -122,14 +103,11 @@ const { links } = site;
         <h2>Agents write code.<br />Engineers own outcomes.</h2>
       </div>
     </div>
-    <div class="method">
-      {site.method.map((m, i) => (
-        <div class="method-card reveal" style={`--c:${methodColors[i % methodColors.length]};--d:${(i % 3) * 0.07}s`}>
-          <span class="idx">{pad(i + 1)}</span>
-          <h3>{m.title}</h3>
-          <p>{m.body}</p>
-        </div>
-      ))}
+    <MethodPipeline />
+
+    <div class="model-strip reveal">
+      <span class="eyebrow">The model layer</span>
+      <ModelPrinciples />
     </div>
   </section>
 
@@ -150,10 +128,11 @@ const { links } = site;
     <div class="selected" data-group>
       {selected.map((p, i) => (
         <details class="card reveal" data-areas={p.data.areas.join(' ')} style={`--accent:${p.data.accent};--d:${(i % 3) * 0.06}s`}>
+          <img class="card-art" src={`/art/${p.id}.svg`} alt="" aria-hidden="true" width="400" height="250" loading="lazy" />
           <summary>
             <span class="bar"></span>
             <div class="card-head">
-              {p.data.logo && <img class="logo" src={p.data.logo} alt="" width="44" height="44" loading="lazy" />}
+              <ProjectLogo name={p.data.name} logo={p.data.logo} accent={p.data.accent} size="md" />
               <div>
                 <h3>{p.data.name}</h3>
                 <span class="status" data-status={p.data.status}>{STATUS[p.data.status]}</span>
@@ -164,7 +143,16 @@ const { links } = site;
           </summary>
           <ul>{p.data.highlights.map((h) => <li>{h}</li>)}</ul>
           <Chips items={p.data.stack} />
+          {p.data.underTheHood.length > 0 && (
+            <div class="under">
+              <span class="eyebrow">Under the hood</span>
+              <ul>{p.data.underTheHood.map((u) => <li>{u}</li>)}</ul>
+            </div>
+          )}
           <AiRole role={p.data.aiRole} />
+          {withPage.has(p.id) && (
+            <a class="card-link" href={`/projects/${p.id}/`}>Read the short version →</a>
+          )}
         </details>
       ))}
     </div>
@@ -174,14 +162,40 @@ const { links } = site;
       <ul class="archive">
         {archive.map((p) => (
           <li data-areas={p.data.areas.join(' ')}>
-            <span class="name">{p.data.logo && <img class="logo logo-sm" src={p.data.logo} alt="" width="24" height="24" loading="lazy" />}{p.data.name}</span>
-            <span class="desc">{p.data.oneLiner}</span>
-            <span class="stack">{p.data.stack.join(' · ')}</span>
+            <a class="archive-row" href={`/projects/${p.id}/`}>
+              <span class="name"><ProjectLogo name={p.data.name} logo={p.data.logo} accent={p.data.accent} size="sm" />{p.data.name}</span>
+              <span class="desc">{p.data.oneLiner}</span>
+              <span class="stack">{p.data.stack.join(' · ')}</span>
+              <span class="go" aria-hidden="true">→</span>
+            </a>
           </li>
         ))}
       </ul>
     </div>
   </section>
+
+  <div class="wrap stack-block reveal">
+    <p class="stack-intro">
+      <span class="eyebrow">Stack</span>
+      <span>Click a technology to see the projects that use it.</span>
+    </p>
+    <div class="stack-map">
+      {site.stackGroups.map((group) => (
+        <div class="stack-group">
+          <span class="stack-label">{group.label}</span>
+          <ul>
+            {group.items.map((item) => (
+              <li>
+                {techSet.has(item.toLowerCase())
+                  ? <a href={`/work?tech=${encodeURIComponent(item)}`}>{item}</a>
+                  : <span>{item}</span>}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+  </div>
 
   <section id="experience" class="section wrap">
     <div class="section-head reveal">
@@ -191,28 +205,35 @@ const { links } = site;
       </div>
     </div>
     <div class="timeline">
-      {site.experience.map((job) => (
-        <div class="job reveal">
-          <div>
-            <h3>{job.company}</h3>
-            <span class="eyebrow">{job.period}</span>
+      {site.experience.map((job) => {
+        const summary = job.engagements[0]?.points[0] ?? '';
+        return (
+          <div class="job reveal">
+            <div class="job-when">
+              <h3>{job.company}</h3>
+              <span class="eyebrow">{job.period}</span>
+            </div>
+            <div class="job-body">
+              <strong>{job.role}</strong>
+              {summary && <p class="job-summary">{summary}</p>}
+              <details class="job-more">
+                <summary>Clients and detail</summary>
+                {job.engagements.map((e) => (
+                  <div class="engagement">
+                    {e.client && (
+                      <p class="client">
+                        {e.client}
+                        {e.period && <span class="eyebrow"> · {e.period}</span>}
+                      </p>
+                    )}
+                    <ul>{e.points.map((pt) => <li>{pt}</li>)}</ul>
+                  </div>
+                ))}
+              </details>
+            </div>
           </div>
-          <div>
-            <strong>{job.role}</strong>
-            {job.engagements.map((e) => (
-              <div class="engagement">
-                {e.client && (
-                  <p class="client">
-                    {e.client}
-                    {e.period && <span class="eyebrow"> · {e.period}</span>}
-                  </p>
-                )}
-                <ul>{e.points.map((pt) => <li>{pt}</li>)}</ul>
-              </div>
-            ))}
-          </div>
-        </div>
-      ))}
+        );
+      })}
       <div class="job reveal">
         <div>
           <h3>Education</h3>
@@ -228,78 +249,75 @@ const { links } = site;
       </div>
     </div>
   </section>
+
+  <section class="section wrap">
+    <a class="all-work" href="/work">
+      <div>
+        <span class="kicker">All work</span>
+        <h2>19 projects, one way of working.</h2>
+      </div>
+      <span class="btn primary">See every project →</span>
+    </a>
+    <p class="closing">
+      Prefer to talk? <a href={links.linkedin}>Find me on LinkedIn ↗</a>
+    </p>
+  </section>
 </Base>
 
 <script>
-  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const initHome = () => {
+    const section = document.querySelector<HTMLElement>('#projects');
+    if (!section || section.dataset.ready) return;
+    section.dataset.ready = '1';
 
-  // Project filters. Without JS every project stays visible.
-  const buttons = document.querySelectorAll<HTMLButtonElement>('[data-filter]');
-  const items = document.querySelectorAll<HTMLElement>('#projects [data-areas]');
-  const groups = document.querySelectorAll<HTMLElement>('#projects [data-group]');
-  for (const button of buttons) {
-    button.addEventListener('click', () => {
-      const filter = button.dataset.filter ?? 'all';
-      for (const b of buttons) b.setAttribute('aria-pressed', String(b === button));
-      for (const item of items) {
-        const areas = (item.dataset.areas ?? '').split(' ');
-        item.hidden = filter !== 'all' && !areas.includes(filter);
-      }
-      for (const group of groups) {
-        group.hidden = group.querySelector('[data-areas]:not([hidden])') === null;
-      }
-    });
-  }
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // Animated counters, once, when the stats scroll into view.
-  const counters = document.querySelectorAll<HTMLElement>('[data-count]');
-  const run = (el: HTMLElement) => {
-    const target = Number(el.dataset.count);
-    const suffix = el.dataset.suffix ?? '';
-    const start = performance.now();
-    const duration = 1400;
-    const tick = (now: number) => {
-      const t = Math.min(1, (now - start) / duration);
-      const eased = 1 - Math.pow(1 - t, 3);
-      el.textContent = Math.round(target * eased).toLocaleString('en') + suffix;
-      if (t < 1) requestAnimationFrame(tick);
-    };
-    requestAnimationFrame(tick);
-  };
-  if (!reduced && 'IntersectionObserver' in window) {
-    const io = new IntersectionObserver((entries) => {
-      for (const e of entries) {
-        if (e.isIntersecting) {
-          run(e.target as HTMLElement);
-          io.unobserve(e.target);
+    // Project filters. Without JS every project stays visible.
+    const buttons = document.querySelectorAll<HTMLButtonElement>('[data-filter]');
+    const items = document.querySelectorAll<HTMLElement>('#projects [data-areas]');
+    const groups = document.querySelectorAll<HTMLElement>('#projects [data-group]');
+    for (const button of buttons) {
+      button.addEventListener('click', () => {
+        const filter = button.dataset.filter ?? 'all';
+        for (const b of buttons) b.setAttribute('aria-pressed', String(b === button));
+        for (const item of items) {
+          const areas = (item.dataset.areas ?? '').split(' ');
+          item.hidden = filter !== 'all' && !areas.includes(filter);
         }
-      }
-    });
-    counters.forEach((c) => io.observe(c));
-  }
+        for (const group of groups) {
+          group.hidden = group.querySelector('[data-areas]:not([hidden])') === null;
+        }
+      });
+    }
 
-  // Typewriter rotator in the hero.
-  const rot = document.querySelector<HTMLElement>('[data-rotate]');
-  if (rot && !reduced) {
-    const words: string[] = JSON.parse(rot.dataset.rotate ?? '[]');
-    let w = 0;
-    let c = words[0]?.length ?? 0;
-    let deleting = true;
-    const step = () => {
-      const word = words[w];
-      c += deleting ? -1 : 1;
-      rot.textContent = word.slice(0, c);
-      let delay = deleting ? 35 : 70;
-      if (!deleting && c === word.length) {
-        deleting = true;
-        delay = 2200;
-      } else if (deleting && c === 0) {
-        deleting = false;
-        w = (w + 1) % words.length;
-        delay = 300;
-      }
-      setTimeout(step, delay);
+    // Animated counters, once, when the stats scroll into view.
+    const counters = document.querySelectorAll<HTMLElement>('[data-count]');
+    const run = (el: HTMLElement) => {
+      const target = Number(el.dataset.count);
+      const suffix = el.dataset.suffix ?? '';
+      const start = performance.now();
+      const duration = 1400;
+      const tick = (now: number) => {
+        const t = Math.min(1, (now - start) / duration);
+        const eased = 1 - Math.pow(1 - t, 3);
+        el.textContent = Math.round(target * eased).toLocaleString('en') + suffix;
+        if (t < 1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
     };
-    setTimeout(step, 2500);
-  }
+    if (!reduced && 'IntersectionObserver' in window) {
+      const io = new IntersectionObserver((entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            run(entry.target as HTMLElement);
+            io.unobserve(entry.target);
+          }
+        }
+      });
+      counters.forEach((counter) => io.observe(counter));
+    }
+  };
+
+  document.addEventListener('astro:page-load', initHome);
+  initHome();
 </script>

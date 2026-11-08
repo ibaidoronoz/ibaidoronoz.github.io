@@ -1,0 +1,106 @@
+---
+import Base from '../layouts/Base.astro';
+import ProjectPoster from '../components/ProjectPoster.astro';
+import { AREAS, STATUS } from '../data/taxonomy';
+import { projectsByTier } from '../lib/projects';
+
+const featured = await projectsByTier('featured');
+const selected = await projectsByTier('selected');
+const archive = await projectsByTier('archive');
+const all = [...featured, ...selected, ...archive];
+
+const usedAreas = new Set(all.flatMap((p) => p.data.areas));
+const filters = Object.entries(AREAS).filter(([key]) => usedAreas.has(key as keyof typeof AREAS));
+---
+
+<Base title="Work" description="Every project in the catalogue: payments, platforms, agents and tools.">
+  <section class="wrap work-hero">
+    <span class="kicker">All work</span>
+    <h1>{all.length} projects, one way of working.</h1>
+    <p class="lead">
+      Payments, platforms, agents and small tools. Every entry has a page with the problem, the
+      decisions and a diagram of how it works.
+    </p>
+  </section>
+
+  <section class="wrap work-section">
+    <div class="filters" role="group" aria-label="Filter projects by area">
+      <button type="button" data-filter="all" aria-pressed="true">All · {all.length}</button>
+      {filters.map(([key, label]) => (
+        <button type="button" data-filter={key} aria-pressed="false">{label}</button>
+      ))}
+    </div>
+
+    <p class="tech-note" data-tech-note hidden>
+      Filtered by <b data-tech-name></b> · <span data-tech-count></span> projects · <a href="/work">clear</a>
+    </p>
+
+    <div class="work-grid" data-group>
+      {all.map((p, i) => (
+        <a
+          class="work-card reveal"
+          href={`/projects/${p.id}/`}
+          data-areas={p.data.areas.join(' ')}
+          data-stack={p.data.stack.join('|')}
+          style={`--accent:${p.data.accent};--d:${(i % 3) * 0.05}s`}
+        >
+          <ProjectPoster id={p.id} name={p.data.name} logo={p.data.logo} accent={p.data.accent} fact={p.data.fact} />
+          <div class="work-body">
+            <span class="area">{p.data.areas.map((a) => AREAS[a]).join(' · ')}</span>
+            <h2>{p.data.name}</h2>
+            <p>{p.data.oneLiner}</p>
+            <span class="work-status status" data-status={p.data.status}>{STATUS[p.data.status]}</span>
+          </div>
+        </a>
+      ))}
+    </div>
+  </section>
+</Base>
+
+<script>
+  const initWork = () => {
+    const grid = document.querySelector<HTMLElement>('.work-grid');
+    if (!grid || grid.dataset.ready) return;
+    grid.dataset.ready = '1';
+
+    const buttons = [...document.querySelectorAll<HTMLButtonElement>('[data-filter]')];
+    const items = [...document.querySelectorAll<HTMLElement>('.work-card')];
+    const note = document.querySelector<HTMLElement>('[data-tech-note]');
+
+    const setTech = (tech: string) => {
+      const wanted = tech.toLowerCase();
+      let count = 0;
+      for (const item of items) {
+        const stack = (item.dataset.stack ?? '').toLowerCase().split('|');
+        const match = stack.includes(wanted);
+        item.hidden = !match;
+        if (match) count += 1;
+      }
+      if (note) {
+        note.hidden = false;
+        const name = note.querySelector<HTMLElement>('[data-tech-name]');
+        const total = note.querySelector<HTMLElement>('[data-tech-count]');
+        if (name) name.textContent = tech;
+        if (total) total.textContent = String(count);
+      }
+    };
+
+    for (const button of buttons) {
+      button.addEventListener('click', () => {
+        if (note) note.hidden = true;
+        const filter = button.dataset.filter ?? 'all';
+        for (const b of buttons) b.setAttribute('aria-pressed', String(b === button));
+        for (const item of items) {
+          const areas = (item.dataset.areas ?? '').split(' ');
+          item.hidden = filter !== 'all' && !areas.includes(filter);
+        }
+      });
+    }
+
+    const tech = new URLSearchParams(window.location.search).get('tech');
+    if (tech) setTech(tech);
+  };
+
+  document.addEventListener('astro:page-load', initWork);
+  initWork();
+</script>

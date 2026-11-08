@@ -1,0 +1,218 @@
+---
+interface Node {
+  title: string;
+  sub: string;
+}
+
+interface Props {
+  kind: 'flow' | 'fork' | 'layers' | 'loop';
+  nodes: Node[];
+  accent: string;
+  name: string;
+  highlight?: number;
+}
+
+const { kind, nodes, accent, name, highlight = -1 } = Astro.props;
+
+const stroke = 'rgba(255,255,255,0.14)';
+const cardFill = '#0d0d18';
+
+const card = (x: number, y: number, w: number, h: number, node: Node, index: number) => {
+  const on = index === highlight;
+  return {
+    x,
+    y,
+    w,
+    h,
+    on,
+    node,
+    index,
+    stroke: on ? accent : stroke,
+    fill: cardFill,
+  };
+};
+
+let width = 1200;
+let height = 330;
+let cards: ReturnType<typeof card>[] = [];
+let wires: string[] = [];
+let pulses: string[] = [];
+let loopPath = '';
+let loopArrow = '';
+
+if (kind === 'flow' || kind === 'loop') {
+  const margin = 40;
+  const gap = 48;
+  const cardW = (width - margin * 2 - gap * (nodes.length - 1)) / nodes.length;
+  const cardH = 110;
+  const y = 105;
+
+  cards = nodes.map((node, i) => card(margin + i * (cardW + gap), y, cardW, cardH, node, i));
+
+  for (let i = 0; i < cards.length - 1; i += 1) {
+    const from = cards[i];
+    const to = cards[i + 1];
+    const yMid = y + cardH / 2;
+    wires.push(`M ${from.x + from.w} ${yMid} H ${to.x}`);
+    pulses.push(`M ${from.x + from.w} ${yMid} H ${to.x}`);
+  }
+
+  if (kind === 'loop') {
+    const first = cards[0];
+    const last = cards[cards.length - 1];
+    const low = y + cardH + 46;
+    loopPath = `M ${last.x + last.w / 2} ${y + cardH} V ${low} H ${first.x + first.w / 2} V ${y + cardH + 14}`;
+    const cx = first.x + first.w / 2;
+    loopArrow = `${cx - 5},${y + cardH + 14} ${cx + 5},${y + cardH + 14} ${cx},${y + cardH + 4}`;
+  }
+}
+
+if (kind === 'fork') {
+  height = 340;
+  const entry = nodes[0];
+  const merge = nodes[nodes.length - 1];
+  const branches = nodes.slice(1, -1);
+
+  const entryCard = card(40, 115, 230, 110, entry, 0);
+  const mergeCard = card(880, 115, 280, 110, merge, nodes.length - 1);
+  const branchH = 84;
+  const branchGap = 22;
+  const totalH = branches.length * branchH + (branches.length - 1) * branchGap;
+  const branchY = 170 - totalH / 2;
+
+  const branchCards = branches.map((node, i) =>
+    card(430, branchY + i * (branchH + branchGap), 300, branchH, node, i + 1),
+  );
+
+  cards = [entryCard, ...branchCards, mergeCard];
+
+  for (const branch of branchCards) {
+    const by = branch.y + branch.h / 2;
+    wires.push(`M 270 170 H 350 V ${by} H 420`);
+    pulses.push(`M 270 170 H 350 V ${by} H 420`);
+    wires.push(`M 730 ${by} H 800 V 170 H 870`);
+    pulses.push(`M 730 ${by} H 800 V 170 H 870`);
+  }
+}
+
+if (kind === 'layers') {
+  const cardH = 90;
+  const gap = 38;
+  const y0 = 56;
+  height = y0 * 2 + nodes.length * cardH + (nodes.length - 1) * gap;
+
+  cards = nodes.map((node, i) => card(250, y0 + i * (cardH + gap), 700, cardH, node, i));
+
+  for (let i = 0; i < cards.length - 1; i += 1) {
+    const from = cards[i];
+    const to = cards[i + 1];
+    wires.push(`M 600 ${from.y + cardH} V ${to.y - 8}`);
+    pulses.push(`M 600 ${from.y + cardH} V ${to.y - 8}`);
+  }
+}
+
+const label = `${name.toLowerCase()} · ${kind}`;
+---
+
+<div class="flow-diagram" style={`--accent:${accent}`} data-flow>
+  <button class="fd-play" type="button" data-fd-play aria-label="Play the diagram">▶ play</button>
+
+  <svg viewBox={`0 0 ${width} ${height}`} role="img" tabindex="0" aria-label={`${name}: ${nodes.map((n) => n.title).join(' to ')}`}>
+    <text class="fd-label" x="40" y="34">{label}</text>
+
+    {cards.map((c) => (
+      <g class:list={['fd-card', { on: c.on }]} data-fd-step={c.index}>
+        <rect x={c.x} y={c.y} width={c.w} height={c.h} rx="14" stroke={c.stroke} fill={c.fill}/>
+        <circle class="fd-dot" cx={c.x + 20} cy={c.y + 24} r="4"/>
+        <text class="fd-idx" x={c.x + 34} y={c.y + 28}>{String(c.index + 1).padStart(2, '0')}</text>
+        <text class="fd-title" x={c.x + 20} y={c.y + 58}>{c.node.title}</text>
+        <text class="fd-sub" x={c.x + 20} y={c.y + 80}>{c.node.sub}</text>
+      </g>
+    ))}
+
+    {wires.map((d) => <path class="fd-wire" d={d}/>)}
+    {pulses.map((d, i) => <path class="fd-pulse" d={d} style={`animation-delay:${i * 0.35}s`}/>)}
+
+    {loopPath && (
+      <>
+        <path class="fd-wire loop" d={loopPath}/>
+        <path class="fd-pulse loop" d={loopPath}/>
+        <polygon class="fd-arrow" points={loopArrow}/>
+      </>
+    )}
+  </svg>
+
+  <ol class="fd-compact">
+    {nodes.map((node, i) => (
+      <li>
+        <span class="fd-c-idx">{String(i + 1).padStart(2, '0')}</span>
+        <span class="fd-c-body">
+          <b>{node.title}</b>
+          <span>{node.sub}</span>
+        </span>
+      </li>
+    ))}
+  </ol>
+</div>
+
+<script>
+  const initFlow = () => {
+    for (const root of document.querySelectorAll<HTMLElement>('[data-flow]')) {
+      if (root.dataset.ready) continue;
+      root.dataset.ready = '1';
+
+      const cards = [...root.querySelectorAll<SVGGElement>('[data-fd-step]')];
+      const button = root.querySelector<HTMLButtonElement>('[data-fd-play]');
+      const svg = root.querySelector<SVGSVGElement>('svg');
+      let timer = 0;
+      let current = -1;
+
+      const setActive = (index: number) => {
+        current = index;
+        cards.forEach((card, i) => card.classList.toggle('active', i === index));
+        root.classList.toggle('playing', index >= 0);
+      };
+
+      const stop = () => {
+        window.clearInterval(timer);
+        timer = 0;
+        setActive(-1);
+        if (button) button.textContent = '▶ play';
+      };
+
+      const play = () => {
+        window.clearInterval(timer);
+        if (button) button.textContent = '❚❚ pause';
+        let i = 0;
+        setActive(0);
+        timer = window.setInterval(() => {
+          i += 1;
+          if (i >= cards.length) {
+            stop();
+            return;
+          }
+          setActive(i);
+        }, 1100);
+      };
+
+      button?.addEventListener('click', () => (timer ? stop() : play()));
+
+      svg?.addEventListener('keydown', (event) => {
+        if (event.key !== 'ArrowRight' && event.key !== 'ArrowLeft') return;
+        event.preventDefault();
+        window.clearInterval(timer);
+        timer = 0;
+        if (button) button.textContent = '▶ play';
+        const next = current + (event.key === 'ArrowRight' ? 1 : -1);
+        if (next < 0 || next >= cards.length) {
+          setActive(-1);
+          return;
+        }
+        setActive(next);
+      });
+    }
+  };
+
+  document.addEventListener('astro:page-load', initFlow);
+  initFlow();
+</script>

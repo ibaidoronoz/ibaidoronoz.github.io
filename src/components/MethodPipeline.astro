@@ -1,0 +1,76 @@
+---
+import { site } from '../data/site';
+
+const steps = site.method;
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+
+<div class="pipeline reveal" data-pipeline aria-label="How I build, step by step">
+  <div class="pipeline-head">
+    <span class="pipeline-title"><i aria-hidden="true"></i>the method</span>
+    <span class="eyebrow">six rules, one loop</span>
+  </div>
+
+  <ol class="pipeline-steps">
+    {steps.map((step, i) => (
+      <li>
+        <button type="button" data-step={i} aria-pressed={i === 0 ? 'true' : 'false'}>
+          <span class="step-idx">{pad(i + 1)}</span>
+          <span class="step-label">{step.title}</span>
+        </button>
+      </li>
+    ))}
+  </ol>
+
+  <div class="pipeline-body">
+    {steps.map((step, i) => (
+      <div data-body={i} class={i === 0 ? 'on' : undefined}>
+        <p class="pipeline-rule">{step.body}</p>
+        <p class="pipeline-why">{step.why}</p>
+        <p class="pipeline-example"><span>In practice</span>{step.example}</p>
+      </div>
+    ))}
+  </div>
+</div>
+
+<script>
+  const initPipeline = () => {
+    const pipeline = document.querySelector<HTMLElement>('[data-pipeline]');
+    if (!pipeline || pipeline.dataset.ready) return;
+    pipeline.dataset.ready = '1';
+
+    const buttons = [...pipeline.querySelectorAll<HTMLButtonElement>('[data-step]')];
+    const bodies = [...pipeline.querySelectorAll<HTMLElement>('[data-body]')];
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let current = 0;
+    let timer = 0;
+
+    const show = (index: number) => {
+      current = index;
+      buttons.forEach((button, i) => button.setAttribute('aria-pressed', String(i === index)));
+      bodies.forEach((body, i) => body.classList.toggle('on', i === index));
+    };
+
+    const advance = () => show((current + 1) % buttons.length);
+    const start = () => {
+      if (reduced) return;
+      window.clearInterval(timer);
+      timer = window.setInterval(advance, 7000);
+    };
+    const stop = () => window.clearInterval(timer);
+
+    buttons.forEach((button, i) =>
+      button.addEventListener('click', () => {
+        show(i);
+        start();
+      }),
+    );
+
+    pipeline.addEventListener('pointerenter', stop);
+    pipeline.addEventListener('pointerleave', start);
+    start();
+  };
+
+  document.addEventListener('astro:page-load', initPipeline);
+  initPipeline();
+</script>

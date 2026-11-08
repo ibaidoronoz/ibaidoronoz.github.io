@@ -2,6 +2,19 @@
 project: plutus
 title: Getting taxes right when every data source disagrees
 draft: false
+decisions:
+  - title: "One database per user"
+    body: "Physical isolation eliminates an entire class of data-leak bugs by design — no tenant filter to forget."
+    why: "A missing WHERE clause is a headline; a separate file is not."
+  - title: "Zero-step deploys"
+    body: "Idempotent migrations run automatically on login: starting the app is the deployment."
+    why: "There is no platform team to run a release process."
+  - title: "Single process, in-process locks"
+    body: "Recalculation, wallet sync and backups are serialised inside one process, with the invariant documented and enforced."
+    why: "A queue nobody operates is a queue that silently stops."
+  - title: "FIFO with keyed lots"
+    body: "The method Spanish IRPF expects, with lots keyed by asset class and asset so stocks and crypto never collide."
+    why: "The tax agency does not care that your model is elegant."
 stats:
   - { value: '17', label: 'blockchains ingested' }
   - { value: '6', label: 'exchanges, API + CSV' }
@@ -30,13 +43,6 @@ Commercial tools ask you to upload your entire financial history to a third-part
 ## Architecture
 
 One FastAPI process serves both the API and the built React SPA. Each user gets an **isolated SQLite database**; authentication lives in a separate store.
-
-## Key decisions
-
-1. **One database per user.** Physical isolation eliminates an entire class of data-leak bugs by design — no tenant filter to forget.
-2. **Zero-step deploys.** Idempotent migrations run automatically on login: starting the app *is* the deployment.
-3. **Single-process engine with in-process locks.** Recalculation, wallet sync and backups are serialised with zero infrastructure, and the invariant is documented and enforced.
-4. **FIFO cost basis**, the method Spanish IRPF expects, with lots keyed by `(asset_class, asset)` so stocks and crypto never collide.
 
 ## The invariants that keep the numbers honest
 

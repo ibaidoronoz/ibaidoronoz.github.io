@@ -1,0 +1,18 @@
+---
+interface Props {
+  blocks: { label: string; title: string; body: string }[];
+}
+
+const { blocks } = Astro.props;
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+
+<div class="study-blocks">
+  {blocks.map((block, i) => (
+    <article class="study-block reveal" style={`--d:${i * 0.07}s`}>
+      <span class="b-label">{pad(i + 1)} — {block.label}</span>
+      <h2>{block.title}</h2>
+      <p>{block.body}</p>
+    </article>
+  ))}
+</div>
