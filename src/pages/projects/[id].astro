@@ -4,8 +4,14 @@ import Base from '../../layouts/Base.astro';
 import Chips from '../../components/Chips.astro';
 import AiRole from '../../components/AiRole.astro';
 import Flow from '../../components/Flow.astro';
+import Diagram from '../../components/Diagram.astro';
+import ProjectLogo from '../../components/ProjectLogo.astro';
+import ProjectPoster from '../../components/ProjectPoster.astro';
+import DecisionCards from '../../components/DecisionCards.astro';
+import StudyBlocks from '../../components/StudyBlocks.astro';
+import CaseRail from '../../components/CaseRail.astro';
 import { AREAS, STATUS } from '../../data/taxonomy';
-import { assertCaseStudies, projectsByTier } from '../../lib/projects';
+import { assertCaseStudies, projectsWithPage } from '../../lib/projects';
 
 export async function getStaticPaths() {
   await assertCaseStudies();
@@ -16,21 +22,37 @@ export async function getStaticPaths() {
 const { study } = Astro.props;
 const project = await getEntry('projects', study.data.project);
 if (!project) throw new Error(`Unknown project: ${study.data.project}`);
-const { Content } = await render(study);
+const { Content, headings } = await render(study);
 const p = project.data;
+const isShort = study.data.format === 'short';
 
-// Link to the next featured case study, wrapping around.
-const featured = await projectsByTier('featured');
-const idx = featured.findIndex((f) => f.id === project.id);
-const next = featured[(idx + 1) % featured.length];
+// Link to the next project that has a page, wrapping around.
+const ordered = await projectsWithPage();
+const idx = ordered.findIndex((f) => f.id === project.id);
+const next = ordered[(idx + 1) % ordered.length];
+
+// Two projects that share an area, so a case study keeps leading somewhere.
+const related = (await getCollection('projects'))
+  .filter((entry) => entry.id !== project.id)
+  .map((entry) => ({
+    entry,
+    shared: entry.data.areas.filter((area) => p.areas.includes(area)).length,
+  }))
+  .filter((item) => item.shared > 0)
+  .sort((a, b) => b.shared - a.shared || a.entry.data.order - b.entry.data.order)
+  .slice(0, 2);
+
 ---
 
-<Base title={p.name} description={p.oneLiner}>
+<Base title={p.name} description={p.oneLiner} image={`/og/${project.id}.png`}>
+  <div class="read-progress" data-progress aria-hidden="true"></div>
   <div class="wrap" style={`--accent:${p.accent}`}>
     <header class="cs-hero">
       <a class="back" href="/#work">← All work</a>
       <span class="name reveal">
-        {p.logo && <img class="logo logo-md" src={p.logo} alt="" width="56" height="56" />}
+        <span transition:name={`logo-${project.id}`}>
+          <ProjectLogo name={p.name} logo={p.logo} accent={p.accent} size="md" />
+        </span>
         {p.name}
       </span>
       <h1 class="reveal" style="--d:.05s">{study.data.title}</h1>
@@ -38,7 +60,13 @@ const next = featured[(idx + 1) % featured.length];
       <div class="reveal" style="--d:.15s"><AiRole role={p.aiRole} /></div>
     </header>
 
-    {study.data.stats.length > 0 && (
+    <div class="cs-subnav">
+      <span class="cs-subnav-name">{p.name}</span>
+      <span class="cs-subnav-area">{p.areas.map((a) => AREAS[a]).join(' · ')}</span>
+      <a class="cs-subnav-top" href="#main">Back to top ↑</a>
+    </div>
+
+    {!isShort && study.data.stats.length > 0 && (
       <div class="cs-stats">
         {study.data.stats.map((st, i) => (
           <div class="cs-stat reveal" style={`--d:${i * 0.07}s`}>
@@ -49,7 +77,15 @@ const next = featured[(idx + 1) % featured.length];
       </div>
     )}
 
-    {study.data.flow.length > 0 && <Flow steps={study.data.flow} />}
+    {p.diagram && (
+      <figure class="shot shot-diagram reveal">
+        <div class="shot-frame"><Diagram diagram={p.diagram} accent={p.accent} name={p.name} /></div>
+      </figure>
+    )}
+
+
+    {/* A diagram already shows the architecture; the flow would repeat it. */}
+    {study.data.flow.length > 0 && !p.diagram && <Flow steps={study.data.flow} />}
 
     <div class="cs-meta reveal">
       <div>
@@ -70,9 +106,58 @@ const next = featured[(idx + 1) % featured.length];
       <p class="draft-banner">Draft — this case study is still being written.</p>
     )}
 
-    <article class="prose">
-      <Content />
-    </article>
+    {p.underTheHood.length > 0 && (
+      <details class="under-block reveal">
+        <summary>Under the hood</summary>
+        <ul>{p.underTheHood.map((u) => <li>{u}</li>)}</ul>
+      </details>
+    )}
+
+    {isShort ? (
+      p.diagram ? (
+        <StudyBlocks blocks={study.data.blocks} />
+      ) : (
+        <div class="study-split">
+          <div class="study-visual">
+            <ProjectPoster id={project.id} name={p.name} logo={p.logo} accent={p.accent} fact={p.fact} />
+          </div>
+          <StudyBlocks blocks={study.data.blocks} />
+        </div>
+      )
+    ) : (
+      <>
+        {study.data.decisions.length > 0 && (
+          <section class="decisions-wrap">
+            <h2 class="cs-band-title">Key decisions</h2>
+            <DecisionCards items={study.data.decisions} />
+          </section>
+        )}
+        <div class="cs-layout">
+          <CaseRail
+            headings={headings}
+            nodes={p.diagram && typeof p.diagram === 'object' ? p.diagram.nodes : []}
+          />
+          <article class="prose"><Content /></article>
+        </div>
+      </>
+    )}
+
+    {related.length > 0 && (
+      <section class="related">
+        <h2 class="cs-band-title">Related work</h2>
+        <div class="related-grid">
+          {related.map(({ entry }) => (
+            <a class="related-card" href={`/projects/${entry.id}/`} style={`--accent:${entry.data.accent}`}>
+              <ProjectLogo name={entry.data.name} logo={entry.data.logo} accent={entry.data.accent} size="md" />
+              <div>
+                <h3>{entry.data.name}</h3>
+                <p>{entry.data.oneLiner}</p>
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
 
     {next && next.id !== project.id && (
       <a class="next-cta" href={`/projects/${next.id}/`} style={`--accent:${next.data.accent}`}>
@@ -85,3 +170,27 @@ const next = featured[(idx + 1) % featured.length];
     )}
   </div>
 </Base>
+
+<script>
+  let progressFrame = 0;
+
+  const updateProgress = () => {
+    progressFrame = 0;
+    const bar = document.querySelector<HTMLElement>('[data-progress]');
+    if (!bar) return;
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    const ratio = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+    bar.style.transform = `scaleX(${ratio})`;
+  };
+
+  window.addEventListener(
+    'scroll',
+    () => {
+      if (!progressFrame) progressFrame = requestAnimationFrame(updateProgress);
+    },
+    { passive: true },
+  );
+
+  document.addEventListener('astro:page-load', updateProgress);
+  updateProgress();
+</script>

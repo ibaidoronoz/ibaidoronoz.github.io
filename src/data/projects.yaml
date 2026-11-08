@@ -1,5 +1,6 @@
-# Single source of truth for every project shown on the site.
+﻿# Single source of truth for every project shown on the site.
 # tier: featured (needs a case study in src/content/case-studies/<id>.md) | selected | archive
+# oneLiner: benefit first, max 140 characters. underTheHood: the technical layer.
 # Nothing in this file may reveal LAN hosts, real financial data, secrets or employer information.
 
 # ───────────── Featured ─────────────
@@ -11,27 +12,78 @@
   order: 1
   areas: [ai-agents, platform]
   status: active
-  oneLiner: Self-hosted control plane that orchestrates AI coding agents across the ticket lifecycle.
+  oneLiner: "AI coding agents that work a ticket end to end: planned, gated by a human and fully auditable."
+  fact: { value: '164', label: 'findings in one audit' }
+  diagram: kizuna
   highlights:
-    - Workflows whose nodes are runtime-agnostic playbooks
-    - Durable orchestrator with human gates, budgets and an audit journal
-    - Self-audited by agents across nine dimensions, from security to performance
+    - "Every run follows a versioned playbook, not a prompt someone forgot"
+    - "One port for eight agent runtimes; the workflow never knows which one ran"
+    - "Human gates on cost, diff size, sensitive paths and failing tests"
+  underTheHood:
+    - "Durable orchestrator on SQLite: a journal entry per state transition, per-run budgets, cooperative cancellation"
+    - "Zod contracts across domain, adapters and integrations; one Fastify process serves both API and UI"
+    - "Agent output is validated against a schema and repaired before the next node runs"
+    - "Nine read-only audit playbooks turned on the system itself: 164 prioritised findings"
   stack: [TypeScript, Node.js, Fastify, Drizzle, SQLite/libSQL, Zod, React, Vite, Vitest, Playwright]
   includes: [Kizuna Playbooks]
+
+- id: crypto-market
+  logo: /logos/crypto-market.png
+  accent: '#ff4500'
+  name: Crypto Market
+  tier: featured
+  order: 2
+  areas: [fintech-data, tools]
+  status: active
+  oneLiner: "Crypto dashboards that live inside Reddit, refreshed every fifteen minutes and configured per community."
+  fact: { value: '15 min', label: 'refresh with no key' }
+  diagram:
+    kind: fork
+    highlight: 1
+    nodes:
+      - { title: Post, sub: 'moderator menu' }
+      - { title: Dashboard, sub: 'many tokens' }
+      - { title: Token detail, sub: 'one token' }
+      - { title: Cron, sub: 'refresh every 15 min' }
+  highlights:
+    - "Published on Reddit's developer platform and installed subreddit by subreddit"
+    - "Two post types: a multi-token dashboard and a single-token detail view"
+    - "Built by hand in 2025, rebuilt on Devvit Web with agents in 2026"
+    - "Free, demo and pro tiers set the refresh rate from fifteen to five minutes"
+  underTheHood:
+    - "Devvit Web 0.12: React 19 and Vite on the client, Express on the server, Redis for storage, cron every fifteen minutes"
+    - "Network permissions restricted to the two CoinGecko hosts"
+    - "Sparklines computed server-side and cached, so a popular post does not hammer the API"
+  stack: [TypeScript, React, Vite, Express, Devvit Web, Redis, CoinGecko API]
+  aiRole: { spec: Me, impl: AI agents, audit: Me }
 
 - id: plutus
   logo: /logos/plutus.png
   accent: '#4f6bff'
   name: Plutus
   tier: featured
-  order: 2
+  order: 3
   areas: [fintech-data]
   status: personal-production
-  oneLiner: Tax engine for Spain that reconciles exchanges, brokers and on-chain wallets into correct FIFO reports.
+  oneLiner: "Six exchanges, seventeen blockchains, one correct FIFO report for Spanish tax."
+  fact: { value: '17', label: 'blockchains reconciled' }
+  diagram:
+    kind: flow
+    highlight: 3
+    nodes:
+      - { title: Sources, sub: '6 exchanges · 17 chains' }
+      - { title: Importers, sub: 'API + CSV' }
+      - { title: Reconcile, sub: 'transfer matching' }
+      - { title: FIFO, sub: 'tax lots' }
+      - { title: Reports, sub: 'IRPF · Modelo 721' }
   highlights:
-    - Ingestion from six exchanges (APIs + CSV) and wallets on 17 blockchains
-    - FIFO cost basis for Spanish IRPF and Modelo 721
-    - Agent audits on an isolated DB copy caught critical engine bugs
+    - "APIs and CSV exports from six exchanges, plus wallets on seventeen chains"
+    - "FIFO cost basis for IRPF and Modelo 721"
+    - "Agent audits on an isolated copy of the database caught critical engine bugs"
+  underTheHood:
+    - "Async SQLAlchemy over SQLite; FastAPI back end, React front end"
+    - "One reconciliation pipeline with a parser per source and a single cost-basis ledger"
+    - "Audits run against a copy of the database, never the live one"
   stack: [Python, FastAPI, SQLAlchemy (async), SQLite, React, TypeScript, Vite, Tailwind]
 
 - id: engineering-platform
@@ -39,47 +91,104 @@
   accent: '#d8590e'
   name: Engineering Platform
   tier: featured
-  order: 3
+  order: 4
   areas: [ai-agents, platform]
   status: active
-  oneLiner: The system I build everything else with — shared AI context, fleet validation, gateway and ops panel.
+  oneLiner: "Twenty repositories, one engineering standard, and the automation that keeps them honest."
+  fact: { value: '20', label: 'repositories, one contract' }
+  diagram: engineering-platform
   highlights:
-    - Prometheus — Claude Code plugin marketplace and shared agent playbooks, validated across every repo
-    - Torii — Caddy gateway routing all local services by hostname
-    - Oracle — service control panel (status, logs, metrics, deploys)
-    - Festive — shared UI engine vendored across apps, with a drift check
-  stack: [Markdown, JSON manifests, Python, Caddy, C#, .NET, ASP.NET Core, React, TypeScript]
-  includes: [Prometheus, Torii, Oracle, Festive]
+    - "One home per skill: a duplicate slug fails the fleet validator"
+    - "Every repository starts from the same, tested context"
+    - "The gateway and the ops panel share one service catalogue"
+  underTheHood:
+    - "check.py --fleet validates agent entry points, git workflow and secret rules in every sibling repo"
+    - "Only a skill's short description loads by default; the body loads on demand"
+  components:
+    - { name: Prometheus, role: shared AI context, logo: /logos/prometheus.png, accent: '#8b5cf6' }
+    - { name: Torii, role: one gateway, logo: /logos/torii.png, accent: '#22d3ee' }
+    - { name: Festive, role: shared UI engine, logo: /logos/festive.png, accent: '#e04fb8' }
+  stack: [Markdown, JSON manifests, Python, Caddy, React, TypeScript]
+  includes: [Prometheus, Torii, Festive]
+
+- id: txango
+  logo: /logos/txango.png
+  accent: '#d8bb56'
+  name: Txango
+  tier: featured
+  order: 5
+  areas: [mobile-desktop]
+  status: active
+  oneLiner: "Hiking navigation with the map already inside: no signal, no account, no Google services."
+  fact: { value: '2,034', label: 'routes offline' }
+  diagram:
+    kind: flow
+    highlight: 2
+    nodes:
+      - { title: Map, sub: 'vector · offline' }
+      - { title: Route, sub: 'catalogue or GPX' }
+      - { title: Hike, sub: 'GPS · alerts' }
+      - { title: Track, sub: 'survives app close' }
+      - { title: Backup, sub: 'one zip file' }
+  highlights:
+    - "2,034 routes, 6,404 peaks and 19,737 points of interest bundled offline"
+    - "Vector maps with hill shading, plus aerial photos saved before you leave"
+    - "Repeated off-route alerts, a sunset warning and 112 one tap away"
+    - "108 unit tests; Spanish, Basque and English"
+  underTheHood:
+    - "Kotlin and Compose Material 3, Mapsforge through AndroidView, Room with exported schemas"
+    - "LocationManager only: no Play Services anywhere in the app"
+    - "Python generators rebuild the catalogue, POIs, terrain tiles and map index"
+  stack: [Kotlin, Jetpack Compose, Room, Mapsforge, Python]
 
 - id: kairos
   logo: /logos/kairos.png
   accent: '#00cfee'
   name: Kairos
   tier: featured
-  order: 4
+  order: 6
   areas: [fintech-data]
   status: active
-  oneLiner: Market-intelligence system for dynamic DCA decisions, from data pipeline to backtesting.
+  oneLiner: "When to buy, backed by a backtest — and the discipline to delete a feature that failed it."
+  fact: { value: '30 years', label: 'of DCA backtested' }
+  diagram:
+    kind: loop
+    highlight: 2
+    nodes:
+      - { title: Data, sub: '5 price sources' }
+      - { title: Regime, sub: 'VIX · curve' }
+      - { title: Score, sub: 'per asset' }
+      - { title: Plan, sub: 'monthly DCA' }
   highlights:
-    - Rule-based regime detection (VIX, yield curve, liquidity)
-    - Walk-forward backtesting against plain DCA
-    - Removed its own headline feature when the backtest said no
+    - "Rule-based regime detection on VIX, yield curve and liquidity"
+    - "Walk-forward backtesting against plain DCA"
+    - "Cut its own headline feature when the numbers said no"
+  underTheHood:
+    - "Python pipeline into SQLite, FastAPI API, React and Plotly charts"
+    - "Every signal reproducible from stored inputs; no look-ahead in the backtest"
+    - "Assistant on a local model by default; cloud only with an explicit notice"
   stack: [Python, FastAPI, SQLAlchemy, SQLite, React, Vite, Plotly]
 
 # ───────────── Selected ─────────────
-- id: tanko
-  logo: /logos/tanko.png
-  accent: '#8658dc'
-  name: Tanko
+- id: oracle
+  logo: /logos/oracle.png
+  accent: '#38bdf8'
+  name: Oracle
   tier: selected
   order: 10
-  areas: [ai-agents, tools]
-  status: personal-production
-  oneLiner: Manga and comic tracker with per-unit progress, external catalogue search and LLM features.
+  areas: [platform, tools]
+  status: active
+  oneLiner: "Every service on one screen: status, logs, metrics and a restart that knows when to stop."
+  fact: { value: '80', label: 'test files' }
+  diagram: oracle
   highlights:
-    - Searches AniList, ComicVine and Metron
-    - LLM features via Groq with a local LM Studio option
-  stack: [Next.js, TypeScript, Prisma, SQLite, Tailwind]
+    - "Tray app for Windows plus an agent that runs beside every service"
+    - "Auto-recovery bounded by window, attempts and cooldown"
+    - "Deploys and restart history from the same panel"
+  underTheHood:
+    - "WinForms tray, ASP.NET Core agent, React panel; 80 test files"
+    - "Bounded recovery is an ADR, not a retry loop"
+  stack: [C#, .NET, WinForms, ASP.NET Core, React, TypeScript]
 
 - id: forge
   logo: /logos/forge.png
@@ -89,38 +198,39 @@
   order: 11
   areas: [mobile-desktop]
   status: active
-  oneLiner: Android gym app, migrated from a PWA + Capacitor to native Kotlin through a written ADR.
+  oneLiner: "A gym app that runs the whole session: 45 programs, 30-day challenges, records and backups."
+  fact: { value: '45', label: 'programs, set by set' }
   highlights:
-    - Native rewrite in Kotlin, Jetpack Compose and Room
-    - Migration decision documented as an ADR
+    - "45 programs and three 30-day abs challenges, played set by set"
+    - "Migrated from a PWA to native Kotlin behind a written ADR"
+    - "Local-first: no accounts, no backend, no analytics, no AI"
+  underTheHood:
+    - "Kotlin, Compose Material 3 and Room; programs generated from data, never hand-edited"
+    - "Health Connect integration and JSON/CSV backups; the legacy React build still ships"
   stack: [Kotlin, Jetpack Compose, Room, React, TypeScript, Capacitor]
-
-- id: txango
-  logo: /logos/txango.png
-  accent: '#d8bb56'
-  name: Txango
-  tier: selected
-  order: 12
-  areas: [mobile-desktop]
-  status: active
-  oneLiner: Native Android hiking and GPX navigation app that works 100% offline in the mountains.
-  highlights:
-    - Offline vector maps with Mapsforge
-    - GPS through LocationManager, no Google Play Services
-  stack: [Kotlin, Jetpack Compose, Room, Mapsforge]
 
 - id: atlas
   logo: /logos/atlas.png
   accent: '#3b82f6'
   name: Atlas
   tier: selected
-  order: 13
+  order: 12
   areas: [fintech-data]
   status: active
-  oneLiner: Market-analysis dashboard for ~100 instruments across crypto, equities, forex and indices.
+  oneLiner: "A market cockpit for 100 instruments, from five-minute candles to weekly, with breadth and regime."
+  fact: { value: '~100', label: 'instruments' }
+  diagram:
+    kind: layers
+    highlight: 1
+    nodes:
+      - { title: Sources, sub: '~100 instruments · 4 classes' }
+      - { title: Store, sub: 'SQLite · candles 5m to 1W' }
+      - { title: Views, sub: 'charts · breadth · regime' }
   highlights:
-    - Timeframes from 5m to 1W with indicators and drawing tools
-    - Correlation, regime, breadth and seasonality analysis
+    - "Timeframes from 5m to 1W with indicators and drawing tools"
+    - "Correlation, breadth, regime and seasonality views"
+  underTheHood:
+    - "Python collector into SQLite; TypeScript front end on lightweight-charts"
   stack: [Python, SQLite, TypeScript, lightweight-charts]
 
 - id: fortuna
@@ -128,44 +238,103 @@
   accent: '#d8972a'
   name: Fortuna
   tier: selected
-  order: 14
+  order: 13
   areas: [fintech-data, ai-agents]
   status: experiment
-  oneLiner: ML trading engine with a headless 24/7 core — and a strict GO/NO-GO audit before any live use.
+  oneLiner: "A trading engine that refuses to go live until the audit says it can."
+  fact: { value: '6', label: 'blocking issues before go-live' }
+  diagram:
+    kind: loop
+    highlight: 2
+    nodes:
+      - { title: Signal, sub: 'XGBoost · LightGBM' }
+      - { title: Decision, sub: 'buy · sell · hold' }
+      - { title: Gate, sub: 'GO / NO-GO' }
+      - { title: Journal, sub: 'every call' }
   highlights:
-    - Headless engine with IPC, FastAPI bridge and PyQt6 UI
-    - XGBoost / LightGBM models tuned with Optuna
-    - GO/NO-GO audit gate before any real money moves
+    - "Headless 24/7 core with IPC, a FastAPI bridge and a PyQt6 cockpit"
+    - "XGBoost and LightGBM models tuned with Optuna"
+    - "One audit stopped go-live on six blocking issues"
+  underTheHood:
+    - "Strict GO/NO-GO checklist before any real capital; nothing moves without it"
+    - "Includes trading-bot, the earlier Kraken-only version"
   stack: [Python, PyQt6, FastAPI, SQLAlchemy, XGBoost, LightGBM, Optuna]
   includes: [trading-bot]
-
-- id: monban
-  logo: /logos/monban.png
-  accent: '#e2e8f0'
-  name: Monban
-  tier: selected
-  order: 15
-  areas: [mobile-desktop, tools]
-  status: personal-production
-  oneLiner: Windows tray guardian that alerts when an executable lands in watched folders, even disguised.
-  highlights:
-    - Detects executables disguised as media files
-    - Single self-contained binary, no admin rights
-  stack: [C#, .NET, WinForms, WPF, xUnit]
 
 - id: striker
   logo: /logos/striker.png
   accent: '#2f7ed8'
   name: Striker
   tier: selected
-  order: 16
+  order: 14
   areas: [mobile-desktop, fintech-data]
   status: experiment
-  oneLiner: Desktop app that predicts fantasy-football scores and builds optimal lineups per game week.
+  oneLiner: "Fantasy-football predictions and optimal lineups, built on more than forty leagues of data."
+  fact: { value: '40+', label: 'leagues tracked' }
+  diagram:
+    kind: fork
+    highlight: 1
+    nodes:
+      - { title: Sources, sub: '40+ leagues' }
+      - { title: Match, sub: 'player identity' }
+      - { title: Predict, sub: 'expected score' }
+      - { title: Lineup, sub: 'optimal XI' }
   highlights:
-    - Multi-signal player matching across 40+ leagues
-    - Handles TOTP and email-OTP authentication flows
+    - "Multi-signal player matching across 40+ leagues"
+    - "Weekly optimal lineups from predicted scores"
+    - "Desktop app with a local database, no account required"
+  underTheHood:
+    - "Tauri 2 shell with a Node sidecar and SQLite"
   stack: [Tauri, React, TypeScript, Node.js, SQLite]
+
+- id: tanko
+  logo: /logos/tanko.png
+  accent: '#8658dc'
+  name: Tanko
+  tier: selected
+  order: 15
+  areas: [ai-agents, tools]
+  status: personal-production
+  oneLiner: "Manga and comic tracker that knows exactly where you stopped, down to the chapter."
+  fact: { value: '3', label: 'catalogue sources' }
+  diagram:
+    kind: layers
+    highlight: 1
+    nodes:
+      - { title: Catalogue, sub: 'AniList · ComicVine · Metron' }
+      - { title: Progress, sub: 'per chapter, not per volume' }
+      - { title: Assistant, sub: 'Groq or local model' }
+  highlights:
+    - "Searches AniList, ComicVine and Metron"
+    - "LLM features through Groq, with a local LM Studio fallback"
+  underTheHood:
+    - "Next.js, Prisma and SQLite; progress tracked per unit, not per volume"
+  stack: [Next.js, TypeScript, Prisma, SQLite, Tailwind]
+
+- id: monban
+  logo: /logos/monban.png
+  accent: '#e2e8f0'
+  name: Monban
+  tier: selected
+  order: 16
+  areas: [mobile-desktop, tools]
+  status: personal-production
+  oneLiner: "A tray app that warns when something executable lands in your folders, even disguised."
+  fact: { value: '1', label: 'self-contained binary' }
+  diagram:
+    kind: flow
+    highlight: 1
+    nodes:
+      - { title: Watch, sub: 'folders' }
+      - { title: Classify, sub: 'path · bytes · signature' }
+      - { title: Alert, sub: 'loud, once' }
+      - { title: Quarantine, sub: 'optional' }
+  highlights:
+    - "Detects executables disguised as media files"
+    - "Single self-contained binary, no admin rights"
+  underTheHood:
+    - "C# and .NET with WinForms and WPF; xUnit for the detection rules"
+  stack: [C#, .NET, WinForms, WPF, xUnit]
 
 # ───────────── Archive ─────────────
 - id: kitto
@@ -176,7 +345,16 @@
   order: 20
   areas: [fintech-data]
   status: personal-production
-  oneLiner: Household expense manager with proportional cost sharing and bank-export import.
+  oneLiner: "Household expenses split by income, with bank exports imported as they come."
+  fact: { value: 'Local', label: 'expenses split by income' }
+  diagram:
+    kind: flow
+    highlight: 1
+    nodes:
+      - { title: Import, sub: 'XLS · XLSX' }
+      - { title: Parse, sub: 'one per bank' }
+      - { title: Categorise, sub: 'shop · category' }
+      - { title: Split, sub: 'by income' }
   stack: [React, TypeScript, Vite, Zustand, Recharts]
 
 - id: yojo
@@ -187,7 +365,16 @@
   order: 21
   areas: [tools]
   status: personal-production
-  oneLiner: Meal-plan tracker shared across devices, with a zero-dependency Node server.
+  oneLiner: "Meal-plan tracker shared across devices, served by a zero-dependency Node process."
+  fact: { value: '0', label: 'dependencies in the server' }
+  diagram:
+    kind: flow
+    highlight: 2
+    nodes:
+      - { title: Log, sub: 'meal · symptoms' }
+      - { title: Local, sub: 'works with no backend' }
+      - { title: Sync, sub: 'optional server' }
+      - { title: Devices, sub: 'one shared history' }
   stack: [HTML, CSS, JavaScript, Node.js]
 
 - id: folia
@@ -198,7 +385,16 @@
   order: 22
   areas: [mobile-desktop]
   status: personal-production
-  oneLiner: Desktop slideshow for images and video with crossfade transitions.
+  oneLiner: "Desktop slideshow for images and video, with crossfades that do not stutter."
+  fact: { value: 'Crossfade', label: 'images and video' }
+  diagram:
+    kind: flow
+    highlight: 1
+    nodes:
+      - { title: Scan, sub: 'folder recursively' }
+      - { title: Preload, sub: 'next frame' }
+      - { title: Crossfade, sub: 'no dropped frames' }
+      - { title: Play, sub: 'image · video' }
   stack: [Python, PySide6]
 
 - id: lethe
@@ -208,7 +404,15 @@
   order: 23
   areas: [tools]
   status: personal-production
-  oneLiner: Chrome extension that clears cookies and cache in one click.
+  oneLiner: "One click to clear cookies and cache for the site you are on."
+  fact: { value: '1 click', label: 'cookies and cache' }
+  diagram:
+    kind: flow
+    highlight: 2
+    nodes:
+      - { title: Click, sub: 'popup' }
+      - { title: Permissions, sub: 'cookies · browsingData' }
+      - { title: Clear, sub: 'cache + cookies' }
   stack: [JavaScript, Chrome MV3]
 
 - id: argus
@@ -218,5 +422,33 @@
   order: 24
   areas: [tools]
   status: experiment
-  oneLiner: Chrome extension with developer tooling, shipped without a build step.
+  oneLiner: "A developer toolbox that lives in the browser toolbar, shipped without a build step."
+  fact: { value: 'No build', label: 'vanilla MV3' }
+  diagram:
+    kind: flow
+    highlight: 1
+    nodes:
+      - { title: Click, sub: 'toolbar icon' }
+      - { title: Analyse, sub: 'engine' }
+      - { title: Result, sub: 'panel' }
   stack: [JavaScript, Chrome MV3]
+
+- id: aether
+  accent: '#7dd3fc'
+  logo: /logos/aether.png
+  name: Aether
+  tier: archive
+  order: 25
+  areas: [tools]
+  status: personal-production
+  oneLiner: "Four qBittorrent themes, generated and checked by a small Python pipeline."
+  fact: { value: '4', label: 'themes, generated' }
+  diagram:
+    kind: flow
+    highlight: 3
+    nodes:
+      - { title: Theme, sub: 'qss · icons' }
+      - { title: qrc, sub: 'resources' }
+      - { title: rcc, sub: 'Qt 5.15' }
+      - { title: Bundle, sub: '.qbtheme' }
+  stack: [Python, QSS]

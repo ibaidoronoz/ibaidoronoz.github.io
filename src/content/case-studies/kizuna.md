@@ -2,6 +2,22 @@
 project: kizuna
 title: Governed AI engineering, as a product
 draft: false
+decisions:
+  - title: "Modular monolith first"
+    body: "One process and one SQLite file to start, with strict module boundaries so any piece can be extracted into a service when scale demands it."
+    why: "Infrastructure you do not need yet is a cost you pay every day."
+  - title: "One port for every agent runtime"
+    body: "Playbooks and workflows never know which agent runs them. Runtimes are swappable adapters, and a mock adapter makes the engine testable without spending a single token."
+    why: "Locking a workflow to a vendor is a rewrite waiting for a price change."
+  - title: "Playbooks as plain markdown"
+    body: "The same file runs in OpenCode, Claude Code or any other runtime, versioned independently of the engine."
+    why: "A process that cannot be read in a pull request cannot be reviewed."
+  - title: "Built to scale up"
+    body: "SQLite for zero-ops installs, with Postgres as a second dialect behind the same repository port."
+    why: "The second database is a dialect, not a rewrite."
+  - title: "Autonomy as policy"
+    body: "Approval per node — auto, gate, or gate-if on cost, diff size, sensitive paths or tests — with required roles and separation of duties."
+    why: "Trust is a setting someone wrote down, not a default."
 stats:
   - { value: '164', label: 'audit findings, prioritised' }
   - { value: '9', label: 'audit dimensions' }
@@ -38,14 +54,6 @@ Modular monolith in strict TypeScript (ESM, Node 22). One Fastify process serves
 | `apps/*` | API, web, CLI, worker |
 
 The orchestrator is durable on top of the database: a journal entry per state transition, an immutable snapshot of the graph per run, cooperative cancellation, retries with backoff, and budgets per run (tokens, cost, time, steps). Agent outputs can be validated against a schema and repaired before they move on.
-
-## Key decisions
-
-1. **Modular monolith first** (ADR 0001). Zero infrastructure to start — one process, one SQLite file — with strict module boundaries so any piece can be extracted into its own service when scale demands it.
-2. **One port for every agent runtime.** Playbooks and workflows never know which agent runs them. Runtimes are swappable adapters, and a mock adapter makes the whole engine testable without spending a single token.
-3. **Playbooks as plain markdown in their own repository.** The same file runs in OpenCode, Claude Code or any other runtime, versioned independently of the engine.
-4. **Built to scale up** (ADR 0006). SQLite for zero-ops installs, with Postgres as a second dialect behind the same repository port.
-5. **Autonomy as policy** (ADR 0005). Approval per node — auto, gate, or gate-if on cost, diff size, sensitive paths or tests — with required roles and separation of duties.
 
 ## My role vs. the agents'
 

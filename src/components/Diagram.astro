@@ -1,0 +1,39 @@
+---
+import KizunaDiagram from './diagrams/Kizuna.astro';
+import PlatformDiagram from './diagrams/Platform.astro';
+import OracleDiagram from './diagrams/Oracle.astro';
+import FlowDiagram from './FlowDiagram.astro';
+
+interface DiagramSpec {
+  kind: 'flow' | 'fork' | 'layers' | 'loop';
+  nodes: { title: string; sub: string }[];
+  highlight?: number;
+}
+
+interface Props {
+  diagram: string | DiagramSpec;
+  accent: string;
+  name: string;
+}
+
+const { diagram, accent, name } = Astro.props;
+const named: Record<string, typeof KizunaDiagram> = {
+  kizuna: KizunaDiagram,
+  'engineering-platform': PlatformDiagram,
+  oracle: OracleDiagram,
+};
+const Component = typeof diagram === 'string' ? named[diagram] : null;
+if (typeof diagram === 'string' && !Component) throw new Error(`Unknown diagram: ${diagram}`);
+---
+
+{Component ? (
+  <Component />
+) : (
+  <FlowDiagram
+    kind={(diagram as DiagramSpec).kind}
+    nodes={(diagram as DiagramSpec).nodes}
+    highlight={(diagram as DiagramSpec).highlight}
+    accent={accent}
+    name={name}
+  />
+)}

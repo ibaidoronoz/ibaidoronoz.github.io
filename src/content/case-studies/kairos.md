@@ -2,6 +2,22 @@
 project: kairos
 title: A DCA engine that had to beat doing nothing
 draft: false
+decisions:
+  - title: "Pre-computed scoring, read-only UI"
+    body: "Heavy analytics run on a schedule so the UI stays instant, with freshness monitoring and alerts built in."
+    why: "A dashboard that computes on read is a dashboard that fails when you need it."
+  - title: "Explainable regime detection"
+    body: "VIX, yield curve and liquidity, with every recommendation traceable back to its signals."
+    why: "A score you cannot argue with is a score you cannot trust."
+  - title: "Resilient market data"
+    body: "Five cascading price sources for crypto, each tier non-fatal."
+    why: "No single provider should be able to take the system down."
+  - title: "Privacy-first AI"
+    body: "The assistant runs on a local model by default and only falls back to the cloud with an explicit notice."
+    why: "Financial context is not something to send by accident."
+  - title: "Incremental UI migration"
+    body: "The React and FastAPI interface is built alongside the Streamlit one."
+    why: "No big-bang rewrite for a tool I use every month."
 stats:
   - { value: '30', label: 'years of DCA backtested' }
   - { value: '5', label: 'cascading price sources' }
@@ -22,14 +38,6 @@ Fixed dollar-cost averaging ignores everything: valuation, momentum, macro regim
 ## Architecture
 
 Portfolio positions come from [Plutus](/projects/plutus/), read-only, so there is one source of truth for what I actually own.
-
-## Key decisions
-
-1. **Pre-computed scoring pipeline, read-only UI.** Heavy analytics run on schedule so the UI stays instant, with freshness monitoring and alerts built in.
-2. **Explainable regime detection** (VIX, yield curve, liquidity) — every recommendation can be traced back to its signals.
-3. **Resilient market data.** Five cascading price sources for crypto, each tier non-fatal, so no single provider can take the system down.
-4. **Privacy-first AI.** The assistant runs on a local LLM by default and only falls back to the cloud with an explicit notice.
-5. **Incremental UI migration.** The React + FastAPI interface is built alongside the Streamlit one — no big-bang rewrite.
 
 ## Evidence over intuition
 
