@@ -91,6 +91,7 @@ export interface UI {
     certifications: string;
     stack: string;
     languages: string;
+    more: string;
   };
 }
 
@@ -201,6 +202,7 @@ const en: UI = {
     certifications: 'Certifications',
     stack: 'Stack',
     languages: 'Languages',
+    more: 'and {count} more at',
   },
 };
 
@@ -311,6 +313,7 @@ const es: UI = {
     certifications: 'Certificaciones',
     stack: 'Stack',
     languages: 'Idiomas',
+    more: 'y {count} más en',
   },
 };
 
