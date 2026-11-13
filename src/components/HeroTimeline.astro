@@ -1,9 +1,18 @@
 ---
-import { site } from '../data/site';
+import type { Site } from '../data/site';
+import type { UI } from '../data/i18n/ui';
+
+interface Props {
+  site: Site;
+  ui: UI;
+  workHref: string;
+}
+
+const { site, ui, workHref } = Astro.props;
 ---
 
 <div class="timeline-wrap">
-  <ol class="timeline-hero reveal" aria-label="Career timeline">
+  <ol class="timeline-hero reveal" aria-label={ui.timeline.aria}>
     {site.timeline.map((stop, i) => (
       <li class="tl-stop" style={`--i:${i}`}>
         <span class="tl-dot" aria-hidden="true"></span>
@@ -29,6 +38,6 @@ import { site } from '../data/site';
   </ol>
 
   <p class="own-rail">
-    <a href="#work">{site.ownProducts} →</a>
+    <a href={workHref}>{site.ownProducts} →</a>
   </p>
 </div>

@@ -1,6 +1,60 @@
-// Site-wide content. Edit here; components only render it.
+// Site-wide content, one object per language. Components only render it.
+// Technical names (stack items, company names) stay identical across locales so the
+// stack map keeps linking to /work?tech=<name>.
 
-export const site = {
+import type { Lang } from '../lib/i18n';
+
+export interface Site {
+  name: string;
+  role: string;
+  focus: string;
+  tagline: string;
+  location: string;
+  pill: string;
+  links: { github: string; linkedin: string };
+  stackGroups: { label: string; items: string[] }[];
+  stats: { value: string; label: string }[];
+  timeline: { years: string; label: string; stack: string[] }[];
+  now: { years: string; branches: { label: string; sub: string; stack: string[] }[] };
+  ownProducts: string;
+  models: { title: string; body: string }[];
+  method: { title: string; body: string; why: string; example: string }[];
+  experience: { company: string; role: string; period: string; engagements: { client: string; period: string; points: string[] }[] }[];
+  education: { title: string; place: string; period: string }[];
+}
+
+const links = {
+  github: 'https://github.com/ibaidoronoz',
+  linkedin: 'https://www.linkedin.com/in/ibai-d-oronoz',
+};
+
+// Technical vocabulary shared by both locales.
+const stackGroups = [
+  { labelKey: 'payments', items: ['SWIFT', 'FIX', 'Smart payment routing', 'Payment orchestration'] },
+  {
+    labelKey: 'backend',
+    items: [
+      'TypeScript', 'Node.js', 'Java', 'Spring Boot', 'NestJS', 'Python', 'FastAPI', 'C#', '.NET',
+      'PostgreSQL', 'MongoDB', 'SQLite', 'Redis', 'Microservices', 'Distributed systems', 'API design',
+    ],
+  },
+  { labelKey: 'ai', items: ['Claude Code', 'Devin', 'Windsurf', 'MCP', 'Local models', 'XGBoost', 'LightGBM', 'Optuna'] },
+  {
+    labelKey: 'web',
+    items: ['React', 'Next.js', 'Vite', 'Angular', 'Ionic', 'Kotlin', 'Android', 'Jetpack Compose', 'Tauri', 'PySide6'],
+  },
+  {
+    labelKey: 'platform',
+    items: ['Docker', 'Kubernetes', 'Caddy', 'Prisma', 'Drizzle', 'Playwright', 'Vitest', 'xUnit', 'Chrome MV3'],
+  },
+];
+
+const groupLabels = {
+  en: { payments: 'Payments', backend: 'Backend', ai: 'AI & agents', web: 'Web & mobile', platform: 'Platform & tooling' },
+  es: { payments: 'Pagos', backend: 'Backend', ai: 'IA y agentes', web: 'Web y móvil', platform: 'Plataforma y tooling' },
+} as const;
+
+const en: Site = {
   name: 'Ibai Díez Oronoz',
   role: 'Senior Software Engineer',
   focus: 'Payments & AI Engineering',
@@ -8,75 +62,30 @@ export const site = {
     'Ten years building payment systems where errors cost money. Now I design how engineering teams ship with AI agents.',
   location: 'Basque Country, Spain',
   pill: 'Payments × AI agents · Basque Country',
-  // Professional stack from the CV / LinkedIn: first marquee row.
-  cvStack: [
-    'Node.js', 'TypeScript', 'NestJS', 'Java', 'Spring Boot', 'Angular', 'PostgreSQL', 'MongoDB',
-    'Docker', 'Kubernetes', 'Microservices', 'Distributed systems', 'API design', 'SWIFT', 'FIX',
-    'Smart payment routing', 'Payment orchestration', 'Devin', 'Windsurf', 'Claude Code',
-    'MCP', 'Local models', 'Kotlin', 'Android', 'Ionic', 'webMethods', 'C#', 'PHP', 'Laravel',
-    'Symfony', 'Jira', 'Confluence',
-  ],
-  links: {
-    github: 'https://github.com/ibaidoronoz',
-    linkedin: 'https://www.linkedin.com/in/ibai-d-oronoz',
-  },
-  // Capabilities, grouped. The home renders them as a map that links into /work.
-  stackGroups: [
-    {
-      label: 'Payments',
-      items: ['SWIFT', 'FIX', 'Smart payment routing', 'Payment orchestration'],
-    },
-    {
-      label: 'Backend',
-      items: [
-        'TypeScript', 'Node.js', 'Java', 'Spring Boot', 'NestJS', 'Python', 'FastAPI', 'C#', '.NET',
-        'PostgreSQL', 'MongoDB', 'SQLite', 'Redis', 'Microservices', 'Distributed systems', 'API design',
-      ],
-    },
-    {
-      label: 'AI & agents',
-      items: ['Claude Code', 'Devin', 'Windsurf', 'MCP', 'Local models', 'XGBoost', 'LightGBM', 'Optuna'],
-    },
-    {
-      label: 'Web & mobile',
-      items: ['React', 'Next.js', 'Vite', 'Angular', 'Ionic', 'Kotlin', 'Android', 'Jetpack Compose', 'Tauri', 'PySide6'],
-    },
-    {
-      label: 'Platform & tooling',
-      items: ['Docker', 'Kubernetes', 'Caddy', 'Prisma', 'Drizzle', 'Playwright', 'Vitest', 'xUnit', 'Chrome MV3'],
-    },
-  ],
-  // Snapshot of the repositories shown on this site (Nov 2026). Update by hand.
+  links,
+  stackGroups: stackGroups.map((group) => ({
+    label: groupLabels.en[group.labelKey as keyof typeof groupLabels.en],
+    items: group.items,
+  })),
   stats: [
     { value: '10+', label: 'years in payments' },
     { value: '19', label: 'products built' },
     { value: '4', label: 'domains: payments · AI · mobile · tools' },
     { value: '164', label: 'findings in one audit' },
   ],
-  // The arc, in eras plus the present. Domains and stack only: details live in Experience.
   timeline: [
     { years: '2014–2016', label: 'Web products', stack: ['Laravel', 'Symfony', 'MySQL'] },
     { years: '2016–2018', label: 'E-commerce & data', stack: ['PHP', 'Magento', 'PostgreSQL'] },
     { years: '2018–2020', label: 'Enterprise & mobile', stack: ['Angular', 'Ionic', 'Java'] },
   ],
-  // The present is two tracks, not one: the day job never stopped.
   now: {
     years: '2020–2026',
     branches: [
-      {
-        label: 'International payments',
-        sub: 'PaymentsHub',
-        stack: ['Java', 'Spring Boot', 'SWIFT', 'FIX'],
-      },
-      {
-        label: 'AI agents',
-        sub: 'Governed workflows',
-        stack: ['TypeScript', 'Claude Code'],
-      },
+      { label: 'International payments', sub: 'PaymentsHub', stack: ['Java', 'Spring Boot', 'SWIFT', 'FIX'] },
+      { label: 'AI agents', sub: 'Governed workflows', stack: ['TypeScript', 'Claude Code'] },
     ],
   },
   ownProducts: '19 products of my own, built alongside the job',
-  // What I do with models, and the evidence behind each rule.
   models: [
     {
       title: 'Context is the product',
@@ -133,7 +142,6 @@ export const site = {
       example: 'Six blocking issues stopped a trading engine before go-live.',
     },
   ],
-  // Mirrors the LinkedIn profile. Keep client work at the level LinkedIn already discloses.
   experience: [
     {
       company: 'ALTEN',
@@ -230,4 +238,193 @@ export const site = {
     { title: 'MSc, Computational Engineering and Intelligent Systems', place: 'University of the Basque Country', period: '2015 — 2016' },
     { title: 'BSc, Computer Engineering (Software Engineering)', place: 'University of the Basque Country', period: '2011 — 2015' },
   ],
-} as const;
+};
+
+const es: Site = {
+  name: 'Ibai Díez Oronoz',
+  role: 'Ingeniero de software senior',
+  focus: 'Pagos e ingeniería de IA',
+  tagline:
+    'Diez años construyendo sistemas de pago donde un error cuesta dinero. Ahora diseño cómo los equipos de ingeniería entregan con agentes de IA.',
+  location: 'País Vasco, España',
+  pill: 'Pagos × agentes de IA · País Vasco',
+  links,
+  stackGroups: stackGroups.map((group) => ({
+    label: groupLabels.es[group.labelKey as keyof typeof groupLabels.es],
+    items: group.items,
+  })),
+  stats: [
+    { value: '10+', label: 'años en pagos' },
+    { value: '19', label: 'productos propios' },
+    { value: '4', label: 'dominios: pagos · IA · móvil · herramientas' },
+    { value: '164', label: 'hallazgos en una auditoría' },
+  ],
+  timeline: [
+    { years: '2014–2016', label: 'Productos web', stack: ['Laravel', 'Symfony', 'MySQL'] },
+    { years: '2016–2018', label: 'E-commerce y datos', stack: ['PHP', 'Magento', 'PostgreSQL'] },
+    { years: '2018–2020', label: 'Empresa y móvil', stack: ['Angular', 'Ionic', 'Java'] },
+  ],
+  now: {
+    years: '2020–2026',
+    branches: [
+      { label: 'Pagos internacionales', sub: 'PaymentsHub', stack: ['Java', 'Spring Boot', 'SWIFT', 'FIX'] },
+      { label: 'Agentes de IA', sub: 'Flujos gobernados', stack: ['TypeScript', 'Claude Code'] },
+    ],
+  },
+  ownProducts: '19 productos propios, construidos en paralelo al trabajo',
+  models: [
+    {
+      title: 'El contexto es el producto',
+      body: 'Una ventana pequeña con fuentes rastreables. En Prometheus solo se carga la descripción de una skill hasta que hace falta el cuerpo.',
+    },
+    {
+      title: 'Local cuando es personal',
+      body: 'Kairos ejecuta su asistente en un modelo local por defecto y solo llega a la nube con un aviso explícito.',
+    },
+    {
+      title: 'Una persona donde equivocarse cuesta dinero',
+      body: 'Coste, tamaño del diff, rutas sensibles, tests en rojo: alguien aprueba antes de que el siguiente paso se ejecute.',
+    },
+    {
+      title: 'Auditar la salida',
+      body: 'Nueve playbooks de solo lectura, 164 hallazgos, cada uno con un comando que lo verifica.',
+    },
+  ],
+  method: [
+    {
+      title: 'Plan antes que código',
+      body: 'Cada cambio empieza como un plan escrito (PLAN.md) lo bastante preciso para que un agente lo ejecute solo y para que yo lo revise.',
+      why: 'Un prompt no es un plan. Si no se puede revisar antes de que exista el código, no se puede revisar después.',
+      example: 'Cada cambio aterriza con un PLAN.md: alcance, ficheros, criterios de aceptación.',
+    },
+    {
+      title: 'Auditar antes de arreglar',
+      body: 'Los agentes auditan primero y arreglan después. Los hallazgos se ordenan por impacto y se convierten en prompts revisables y ordenados.',
+      why: 'Un agente que encuentra y arregla esconde sus propios errores.',
+      example: 'Una auditoría, nueve dimensiones, 164 hallazgos priorizados antes de un solo arreglo.',
+    },
+    {
+      title: 'Leer antes de escribir',
+      body: 'Los agentes que implementan deben leer el código que tocan antes de cambiarlo. El contexto compartido vive en un solo repositorio validado.',
+      why: 'Un diff seguro sobre código que nadie leyó es la forma más cara de equivocarse.',
+      example: 'Contexto compartido en un repositorio, validado en toda la flota, no un prompt copiado por proyecto.',
+    },
+    {
+      title: 'Autoría rastreable',
+      body: 'Los commits de los agentes llevan su propia identidad, así el historial muestra exactamente qué se delegó y qué escribí yo.',
+      why: 'Si el historial no los distingue, nadie puede revisar lo que se delegó.',
+      example: 'Los commits de los agentes llevan su identidad; los míos, la mía.',
+    },
+    {
+      title: 'Explícito sobre implícito',
+      body: 'Disparadores explícitos antes que workers en segundo plano, datos locales primero, sin dependencias innecesarias.',
+      why: 'Cada mecanismo implícito es algo que te sorprende a las tres de la mañana.',
+      example: 'Disparadores explícitos, datos locales primero, ninguna dependencia sin motivo.',
+    },
+    {
+      title: 'Puertas GO / NO-GO',
+      body: 'Nada toca dinero real sin una lista de comprobación. Una auditoría paró un motor de trading con seis problemas bloqueantes antes de salir a producción.',
+      why: 'La autonomía sin condición de parada es un pasivo con tarjeta de crédito.',
+      example: 'Seis problemas bloqueantes pararon un motor de trading antes de producción.',
+    },
+  ],
+  experience: [
+    {
+      company: 'ALTEN',
+      role: 'Ingeniero de software senior — Pagos e ingeniería de IA',
+      period: '2018 — Actualidad',
+      engagements: [
+        {
+          client: 'Getnet Platforms · PaymentsHub',
+          period: '2026 — Actualidad',
+          points: [
+            'Microservicios backend para orquestación de pagos y enrutamiento inteligente; integraciones SWIFT y FIX.',
+            'Lidero la adopción de IA en equipos de ingeniería: flujos asistidos por IA estandarizados y gobernados con Devin y Windsurf, incluido contexto aumentado por recuperación (RAG) para asistentes internos.',
+          ],
+        },
+        {
+          client: 'PagoNxt · EMI',
+          period: '2022 — 2025',
+          points: ['Infraestructura de pagos y microservicios de enrutamiento inteligente; integraciones SWIFT y FIX.'],
+        },
+        {
+          client: 'PagoFX',
+          period: '2020 — 2022',
+          points: ['Servicios backend para pagos transfronterizos dentro del ecosistema Santander.'],
+        },
+        {
+          client: 'Holcim',
+          period: '2018 — 2020',
+          points: ['Aplicaciones empresariales y soluciones móviles híbridas (Angular, Ionic, Java).'],
+        },
+      ],
+    },
+    {
+      company: 'PKF Attest',
+      role: 'Ingeniero de software',
+      period: '2017',
+      engagements: [
+        {
+          client: '',
+          period: '',
+          points: ['Frontend, backend y bases de datos para proyectos corporativos en equipos Scrum (C#, C++, SharePoint, PostgreSQL).'],
+        },
+      ],
+    },
+    {
+      company: 'Senddo',
+      role: 'Ingeniero de software',
+      period: '2016 — 2017',
+      engagements: [
+        {
+          client: '',
+          period: '',
+          points: ['Desarrollo backend y de base de datos para una plataforma de e-commerce en Magento 2 (PHP, MySQL/PostgreSQL).'],
+        },
+      ],
+    },
+    {
+      company: 'EUSTAT — Euskal Estatistika Erakundea',
+      role: 'Investigador',
+      period: '2016',
+      engagements: [
+        {
+          client: '',
+          period: '',
+          points: ['Aplicación web que aplica narración estadística para presentar datos públicos de forma interactiva (Laravel, R).'],
+        },
+      ],
+    },
+    {
+      company: 'Dinycon Sistemas',
+      role: 'Ingeniero de software',
+      period: '2015 — 2016',
+      engagements: [
+        {
+          client: '',
+          period: '',
+          points: ['Frontend, backend y bases de datos para sistemas de conteo de personas (Laravel, MySQL, MongoDB).'],
+        },
+      ],
+    },
+    {
+      company: 'BIC Gipuzkoa · HolaCampus',
+      role: 'Ingeniero de software',
+      period: '2014',
+      engagements: [
+        {
+          client: '',
+          period: '',
+          points: ['Red social universitaria para estudiantes (Symfony, PostgreSQL).'],
+        },
+      ],
+    },
+  ],
+  education: [
+    { title: 'Máster, Ingeniería Computacional y Sistemas Inteligentes', place: 'Universidad del País Vasco', period: '2015 — 2016' },
+    { title: 'Grado, Ingeniería Informática (Ingeniería del Software)', place: 'Universidad del País Vasco', period: '2011 — 2015' },
+  ],
+};
+
+export const SITE: Record<Lang, Site> = { en, es };
+export const getSite = (lang: Lang): Site => SITE[lang];

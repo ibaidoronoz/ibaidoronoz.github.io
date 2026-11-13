@@ -1,12 +1,16 @@
 ---
+import type { UI } from '../data/i18n/ui';
+
 interface Props {
   role: { spec: string; impl: string; audit: string };
+  labels: UI['aiRole'];
 }
-const { role } = Astro.props;
+
+const { role, labels } = Astro.props;
 ---
 
-<div class="ai-role" aria-label="Division of work between me and AI agents">
-  <span>Spec & architecture: <b>{role.spec}</b></span>
-  <span>Implementation: <b>{role.impl}</b></span>
-  <span>Audit: <b>{role.audit}</b></span>
+<div class="ai-role" aria-label={labels.aria}>
+  <span>{labels.spec}: <b>{role.spec}</b></span>
+  <span>{labels.impl}: <b>{role.impl}</b></span>
+  <span>{labels.audit}: <b>{role.audit}</b></span>
 </div>

@@ -1,0 +1,25 @@
+---
+import Base from '../layouts/Base.astro';
+import { ui } from '../data/i18n/ui';
+import { path } from '../lib/i18n';
+import type { Lang } from '../lib/i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const copy = ui[lang];
+---
+
+<Base lang={lang} title={copy.notFound.metaTitle} description={copy.notFound.metaDescription}>
+  <section class="wrap not-found">
+    <span class="kicker">404</span>
+    <h1>{copy.notFound.title}</h1>
+    <p class="lead">{copy.notFound.lead}</p>
+    <div class="cta">
+      <a class="btn primary" href={path(lang, '/')}>{copy.notFound.home}</a>
+      <a class="btn" href={path(lang, '/work')}>{copy.notFound.work}</a>
+    </div>
+  </section>
+</Base>

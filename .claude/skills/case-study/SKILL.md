@@ -37,6 +37,19 @@ Enforced by Zod in `src/content.config.ts`. A violation fails `npm run build`.
 - `accent`: `#rrggbb`.
 - `includes`: other repos merged into this entry (e.g. `Engineering Platform`).
 
+## Every project speaks two languages
+
+A project is not added until it has both languages, because the build fails otherwise:
+
+1. `src/data/projects.es.yaml`: one entry with the same `id`, the Spanish `oneLiner`
+   (≤ 140), `highlights`, `underTheHood`, `fact.label` and, if it has diagram nodes, the
+   translated `diagram.nodes` in the same order.
+2. `src/content/case-studies/es/<id>.md`: same frontmatter shape, same facts, same numbers.
+   Cross-links point at `/es/projects/...`.
+
+`assertCaseStudies('es')` fails the build when an id, a text block or a study is missing.
+Do not soften that check: a half-translated catalogue is worse than an untranslated one.
+
 ## Tiers
 
 | Tier | Where it shows | Requirement |
@@ -88,5 +101,8 @@ fix the data.
   not a data change: update the map and the `AREAS`/`STATUS` consumers.
 - Moving a project from `featured` to `selected` leaves an orphan case study and fails the
   build. Delete or reassign the file in the same change.
+- A missing Spanish study, Spanish entry or diagram node fails the build too.
 - The site is public: no LAN hostnames, ports, real financial data or employer details
   ever land in this file.
+- `/cv` PDFs are static files in `public/cv/`: after changing `src/data/cv.ts`, print the
+  page again or the download ships yesterday's CV.

@@ -1,91 +1,132 @@
 ---
 import '../styles/global.css';
 import { ClientRouter } from 'astro:transitions';
-import { site } from '../data/site';
+import Icon from '../components/Icon.astro';
+import SocialLinks from '../components/SocialLinks.astro';
+import LanguageSwitch from '../components/LanguageSwitch.astro';
+import ThemeToggle from '../components/ThemeToggle.astro';
+import { getSite } from '../data/site';
+import { ui } from '../data/i18n/ui';
+import { ALT_LOCALES, DEFAULT_LANG, HTML_LANG, LOCALES, altPath, path } from '../lib/i18n';
+import type { Lang } from '../lib/i18n';
 
 interface Props {
+  lang: Lang;
   title?: string;
   description?: string;
   image?: string;
 }
 
-const { title, description = site.tagline, image = '/og/home.png' } = Astro.props;
+const { lang, title, description, image = lang === 'es' ? '/og/es/home.png' : '/og/home.png' } = Astro.props;
+const site = getSite(lang);
+const copy = ui[lang];
 const fullTitle = title ? `${title} — ${site.name}` : `${site.name} — ${site.role}, ${site.focus}`;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const ogImage = new URL(image, Astro.site);
-const path = Astro.url.pathname;
-const isWork = path.startsWith('/work') || path.startsWith('/projects');
+const pathname = Astro.url.pathname;
+const isWork = pathname.startsWith('/work') || pathname.includes('/projects');
+
+const alternates = LOCALES.map((code) => ({
+  code,
+  href: new URL(altPath(pathname, code), Astro.site).href,
+}));
+
 const person = {
   '@context': 'https://schema.org',
   '@type': 'Person',
   name: site.name,
   jobTitle: `${site.role} — ${site.focus}`,
-  url: new URL('/', Astro.site).href,
+  url: new URL(path(lang, '/'), Astro.site).href,
   image: new URL('/icon-512.png', Astro.site).href,
   sameAs: [site.links.github, site.links.linkedin],
   knowsAbout: ['Payments', 'Payment orchestration', 'SWIFT', 'FIX', 'AI agents', 'Software engineering'],
   address: {
     '@type': 'PostalAddress',
-    addressRegion: 'Basque Country',
+    addressRegion: lang === 'es' ? 'País Vasco' : 'Basque Country',
     addressCountry: 'ES',
   },
 };
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={HTML_LANG[lang]} data-default-lang={DEFAULT_LANG}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#07070c" />
     <title>{fullTitle}</title>
-    <meta name="description" content={description} />
+    <meta name="description" content={description ?? site.tagline} />
     <link rel="canonical" href={canonical} />
+    {alternates.map((alt) => <link rel="alternate" hreflang={HTML_LANG[alt.code]} href={alt.href} />)}
+    <link rel="alternate" hreflang="x-default" href={new URL(path(DEFAULT_LANG, '/'), Astro.site).href} />
     <meta property="og:type" content="website" />
     <meta property="og:title" content={fullTitle} />
-    <meta property="og:description" content={description} />
+    <meta property="og:description" content={description ?? site.tagline} />
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={ogImage} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content={ALT_LOCALES[lang]} />
+    {LOCALES.filter((code) => code !== lang).map((code) => (
+      <meta property="og:locale:alternate" content={ALT_LOCALES[code]} />
+    ))}
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={fullTitle} />
-    <meta name="twitter:description" content={description} />
+    <meta name="twitter:description" content={description ?? site.tagline} />
     <meta name="twitter:image" content={ogImage} />
+    <meta name="theme-color" content="#f7f6fb" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#07070c" media="(prefers-color-scheme: dark)" />
     <link rel="icon" href="/favicon-64.png" sizes="64x64" type="image/png" />
     <link rel="icon" href="/icon-512.png" sizes="512x512" type="image/png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <script type="application/ld+json" set:html={JSON.stringify(person)} />
+    <script is:inline>
+      // Theme before paint: stored choice, or the system when nobody chose.
+      (function () {
+        var root = document.documentElement;
+        var mode = 'auto';
+        try {
+          var saved = localStorage.getItem('theme');
+          if (saved === 'light' || saved === 'dark' || saved === 'auto') mode = saved;
+        } catch (e) {}
+        if (mode === 'auto') root.removeAttribute('data-theme');
+        else root.setAttribute('data-theme', mode);
+        root.dataset.themeMode = mode;
+        root.classList.add('js');
+      })();
+    </script>
     <ClientRouter />
-    <script is:inline>document.documentElement.classList.add('js');</script>
   </head>
   <body>
-    <a class="skip" href="#main">Skip to content</a>
+    <a class="skip" href="#main">{lang === 'es' ? 'Saltar al contenido' : 'Skip to content'}</a>
     <div class="aurora" aria-hidden="true"><span></span><span></span><span></span></div>
     <div class="grid-bg" aria-hidden="true"></div>
 
     <header class="site-header" transition:persist>
       <div class="wrap">
-        <a class="brand" href="/"><img src="/brand.png" alt="" width="32" height="32" />ibai.d.oronoz</a>
-        <nav class="nav" aria-label="Main">
-          <a href="/work" class="nav-keep" aria-current={isWork ? 'page' : undefined}>Work</a>
-          <a href="/#method">How I build</a>
-          <a href="/#projects">Workshop</a>
-          <a href="/#experience">Experience</a>
-          <a href={site.links.linkedin} class="nav-keep">LinkedIn ↗</a>
-          <a href={site.links.github} class="nav-keep">GitHub ↗</a>
+        <a class="brand" href={path(lang, '/')}><img src="/brand.png" alt="" width="32" height="32" /><span class="brand-text">ibai.d.oronoz</span></a>
+        <nav class="nav" aria-label={copy.nav.main}>
+          <a href={path(lang, '/work')} class="nav-keep" aria-current={isWork ? 'page' : undefined}>{copy.nav.work}</a>
+          <a href={path(lang, '/#method')}>{copy.nav.method}</a>
+          <a href={path(lang, '/#projects')}>{copy.nav.workshop}</a>
+          <a href={path(lang, '/#experience')}>{copy.nav.experience}</a>
+          <a href={path(lang, '/cv')}>CV</a>
         </nav>
-        <details class="nav-mobile">
-          <summary>Menu</summary>
-          <div class="nav-panel">
-            <a href="/work">Work</a>
-            <a href="/#method">How I build</a>
-            <a href="/#projects">Workshop</a>
-            <a href="/#experience">Experience</a>
-            <a href={site.links.linkedin}>LinkedIn ↗</a>
-            <a href={site.links.github}>GitHub ↗</a>
-          </div>
-        </details>
+        <div class="header-actions">
+          <SocialLinks lang={lang} compact />
+          <LanguageSwitch lang={lang} pathname={pathname} />
+          <ThemeToggle lang={lang} />
+          <details class="nav-mobile">
+            <summary>{copy.nav.menu}</summary>
+            <div class="nav-panel">
+              <a href={path(lang, '/work')}>{copy.nav.work}</a>
+              <a href={path(lang, '/#method')}>{copy.nav.method}</a>
+              <a href={path(lang, '/#projects')}>{copy.nav.workshop}</a>
+              <a href={path(lang, '/#experience')}>{copy.nav.experience}</a>
+              <a href={site.links.linkedin} rel="me noopener" target="_blank"><Icon name="linkedin" size={16} /> LinkedIn</a>
+              <a href={site.links.github} rel="me noopener" target="_blank"><Icon name="github" size={16} /> GitHub</a>
+            </div>
+          </details>
+        </div>
       </div>
     </header>
 
@@ -99,33 +140,72 @@ const person = {
           <span class="footer-brand">ibai.d.oronoz</span>
           <p class="footer-note">{site.pill}</p>
         </div>
-        <nav aria-label="Footer">
-          <span class="eyebrow">Explore</span>
-          <a href="/work">Work</a>
-          <a href="/#method">How I build</a>
-          <a href="/#projects">Workshop</a>
-          <a href="/#experience">Experience</a>
+        <nav aria-label={copy.footer.explore}>
+          <span class="eyebrow">{copy.footer.explore}</span>
+          <a href={path(lang, '/work')}>{copy.nav.work}</a>
+          <a href={path(lang, '/#method')}>{copy.nav.method}</a>
+          <a href={path(lang, '/#projects')}>{copy.nav.workshop}</a>
+          <a href={path(lang, '/#experience')}>{copy.nav.experience}</a>
+          <a href={path(lang, '/cv')}>CV</a>
         </nav>
         <div>
-          <span class="eyebrow">Elsewhere</span>
-          <a href={site.links.github}>GitHub ↗</a>
-          <a href={site.links.linkedin}>LinkedIn ↗</a>
+          <span class="eyebrow">{copy.footer.elsewhere}</span>
+          <a href={site.links.github} rel="me noopener" target="_blank"><Icon name="github" size={16} /> GitHub</a>
+          <a href={site.links.linkedin} rel="me noopener" target="_blank"><Icon name="linkedin" size={16} /> LinkedIn</a>
         </div>
         <div>
-          <span class="eyebrow">Colophon</span>
-          <span>Static site · no cookies · no tracking</span>
-          <span>© {new Date().getFullYear()} {site.name}</span>
+          <span class="eyebrow">{copy.footer.colophon}</span>
+          <span>{copy.footer.note}</span>
+          <span>{copy.footer.rights.replace('{year}', String(new Date().getFullYear())).replace('{name}', site.name)}</span>
         </div>
       </div>
     </footer>
 
     <script>
+      const syncThemeColor = (mode: string) => {
+        const metas = [...document.querySelectorAll<HTMLMetaElement>('meta[name="theme-color"]')];
+        if (!metas.length) return;
+        const dark = mode === 'dark' || (mode === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        const color = dark ? '#07070c' : '#f7f6fb';
+        metas.forEach((meta) => meta.removeAttribute('media'));
+        metas[0].content = color;
+        metas.slice(1).forEach((meta) => meta.remove());
+      };
+
+      const initTheme = () => {
+        const root = document.documentElement;
+        const toggle = document.querySelector<HTMLElement>('[data-theme-toggle]');
+        if (!toggle) return;
+
+        const buttons = [...toggle.querySelectorAll<HTMLButtonElement>('[data-mode]')];
+        const mode = (localStorage.getItem('theme') as string) || root.dataset.themeMode || 'auto';
+
+        const apply = (next: string) => {
+          root.dataset.themeMode = next;
+          if (next === 'auto') {
+            root.removeAttribute('data-theme');
+            localStorage.removeItem('theme');
+          } else {
+            root.setAttribute('data-theme', next);
+            localStorage.setItem('theme', next);
+          }
+          buttons.forEach((button) => button.setAttribute('aria-pressed', String(button.dataset.mode === next)));
+          syncThemeColor(next);
+        };
+
+        buttons.forEach((button) =>
+          button.addEventListener('click', () => apply(button.dataset.mode ?? 'auto')),
+        );
+
+        apply(mode);
+      };
+
       const initBase = () => {
         document.documentElement.classList.add('js');
+        initTheme();
 
-        // Reveal elements as they enter the viewport.
-        const reveals = document.querySelectorAll<HTMLElement>('.reveal');
-        for (const element of reveals) element.classList.remove('in');
+        // New page content arrives without `in`; anything already revealed stays revealed.
+        const reveals = [...document.querySelectorAll<HTMLElement>('.reveal:not(.in)')];
         if ('IntersectionObserver' in window) {
           const io = new IntersectionObserver(
             (entries) => {
@@ -143,7 +223,6 @@ const person = {
           reveals.forEach((el) => el.classList.add('in'));
         }
 
-        // Cursor spotlight on featured cards.
         for (const card of document.querySelectorAll<HTMLElement>('.feature')) {
           if (card.dataset.spotlight) continue;
           card.dataset.spotlight = '1';
@@ -156,6 +235,7 @@ const person = {
       };
 
       document.addEventListener('astro:page-load', initBase);
+      initBase();
     </script>
   </body>
 </html>

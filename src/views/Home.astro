@@ -1,0 +1,335 @@
+---
+import Base from '../layouts/Base.astro';
+import Chips from '../components/Chips.astro';
+import AiRole from '../components/AiRole.astro';
+import HeroTimeline from '../components/HeroTimeline.astro';
+import MethodPipeline from '../components/MethodPipeline.astro';
+import ModelPrinciples from '../components/ModelPrinciples.astro';
+import ProjectPoster from '../components/ProjectPoster.astro';
+import ProjectLogo from '../components/ProjectLogo.astro';
+import Icon from '../components/Icon.astro';
+import { getSite } from '../data/site';
+import { ui } from '../data/i18n/ui';
+import { assertCaseStudies, projectsByTier, projectsWithPage } from '../lib/projects';
+import { path, t } from '../lib/i18n';
+import type { Lang } from '../lib/i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const site = getSite(lang);
+const copy = ui[lang];
+
+await assertCaseStudies(lang);
+const featured = await projectsByTier('featured', lang);
+const selected = await projectsByTier('selected', lang);
+const archive = await projectsByTier('archive', lang);
+const all = [...featured, ...selected, ...archive];
+const withPage = new Set((await projectsWithPage(lang)).map((p) => p.id));
+
+const usedAreas = new Set([...selected, ...archive].flatMap((p) => p.data.areas));
+const filters = Object.entries(copy.areas).filter(([key]) => usedAreas.has(key as keyof typeof copy.areas));
+
+const techSet = new Set(all.flatMap((p) => p.data.stack).map((tech) => tech.toLowerCase()));
+
+const parseStat = (value: string) => {
+  const match = value.match(/^([\d,]+)(.*)$/);
+  return match ? { count: Number(match[1].replace(/,/g, '')), suffix: match[2] } : null;
+};
+---
+
+<Base lang={lang}>
+  <section class="hero wrap">
+    <div class="hero-copy">
+      <span class="pill reveal"><span class="dot"></span>{site.pill}</span>
+      <h1 class="reveal" style="--d:.05s">
+        <span class="role">{site.role}</span>
+        <span class="grad-text">{site.focus}</span>
+      </h1>
+      <p class="tagline reveal" style="--d:.1s">{site.tagline}</p>
+      <div class="cta reveal" style="--d:.2s">
+        <a class="btn primary" href="#work">{copy.home.ctaWork}</a>
+        <a class="btn" href={site.links.linkedin} rel="me noopener" target="_blank"><Icon name="linkedin" size={16} /> LinkedIn</a>
+        <a class="btn" href={site.links.github} rel="me noopener" target="_blank"><Icon name="github" size={16} /> GitHub</a>
+        <a class="btn" href={`/cv/ibai-diez-oronoz-cv-${lang}.pdf`} download><Icon name="download" size={16} /> CV</a>
+      </div>
+    </div>
+    <HeroTimeline site={site} ui={copy} workHref="#work" />
+  </section>
+
+  <div class="wrap">
+    <div class="stats">
+      {site.stats.map((stat, i) => {
+        const parsed = parseStat(stat.value);
+        return (
+          <div class="stat reveal" style={`--d:${i * 0.07}s`}>
+            <b data-count={parsed?.count} data-suffix={parsed?.suffix}>{stat.value}</b>
+            <span>{stat.label}</span>
+          </div>
+        );
+      })}
+    </div>
+  </div>
+
+  <section id="work" class="section wrap">
+    <div class="section-head reveal">
+      <div>
+        <span class="kicker">{copy.home.featuredKicker}</span>
+        <h2>{copy.home.featuredTitle}</h2>
+      </div>
+      <div class="section-aside">
+        <span class="eyebrow">{copy.home.privateNote}</span>
+        <a class="section-link" href={path(lang, '/work')}>{t(copy.home.allProjects, { count: all.length })}</a>
+      </div>
+    </div>
+    <div class="featured">
+      {featured.map((p, i) => (
+        <a class="feature reveal" href={path(lang, `/projects/${p.id}/`)} style={`--accent:${p.data.accent};--d:${(i % 2) * 0.08}s`}>
+          <ProjectPoster id={p.id} name={p.data.name} logo={p.data.logo} accent={p.data.accent} fact={p.data.fact} />
+          <div class="feature-body">
+            <span class="area">{p.data.areas.map((area) => copy.areas[area]).join(' · ')}</span>
+            <h3>{p.data.name}</h3>
+            <p>{p.data.oneLiner}</p>
+            {p.data.components.length > 0 && (
+              <ul class="components">
+                {p.data.components.map((component) => (
+                  <li>
+                    <span class="comp-name">{component.name}</span>
+                    <span class="comp-role">{component.role}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+            <ul>{p.data.highlights.slice(0, 2).map((highlight) => <li>{highlight}</li>)}</ul>
+            <span class="more">{copy.home.readCaseStudy}</span>
+          </div>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <section id="method" class="section wrap">
+    <div class="section-head reveal">
+      <div>
+        <span class="kicker">{copy.home.methodKicker}</span>
+        <h2>{copy.home.methodTitleA}<br />{copy.home.methodTitleB}</h2>
+      </div>
+    </div>
+    <MethodPipeline site={site} ui={copy} />
+
+    <div class="model-strip reveal">
+      <span class="eyebrow">{copy.home.modelLayer}</span>
+      <ModelPrinciples models={site.models} />
+    </div>
+  </section>
+
+  <section id="projects" class="section wrap">
+    <div class="section-head reveal">
+      <div>
+        <span class="kicker">{copy.home.moreKicker}</span>
+        <h2>{copy.home.moreTitle}</h2>
+      </div>
+      <div class="filters" role="group" aria-label={copy.home.filterLabel}>
+        <button type="button" data-filter="all" aria-pressed="true">{copy.home.filterAll}</button>
+        {filters.map(([key, label]) => (
+          <button type="button" data-filter={key} aria-pressed="false">{label}</button>
+        ))}
+      </div>
+    </div>
+
+    <div class="selected" data-group>
+      {selected.map((p, i) => (
+        <details class="card reveal" data-areas={p.data.areas.join(' ')} style={`--accent:${p.data.accent};--d:${(i % 3) * 0.06}s`}>
+          <img class="card-art" src={`/art/${p.id}.svg`} alt="" aria-hidden="true" width="400" height="250" loading="lazy" />
+          <summary>
+            <span class="bar"></span>
+            <div class="card-head">
+              <ProjectLogo name={p.data.name} logo={p.data.logo} accent={p.data.accent} size="md" />
+              <div>
+                <h3>{p.data.name}</h3>
+                <span class="status" data-status={p.data.status}>{copy.status[p.data.status]}</span>
+              </div>
+            </div>
+            <p>{p.data.oneLiner}</p>
+            <span class="toggle">{copy.home.details}</span>
+          </summary>
+          <ul>{p.data.highlights.map((highlight) => <li>{highlight}</li>)}</ul>
+          <Chips items={p.data.stack} />
+          {p.data.underTheHood.length > 0 && (
+            <div class="under">
+              <span class="eyebrow">{copy.home.underTheHood}</span>
+              <ul>{p.data.underTheHood.map((item) => <li>{item}</li>)}</ul>
+            </div>
+          )}
+          <AiRole role={p.data.aiRole} labels={copy.aiRole} />
+          {withPage.has(p.id) && (
+            <a class="card-link" href={path(lang, `/projects/${p.id}/`)}>{copy.home.readShort}</a>
+          )}
+        </details>
+      ))}
+    </div>
+
+    <div data-group class="reveal">
+      <p class="eyebrow subhead">{copy.home.archive}</p>
+      <ul class="archive">
+        {archive.map((p) => (
+          <li data-areas={p.data.areas.join(' ')}>
+            <a class="archive-row" href={path(lang, `/projects/${p.id}/`)}>
+              <span class="name"><ProjectLogo name={p.data.name} logo={p.data.logo} accent={p.data.accent} size="sm" />{p.data.name}</span>
+              <span class="desc">{p.data.oneLiner}</span>
+              <span class="stack">{p.data.stack.join(' · ')}</span>
+              <span class="go" aria-hidden="true">→</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <div class="wrap stack-block reveal">
+    <p class="stack-intro">
+      <span class="eyebrow">{copy.home.stackKicker}</span>
+      <span>{copy.home.stackIntro}</span>
+    </p>
+    <div class="stack-map">
+      {site.stackGroups.map((group) => (
+        <div class="stack-group">
+          <span class="stack-label">{group.label}</span>
+          <ul>
+            {group.items.map((item) => (
+              <li>
+                {techSet.has(item.toLowerCase())
+                  ? <a href={`${path(lang, '/work')}?tech=${encodeURIComponent(item)}`}>{item}</a>
+                  : <span>{item}</span>}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+  </div>
+
+  <section id="experience" class="section wrap">
+    <div class="section-head reveal">
+      <div>
+        <span class="kicker">{copy.home.experienceKicker}</span>
+        <h2>{copy.home.experienceTitle}</h2>
+      </div>
+    </div>
+    <div class="timeline">
+      {site.experience.map((job) => {
+        const summary = job.engagements[0]?.points[0] ?? '';
+        return (
+          <div class="job reveal">
+            <div class="job-when">
+              <h3>{job.company}</h3>
+              <span class="eyebrow">{job.period}</span>
+            </div>
+            <div class="job-body">
+              <strong>{job.role}</strong>
+              {summary && <p class="job-summary">{summary}</p>}
+              <details class="job-more">
+                <summary>{copy.home.clientsDetail}</summary>
+                {job.engagements.map((engagement) => (
+                  <div class="engagement">
+                    {engagement.client && (
+                      <p class="client">
+                        {engagement.client}
+                        {engagement.period && <span class="eyebrow"> · {engagement.period}</span>}
+                      </p>
+                    )}
+                    <ul>{engagement.points.map((point) => <li>{point}</li>)}</ul>
+                  </div>
+                ))}
+              </details>
+            </div>
+          </div>
+        );
+      })}
+      <div class="job reveal">
+        <div>
+          <h3>{copy.home.education}</h3>
+        </div>
+        <div>
+          {site.education.map((study) => (
+            <p class="client">
+              {study.title}
+              <span class="eyebrow"> · {study.place} · {study.period}</span>
+            </p>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section wrap">
+    <a class="all-work" href={path(lang, '/work')}>
+      <div>
+        <span class="kicker">{copy.home.allWorkKicker}</span>
+        <h2>{t(copy.home.allWorkTitle, { count: all.length })}</h2>
+      </div>
+      <span class="btn primary">{copy.home.seeEveryProject}</span>
+    </a>
+    <p class="closing">
+      {copy.home.closingPre} <a href={site.links.linkedin} rel="me noopener" target="_blank">{copy.home.closingLink}</a>
+    </p>
+  </section>
+</Base>
+
+<script>
+  const initHome = () => {
+    const section = document.querySelector<HTMLElement>('#projects');
+    if (!section || section.dataset.ready) return;
+    section.dataset.ready = '1';
+
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const buttons = document.querySelectorAll<HTMLButtonElement>('[data-filter]');
+    const items = document.querySelectorAll<HTMLElement>('#projects [data-areas]');
+    const groups = document.querySelectorAll<HTMLElement>('#projects [data-group]');
+    for (const button of buttons) {
+      button.addEventListener('click', () => {
+        const filter = button.dataset.filter ?? 'all';
+        for (const other of buttons) other.setAttribute('aria-pressed', String(other === button));
+        for (const item of items) {
+          const areas = (item.dataset.areas ?? '').split(' ');
+          item.hidden = filter !== 'all' && !areas.includes(filter);
+        }
+        for (const group of groups) {
+          group.hidden = group.querySelector('[data-areas]:not([hidden])') === null;
+        }
+      });
+    }
+
+    const counters = document.querySelectorAll<HTMLElement>('[data-count]');
+    const run = (el: HTMLElement) => {
+      const target = Number(el.dataset.count);
+      const suffix = el.dataset.suffix ?? '';
+      const start = performance.now();
+      const duration = 1400;
+      const tick = (now: number) => {
+        const progress = Math.min(1, (now - start) / duration);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        el.textContent = Math.round(target * eased).toLocaleString() + suffix;
+        if (progress < 1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    };
+    if (!reduced && 'IntersectionObserver' in window) {
+      const io = new IntersectionObserver((entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            run(entry.target as HTMLElement);
+            io.unobserve(entry.target);
+          }
+        }
+      });
+      counters.forEach((counter) => io.observe(counter));
+    }
+  };
+
+  document.addEventListener('astro:page-load', initHome);
+  initHome();
+</script>
