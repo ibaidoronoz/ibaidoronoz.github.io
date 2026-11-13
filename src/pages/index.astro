@@ -88,6 +88,16 @@ const { links } = site;
             <span class="area">{p.data.areas.map((a) => AREAS[a]).join(' · ')}</span>
             <h3>{p.data.name}</h3>
             <p>{p.data.oneLiner}</p>
+            {p.data.components.length > 0 && (
+              <ul class="components">
+                {p.data.components.map((c) => (
+                  <li>
+                    <span class="comp-name">{c.name}</span>
+                    <span class="comp-role">{c.role}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
             <ul>{p.data.highlights.slice(0, 2).map((h) => <li>{h}</li>)}</ul>
             <span class="more">Read the case study</span>
           </div>

@@ -107,9 +107,10 @@
   components:
     - { name: Prometheus, role: shared AI context, logo: /logos/prometheus.png, accent: '#8b5cf6' }
     - { name: Torii, role: one gateway, logo: /logos/torii.png, accent: '#22d3ee' }
+    - { name: Kagi, role: single sign-on, logo: /logos/kagi.png, accent: '#ff8a00' }
     - { name: Festive, role: shared UI engine, logo: /logos/festive.png, accent: '#e04fb8' }
-  stack: [Markdown, JSON manifests, Python, Caddy, React, TypeScript]
-  includes: [Prometheus, Torii, Festive]
+  stack: [Markdown, JSON manifests, Python, FastAPI, Caddy, React, TypeScript]
+  includes: [Prometheus, Torii, Kagi, Festive]
 
 - id: txango
   logo: /logos/txango.png
