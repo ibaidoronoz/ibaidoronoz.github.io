@@ -64,6 +64,10 @@ docs/design-system.md            tokens, motion budget, accessibility and perf f
 - Everything must stay disabled under `prefers-reduced-motion` and the page must work
   without JS.
 - Visuals may illustrate ideas but never invent data (no fake metrics, logs or users).
+- `components` renders twice: the name/role strip on the featured card (`index.astro`) and
+  the cards in the hand-made diagram of that project. `includes` is bookkeeping only.
+- A case study's frontmatter `flow` is ignored when the project has a `diagram`: the diagram
+  already shows the architecture.
 - Every project has a diagram, never a screenshot: `flow`, `fork`, `layers` or `loop`, defined
   in `projects.yaml`. The three complex ones stay hand-made in `src/components/diagrams/`.
 
