@@ -54,8 +54,10 @@ export interface Cv {
 const projectsBase = [
   { name: 'Kizuna', accent: '#8b5cf6' },
   { name: 'Plutus', accent: '#4f6bff' },
+  { name: 'Crypto Market', accent: '#ff4500' },
   { name: 'Txango', accent: '#d8bb56' },
   { name: 'Engineering Platform', accent: '#d8590e' },
+  { name: 'Oracle', accent: '#38bdf8' },
 ];
 
 const en: Cv = {
@@ -138,13 +140,23 @@ const en: Cv = {
     },
     {
       ...projectsBase[2],
+      line: 'Crypto dashboards inside Reddit, installed subreddit by subreddit, refreshed on a schedule and cached so a popular post never hits the API twice.',
+      metric: { value: '15 min', label: 'refresh with no key' },
+    },
+    {
+      ...projectsBase[3],
       line: 'Offline Android hiking app: vector maps, 2,034 routes, terrain profile and no Google services anywhere.',
       metric: { value: '2,034', label: 'routes offline' },
     },
     {
-      ...projectsBase[3],
+      ...projectsBase[4],
       line: 'Twenty repositories under one validated contract: shared context, gateway, access gate and UI engine.',
       metric: { value: '20', label: 'repositories, one contract' },
+    },
+    {
+      ...projectsBase[5],
+      line: 'Service control panel with bounded recovery: status, logs, metrics and deploys on one screen.',
+      metric: { value: '80', label: 'test files' },
     },
   ],
   education: [
@@ -254,13 +266,23 @@ const es: Cv = {
     },
     {
       ...projectsBase[2],
+      line: 'Dashboards de cripto dentro de Reddit, instalables subreddit a subreddit, con refresco por calendario y caché para no machacar la API.',
+      metric: { value: '15 min', label: 'refresco sin clave' },
+    },
+    {
+      ...projectsBase[3],
       line: 'App Android de senderismo sin conexión: mapas vectoriales, 2.034 rutas, perfil del terreno y ningún servicio de Google.',
       metric: { value: '2.034', label: 'rutas sin conexión' },
     },
     {
-      ...projectsBase[3],
+      ...projectsBase[4],
       line: 'Veinte repositorios bajo un contrato validado: contexto compartido, puerta de entrada, acceso y motor de UI.',
       metric: { value: '20', label: 'repositorios, un contrato' },
+    },
+    {
+      ...projectsBase[5],
+      line: 'Panel de control de servicios con recuperación acotada: estado, logs, métricas y despliegues en una pantalla.',
+      metric: { value: '80', label: 'ficheros de test' },
     },
   ],
   education: [
