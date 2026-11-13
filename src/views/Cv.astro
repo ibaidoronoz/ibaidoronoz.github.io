@@ -1,8 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import Icon from '../components/Icon.astro';
-import { CV, CV_LINKS } from '../data/cv';
-import { getSite } from '../data/site';
+import { CV, CV_EMAIL, CV_LINKS } from '../data/cv';
 import { ui } from '../data/i18n/ui';
 import { path } from '../lib/i18n';
 import type { Lang } from '../lib/i18n';
@@ -13,7 +12,6 @@ interface Props {
 
 const { lang } = Astro.props;
 const copy = ui[lang];
-const site = getSite(lang);
 const cv = CV[lang];
 const pdf = `/cv/ibai-diez-oronoz-cv-${lang}.pdf`;
 ---
@@ -21,13 +19,13 @@ const pdf = `/cv/ibai-diez-oronoz-cv-${lang}.pdf`;
 <Base lang={lang} title={copy.cv.metaTitle} description={copy.cv.metaDescription}>
   <div class="wrap cv">
     <header class="cv-head">
-      <span class="kicker">{copy.cv.kicker}</span>
-      <h1>{cv.headline}</h1>
-      <p class="cv-sub">{cv.subtitle}</p>
-      <p class="cv-meta">
-        {cv.location} ·
-        <a href={CV_LINKS.linkedin} rel="me noopener" target="_blank">LinkedIn</a> ·
-        <a href={CV_LINKS.github} rel="me noopener" target="_blank">GitHub</a> ·
+      <span class="cv-kicker">{copy.cv.kicker} · {cv.role}</span>
+      <h1>{cv.name}</h1>
+      <p class="cv-contact">
+        <span>{cv.location}</span>
+        <a href={`mailto:${CV_EMAIL}`}><Icon name="mail" size={13} /> {CV_EMAIL}</a>
+        <a href={CV_LINKS.linkedin} rel="me noopener" target="_blank"><Icon name="linkedin" size={13} /> LinkedIn</a>
+        <a href={CV_LINKS.github} rel="me noopener" target="_blank"><Icon name="github" size={13} /> GitHub</a>
         <a href={CV_LINKS.site}>{CV_LINKS.site.replace('https://', '')}</a>
       </p>
       <div class="cv-actions">
@@ -37,56 +35,117 @@ const pdf = `/cv/ibai-diez-oronoz-cv-${lang}.pdf`;
       </div>
     </header>
 
-    <section class="cv-section">
-      <h2>{copy.cv.profile}</h2>
-      {cv.profile.map((paragraph) => <p>{paragraph}</p>)}
-    </section>
+    <div class="cv-grid">
+      <div class="cv-main">
+        <section class="cv-section">
+          <h2>{copy.cv.profile}</h2>
+          {cv.profile.map((paragraph) => <p>{paragraph}</p>)}
+        </section>
 
-    <section class="cv-section">
-      <h2>{copy.cv.experience}</h2>
-      {cv.experience.map((job) => (
-        <article class="cv-job">
-          <header>
-            <h3>{job.company}</h3>
-            <span>{job.period}</span>
-          </header>
-          <p class="cv-role">{job.role}</p>
-          <ul>{job.points.map((point) => <li>{point}</li>)}</ul>
-        </article>
-      ))}
-    </section>
+        <ul class="cv-stats">
+          {cv.highlights.map((highlight) => (
+            <li>
+              <b>{highlight.value}</b>
+              <span>{highlight.label}</span>
+            </li>
+          ))}
+        </ul>
 
-    <section class="cv-section">
-      <h2>{copy.cv.projects}</h2>
-      <ul class="cv-projects">
-        {cv.projects.map((project) => (
-          <li><b>{project.name}</b> — {project.line}</li>
+        <section class="cv-section">
+          <h2>{copy.cv.experience}</h2>
+          <ol class="cv-timeline">
+            {cv.roles.map((job) => (
+              <li>
+                <div class="cv-job-head">
+                  <h3>{job.company}{job.client && <em> · {job.client}</em>}</h3>
+                  <span>{job.period}</span>
+                </div>
+                <p class="cv-role">{job.role}</p>
+                <ul class="cv-points">{job.points.map((point) => <li>{point}</li>)}</ul>
+                <p class="cv-stack">{job.stack.join(' · ')}</p>
+              </li>
+            ))}
+          </ol>
+        </section>
+      </div>
+
+      <aside class="cv-side">
+        <section>
+          <h2>{copy.cv.stack}</h2>
+          {cv.stack.map((group) => (
+            <div class="cv-chip-group">
+              <span>{group.label}</span>
+              <ul>{group.items.map((item) => <li>{item}</li>)}</ul>
+            </div>
+          ))}
+        </section>
+
+        <section>
+          <h2>{copy.cv.languages}</h2>
+          <ul class="cv-langs">
+            {cv.languages.map((language) => (
+              <li><b>{language.name}</b> {language.level}</li>
+            ))}
+          </ul>
+        </section>
+
+        <section>
+          <h2>{copy.cv.certifications}</h2>
+          <ul class="cv-certs">{cv.certifications.map((cert) => <li>{cert}</li>)}</ul>
+        </section>
+
+        <section>
+          <h2>{copy.cv.education}</h2>
+          {cv.education.map((study) => (
+            <p class="cv-study">
+              <b>{study.title}</b>
+              <span>{study.place} · {study.period}</span>
+            </p>
+          ))}
+        </section>
+
+        <section>
+          <h2>{copy.cv.training}</h2>
+          {cv.training.map((course) => (
+            <p class="cv-study">
+              <b>{course.title}</b>
+              <span>{course.place} · {course.period}</span>
+            </p>
+          ))}
+        </section>
+      </aside>
+    </div>
+
+    <section class="cv-section cv-earlier">
+      <h2>{copy.cv.earlier}</h2>
+      <ul>
+        {cv.earlier.map((job) => (
+          <li>
+            <b>{job.company}</b> <span>{job.period}</span>
+            <p>{job.role} — {job.note}</p>
+          </li>
         ))}
       </ul>
     </section>
 
-    <section class="cv-section">
-      <h2>{copy.cv.education}</h2>
-      {cv.education.map((study) => (
-        <p class="cv-study">
-          <b>{study.title}</b><br />
-          {study.place} · {study.period}
-        </p>
-      ))}
-    </section>
-
-    <section class="cv-section">
-      <h2>{copy.cv.stack}</h2>
-      <p class="cv-stack">{cv.stack.join(' · ')}</p>
-    </section>
-
-    <section class="cv-section">
-      <h2>{copy.cv.languages}</h2>
-      <p>{cv.languages}</p>
+    <section class="cv-projects">
+      <h2>{copy.cv.projects}</h2>
+      <div class="cv-project-grid">
+        {cv.projects.map((project) => (
+          <article style={`--accent:${project.accent}`}>
+            <h3>{project.name}</h3>
+            <p>{project.line}</p>
+            <div class="cv-metric">
+              <b>{project.metric.value}</b>
+              <span>{project.metric.label}</span>
+            </div>
+          </article>
+        ))}
+      </div>
     </section>
 
     <p class="cv-foot">
-      {site.pill} · <a href={path(lang, '/work')}>{copy.notFound.work}</a>
+      {cv.name} · <a href={CV_LINKS.site}>{CV_LINKS.site.replace('https://', '')}</a> · <a href={path(lang, '/work')}>{copy.notFound.work}</a>
     </p>
   </div>
 </Base>
