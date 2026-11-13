@@ -1,0 +1,103 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import { CV, CV_LINKS } from '../data/cv';
+import { getSite } from '../data/site';
+import { ui } from '../data/i18n/ui';
+import { path } from '../lib/i18n';
+import type { Lang } from '../lib/i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const copy = ui[lang];
+const site = getSite(lang);
+const cv = CV[lang];
+const pdf = `/cv/ibai-diez-oronoz-cv-${lang}.pdf`;
+---
+
+<Base lang={lang} title={copy.cv.metaTitle} description={copy.cv.metaDescription}>
+  <div class="wrap cv">
+    <header class="cv-head">
+      <span class="kicker">{copy.cv.kicker}</span>
+      <h1>{cv.headline}</h1>
+      <p class="cv-sub">{cv.subtitle}</p>
+      <p class="cv-meta">
+        {cv.location} ·
+        <a href={CV_LINKS.linkedin} rel="me noopener" target="_blank">LinkedIn</a> ·
+        <a href={CV_LINKS.github} rel="me noopener" target="_blank">GitHub</a> ·
+        <a href={CV_LINKS.site}>{CV_LINKS.site.replace('https://', '')}</a>
+      </p>
+      <div class="cv-actions">
+        <a class="btn primary" href={pdf} download><Icon name="download" size={16} /> {copy.cv.download}</a>
+        <button class="btn" type="button" data-print>{copy.cv.print}</button>
+        <span class="cv-note">{copy.cv.downloadNote}</span>
+      </div>
+    </header>
+
+    <section class="cv-section">
+      <h2>{copy.cv.profile}</h2>
+      {cv.profile.map((paragraph) => <p>{paragraph}</p>)}
+    </section>
+
+    <section class="cv-section">
+      <h2>{copy.cv.experience}</h2>
+      {cv.experience.map((job) => (
+        <article class="cv-job">
+          <header>
+            <h3>{job.company}</h3>
+            <span>{job.period}</span>
+          </header>
+          <p class="cv-role">{job.role}</p>
+          <ul>{job.points.map((point) => <li>{point}</li>)}</ul>
+        </article>
+      ))}
+    </section>
+
+    <section class="cv-section">
+      <h2>{copy.cv.projects}</h2>
+      <ul class="cv-projects">
+        {cv.projects.map((project) => (
+          <li><b>{project.name}</b> — {project.line}</li>
+        ))}
+      </ul>
+    </section>
+
+    <section class="cv-section">
+      <h2>{copy.cv.education}</h2>
+      {cv.education.map((study) => (
+        <p class="cv-study">
+          <b>{study.title}</b><br />
+          {study.place} · {study.period}
+        </p>
+      ))}
+    </section>
+
+    <section class="cv-section">
+      <h2>{copy.cv.stack}</h2>
+      <p class="cv-stack">{cv.stack.join(' · ')}</p>
+    </section>
+
+    <section class="cv-section">
+      <h2>{copy.cv.languages}</h2>
+      <p>{cv.languages}</p>
+    </section>
+
+    <p class="cv-foot">
+      {site.pill} · <a href={path(lang, '/work')}>{copy.notFound.work}</a>
+    </p>
+  </div>
+</Base>
+
+<script>
+  const initCv = () => {
+    const button = document.querySelector<HTMLButtonElement>('[data-print]');
+    if (!button || button.dataset.ready) return;
+    button.dataset.ready = '1';
+    button.addEventListener('click', () => window.print());
+  };
+  document.addEventListener('astro:page-load', initCv);
+  initCv();
+</script>

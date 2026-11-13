@@ -54,3 +54,20 @@ description: "Ship a change to the live portfolio: verify, branch, PR from devel
 - `dist/` is committed in some checkouts. It must never be. Confirm `.gitignore` covers it.
 - Everything in `dist/` is public and indexed. Treat a build artifact as a press release.
 - Do not amend or force-push a branch a PR is tracking.
+
+## Both languages and the CV
+
+- `npm run verify` builds `/` and `/es/`. `assertCaseStudies('es')` throws on a missing
+  Spanish entry or study, so a green build means both locales are complete.
+- After touching `src/data/cv.ts`, regenerate the two PDFs from the built site:
+
+  ```powershell
+  npm run build; npm run preview
+  & "C:\Program Files\Google\Chrome\Application\chrome.exe" --headless=new --disable-gpu `
+    --no-pdf-header-footer --print-to-pdf="$PWD\public\cv\ibai-diez-oronoz-cv-en.pdf" "http://localhost:4321/cv"
+  & "C:\Program Files\Google\Chrome\Application\chrome.exe" --headless=new --disable-gpu `
+    --no-pdf-header-footer --print-to-pdf="$PWD\public\cv\ibai-diez-oronoz-cv-es.pdf" "http://localhost:4321/es/cv"
+  npm run build
+  ```
+- Check both themes before a release: the toggle writes `data-theme` and `auto` follows the
+  system. Anything invisible in one theme is a hardcoded colour, not a missing token.

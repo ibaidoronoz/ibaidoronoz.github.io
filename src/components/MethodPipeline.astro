@@ -1,14 +1,21 @@
 ---
-import { site } from '../data/site';
+import type { Site } from '../data/site';
+import type { UI } from '../data/i18n/ui';
 
+interface Props {
+  site: Site;
+  ui: UI;
+}
+
+const { site, ui } = Astro.props;
 const steps = site.method;
 const pad = (n: number) => String(n).padStart(2, '0');
 ---
 
-<div class="pipeline reveal" data-pipeline aria-label="How I build, step by step">
+<div class="pipeline reveal" data-pipeline aria-label={ui.pipeline.aria}>
   <div class="pipeline-head">
-    <span class="pipeline-title"><i aria-hidden="true"></i>the method</span>
-    <span class="eyebrow">six rules, one loop</span>
+    <span class="pipeline-title"><i aria-hidden="true"></i>{ui.pipeline.title}</span>
+    <span class="eyebrow">{ui.pipeline.subtitle}</span>
   </div>
 
   <ol class="pipeline-steps">
@@ -27,7 +34,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
       <div data-body={i} class={i === 0 ? 'on' : undefined}>
         <p class="pipeline-rule">{step.body}</p>
         <p class="pipeline-why">{step.why}</p>
-        <p class="pipeline-example"><span>In practice</span>{step.example}</p>
+        <p class="pipeline-example"><span>{ui.pipeline.inPractice}</span>{step.example}</p>
       </div>
     ))}
   </div>

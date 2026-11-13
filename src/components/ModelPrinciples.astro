@@ -1,11 +1,16 @@
 ---
-import { site } from '../data/site';
+import type { Site } from '../data/site';
 
+interface Props {
+  models: Site['models'];
+}
+
+const { models } = Astro.props;
 const pad = (n: number) => String(n).padStart(2, '0');
 ---
 
 <div class="principles">
-  {site.models.map((item, i) => (
+  {models.map((item, i) => (
     <article class="principle reveal" style={`--d:${i * 0.06}s`}>
       <span class="p-idx">{pad(i + 1)}</span>
       <h3>{item.title}</h3>

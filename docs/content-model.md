@@ -5,13 +5,16 @@ they never own copy. If a sentence needs to change, it changes in the data file.
 
 | Content | Source | Limits |
 |---|---|---|
-| Hero, tagline, stats, method, experience, links | `src/data/site.ts` | — |
-| Project name, tier, one-liner, highlights, stack | `src/data/projects.yaml` | one-liner ≤ 140 chars, highlights ≤ 4, stack ≥ 1, components ≤ 5 |
+| Hero, tagline, stats, method, experience, links | `src/data/site.ts` | one object per language |
+| Chrome copy (nav, buttons, labels, areas, status) | `src/data/i18n/ui.ts` | typed: adding a string means adding it to every locale |
+| Project structure, logos, stack, English text | `src/data/projects.yaml` | one-liner ≤ 140 chars, highlights ≤ 4, stack ≥ 1, components ≤ 5 |
+| Project text in Spanish | `src/data/projects.es.yaml` | one entry per id; missing highlights/underTheHood fail the build |
 | Poster fact (big number or short phrase) | `fact` in `projects.yaml` | one per project |
-| Anchor visual | `diagram` in `projects.yaml`: a name or `{ kind, nodes }` | one per project |
-| Areas and status labels | `src/data/taxonomy.ts` | keys are typed; adding one is a code change |
-| Case study body, stats, flow | `src/content/case-studies/<id>.md` | stats ≤ 4, flow ≤ 6 |
-| Design tokens, layout, motion | `src/styles/global.css` | — |
+| Anchor visual | `diagram` in `projects.yaml` (and `projects.es.yaml` for node text) | one per project |
+| Areas and status keys | `src/data/taxonomy.ts` | keys are typed; labels live in `ui.ts` |
+| Case study body, stats, flow | `src/content/case-studies/<id>.md` and `es/<id>.md` | stats ≤ 4, flow ≤ 6 |
+| CV | `src/data/cv.ts` | one object per language |
+| Design tokens, layout, motion | `src/styles/global.css` | light and dark blocks kept in sync |
 
 The Zod schema in `src/content.config.ts` is the contract. It runs at build time, so an
 invalid field fails `npm run verify` instead of shipping a broken card.

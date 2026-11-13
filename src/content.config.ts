@@ -59,29 +59,54 @@ const projects = defineCollection({
   }),
 });
 
+const caseStudySchema = z.object({
+  project: z.string(),
+  title: z.string(),
+  draft: z.boolean().default(true),
+  // 'short' renders three structured blocks on one screen; 'long' renders the full prose.
+  format: z.enum(['short', 'long']).default('long'),
+  // Long studies: the decisions as cards, with an optional "why" that expands.
+  decisions: z
+    .array(z.object({ title: z.string(), body: z.string(), why: z.string().optional() }))
+    .max(6)
+    .default([]),
+  // Short studies: the three blocks (problem, decision, proof).
+  blocks: z
+    .array(z.object({ label: z.string(), title: z.string(), body: z.string() }))
+    .max(4)
+    .default([]),
+  // Headline numbers shown big in the case-study hero. Facts only.
+  stats: z.array(z.object({ value: z.string(), label: z.string() })).max(4).default([]),
+  // Animated pipeline rendered under the hero.
+  flow: z.array(z.object({ label: z.string(), sub: z.string() })).max(6).default([]),
+});
+
 const caseStudies = defineCollection({
-  loader: glob({ pattern: '**/*.md', base: './src/content/case-studies' }),
+  loader: glob({ pattern: '*.md', base: './src/content/case-studies' }),
+  schema: caseStudySchema,
+});
+
+// Spanish case studies: same schema, one file per project, under es/.
+const caseStudiesEs = defineCollection({
+  loader: glob({ pattern: 'es/*.md', base: './src/content/case-studies' }),
+  schema: caseStudySchema,
+});
+
+// Spanish text for each project. Structure, logos and stack stay in projects.yaml;
+// only the prose is translated here, keyed by id.
+const projectsEs = defineCollection({
+  loader: file('src/data/projects.es.yaml'),
   schema: z.object({
-    project: z.string(),
-    title: z.string(),
-    draft: z.boolean().default(true),
-    // 'short' renders three structured blocks on one screen; 'long' renders the full prose.
-    format: z.enum(['short', 'long']).default('long'),
-    // Long studies: the decisions as cards, with an optional "why" that expands.
-    decisions: z
-      .array(z.object({ title: z.string(), body: z.string(), why: z.string().optional() }))
-      .max(6)
-      .default([]),
-    // Short studies: the three blocks (problem, decision, proof).
-    blocks: z
-      .array(z.object({ label: z.string(), title: z.string(), body: z.string() }))
-      .max(4)
-      .default([]),
-    // Headline numbers shown big in the case-study hero. Facts only.
-    stats: z.array(z.object({ value: z.string(), label: z.string() })).max(4).default([]),
-    // Animated pipeline rendered under the hero.
-    flow: z.array(z.object({ label: z.string(), sub: z.string() })).max(6).default([]),
+    id: z.string(),
+    oneLiner: z.string().max(140),
+    highlights: z.array(z.string()).max(4).optional(),
+    underTheHood: z.array(z.string()).max(4).optional(),
+    fact: z.object({ label: z.string() }).optional(),
+    components: z.array(z.object({ name: z.string(), role: z.string() })).optional(),
+    diagram: z
+      .object({ nodes: z.array(z.object({ title: z.string(), sub: z.string() })) })
+      .optional(),
   }),
 });
 
-export const collections = { projects, caseStudies };
+export const collections = { projects, projectsEs, caseStudies, caseStudiesEs };
