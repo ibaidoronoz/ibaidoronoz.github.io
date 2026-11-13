@@ -2,7 +2,7 @@
 // Inline SVG icons. Brand marks are filled paths; UI icons are strokes.
 // No sprite files, no external requests.
 interface Props {
-  name: 'github' | 'linkedin' | 'sun' | 'moon' | 'monitor' | 'globe' | 'download' | 'arrow';
+  name: 'github' | 'linkedin' | 'sun' | 'moon' | 'monitor' | 'globe' | 'download' | 'arrow' | 'mail';
   size?: number;
   label?: string;
 }
@@ -23,6 +23,7 @@ const stroke: Record<string, string> = {
   globe: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.4 2.6 3.6 5.6 3.6 9s-1.2 6.4-3.6 9c-2.4-2.6-3.6-5.6-3.6-9S9.6 5.6 12 3z"/>',
   download: '<path d="M12 3v12M7.5 10.5 12 15l4.5-4.5M4 20h16"/>',
   arrow: '<path d="M5 12h14M13 6l6 6-6 6"/>',
+  mail: '<rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M3.5 6.5 12 13l8.5-6.5"/>',
 };
 
 const isBrand = name in brand;

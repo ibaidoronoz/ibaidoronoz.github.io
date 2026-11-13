@@ -84,11 +84,13 @@ export interface UI {
     print: string;
     profile: string;
     experience: string;
+    earlier: string;
     projects: string;
     education: string;
+    training: string;
+    certifications: string;
     stack: string;
     languages: string;
-    languagesValue: string;
   };
 }
 
@@ -192,11 +194,13 @@ const en: UI = {
     print: 'Print or save as PDF',
     profile: 'Profile',
     experience: 'Experience',
+    earlier: 'Earlier',
     projects: 'Selected projects',
     education: 'Education',
+    training: 'Further training',
+    certifications: 'Certifications',
     stack: 'Stack',
     languages: 'Languages',
-    languagesValue: 'Spanish (native), Basque (native), English (professional)',
   },
 };
 
@@ -300,11 +304,13 @@ const es: UI = {
     print: 'Imprimir o guardar como PDF',
     profile: 'Perfil',
     experience: 'Experiencia',
+    earlier: 'Etapas anteriores',
     projects: 'Proyectos seleccionados',
     education: 'Formación',
+    training: 'Formación complementaria',
+    certifications: 'Certificaciones',
     stack: 'Stack',
     languages: 'Idiomas',
-    languagesValue: 'Castellano (nativo), euskera (nativo), inglés (profesional)',
   },
 };
 
