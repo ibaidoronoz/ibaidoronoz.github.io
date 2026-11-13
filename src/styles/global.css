@@ -3145,6 +3145,16 @@ section[id] {
   text-transform: uppercase;
   color: var(--muted);
 }
+.cv-more {
+  margin: 0.9rem 0 0;
+  font: 500 0.7rem var(--mono);
+  color: var(--muted);
+}
+.cv-more a {
+  color: var(--ink-2);
+  text-decoration: none;
+  border-bottom: 1px solid var(--rule);
+}
 .cv-foot {
   margin-top: 1.8rem;
   font: 500 0.72rem var(--mono);
@@ -3354,6 +3364,10 @@ section[id] {
     border-radius: 2.5mm;
     break-inside: avoid;
     background: color-mix(in srgb, var(--accent) 9%, #ffffff);
+  }
+  .cv-more {
+    font-size: 6.6pt;
+    margin-top: 2mm;
   }
   .cv-project-grid h3 {
     font-size: 10pt;

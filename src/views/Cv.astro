@@ -3,7 +3,8 @@ import Base from '../layouts/Base.astro';
 import Icon from '../components/Icon.astro';
 import { CV, CV_EMAIL, CV_LINKS } from '../data/cv';
 import { ui } from '../data/i18n/ui';
-import { path } from '../lib/i18n';
+import { allProjects } from '../lib/projects';
+import { path, t } from '../lib/i18n';
 import type { Lang } from '../lib/i18n';
 
 interface Props {
@@ -14,6 +15,7 @@ const { lang } = Astro.props;
 const copy = ui[lang];
 const cv = CV[lang];
 const pdf = `/cv/ibai-diez-oronoz-cv-${lang}.pdf`;
+const remaining = Math.max(0, (await allProjects(lang)).length - cv.projects.length);
 ---
 
 <Base lang={lang} title={copy.cv.metaTitle} description={copy.cv.metaDescription}>
@@ -142,6 +144,11 @@ const pdf = `/cv/ibai-diez-oronoz-cv-${lang}.pdf`;
           </article>
         ))}
       </div>
+      {remaining > 0 && (
+        <p class="cv-more">
+          {t(copy.cv.more, { count: remaining })} <a href={`${CV_LINKS.site}/work`}>{CV_LINKS.site.replace('https://', '')}/work</a>
+        </p>
+      )}
     </section>
 
     <p class="cv-foot">
