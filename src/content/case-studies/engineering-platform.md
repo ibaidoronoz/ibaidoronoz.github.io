@@ -20,7 +20,7 @@ decisions:
     why: "A shared runtime is infrastructure; a checked copy is a dependency you can read."
 stats:
   - { value: '20', label: 'repositories, one contract' }
-  - { value: '3', label: 'shared layers' }
+  - { value: '4', label: 'shared layers' }
   - { value: '1', label: 'home per skill, zero copies' }
   - { value: '1', label: 'validator for the whole fleet' }
 flow:
@@ -46,6 +46,7 @@ by one person, on one machine.
 |---|---|
 | **Prometheus** | Plugin marketplace for Claude Code and the global OpenCode configuration: skills, agents, flows and playbooks. The single home of the shared engineering context. |
 | **Torii** | Gateway: one process routes every service by hostname and path. |
+| **Kagi** | Access gate in front of every route: one login, one cookie, and an identity each app verifies instead of trusting the network. |
 | **Festive** | Shared UI engine, vendored into the apps with a drift check. |
 
 Oracle — the control panel for those services — is its own product and has
