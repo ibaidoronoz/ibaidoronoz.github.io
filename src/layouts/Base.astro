@@ -6,6 +6,7 @@ import SocialLinks from '../components/SocialLinks.astro';
 import LanguageSwitch from '../components/LanguageSwitch.astro';
 import ThemeToggle from '../components/ThemeToggle.astro';
 import { getSite } from '../data/site';
+import { CV_EMAIL } from '../data/cv';
 import { ui } from '../data/i18n/ui';
 import { ALT_LOCALES, DEFAULT_LANG, HTML_LANG, LOCALES, altPath, path } from '../lib/i18n';
 import type { Lang } from '../lib/i18n';
@@ -39,6 +40,7 @@ const person = {
   url: new URL(path(lang, '/'), Astro.site).href,
   image: new URL('/icon-512.png', Astro.site).href,
   sameAs: [site.links.github, site.links.linkedin],
+  email: `mailto:${CV_EMAIL}`,
   knowsAbout: ['Payments', 'Payment orchestration', 'SWIFT', 'FIX', 'AI agents', 'Software engineering'],
   address: {
     '@type': 'PostalAddress',
@@ -152,6 +154,7 @@ const person = {
           <span class="eyebrow">{copy.footer.elsewhere}</span>
           <a href={site.links.github} rel="me noopener" target="_blank"><Icon name="github" size={16} /> GitHub</a>
           <a href={site.links.linkedin} rel="me noopener" target="_blank"><Icon name="linkedin" size={16} /> LinkedIn</a>
+          <a href={`mailto:${CV_EMAIL}`}><Icon name="mail" size={16} /> {CV_EMAIL}</a>
         </div>
         <div>
           <span class="eyebrow">{copy.footer.colophon}</span>
