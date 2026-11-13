@@ -1,0 +1,15 @@
+---
+import { getCollection } from 'astro:content';
+import Project from '../../../views/Project.astro';
+import { assertCaseStudies } from '../../../lib/projects';
+
+export async function getStaticPaths() {
+  await assertCaseStudies('es');
+  const studies = await getCollection('caseStudiesEs');
+  return studies.map((study) => ({ params: { id: study.data.project }, props: { study } }));
+}
+
+const { study } = Astro.props;
+---
+
+<Project lang="es" study={study} />

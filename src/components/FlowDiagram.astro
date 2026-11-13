@@ -1,4 +1,6 @@
 ---
+import type { UI } from '../data/i18n/ui';
+
 interface Node {
   title: string;
   sub: string;
@@ -10,12 +12,14 @@ interface Props {
   accent: string;
   name: string;
   highlight?: number;
+  labels?: UI['flow'];
 }
 
-const { kind, nodes, accent, name, highlight = -1 } = Astro.props;
+const { kind, nodes, accent, name, highlight = -1, labels } = Astro.props;
+const copy = labels ?? { aria: 'Play the diagram', play: 'play', pause: 'pause' };
 
-const stroke = 'rgba(255,255,255,0.14)';
-const cardFill = '#0d0d18';
+const stroke = 'var(--dg-line)';
+const cardFill = 'var(--dg-card)';
 
 const card = (x: number, y: number, w: number, h: number, node: Node, index: number) => {
   const on = index === highlight;
@@ -114,10 +118,10 @@ if (kind === 'layers') {
 const label = `${name.toLowerCase()} · ${kind}`;
 ---
 
-<div class="flow-diagram" style={`--accent:${accent}`} data-flow>
-  <button class="fd-play" type="button" data-fd-play aria-label="Play the diagram">▶ play</button>
+<div class="flow-diagram" style={`--accent:${accent}`} data-flow data-play={copy.play} data-pause={copy.pause}>
+  <button class="fd-play" type="button" data-fd-play aria-label={copy.aria}>▶ {copy.play}</button>
 
-  <svg viewBox={`0 0 ${width} ${height}`} role="img" tabindex="0" aria-label={`${name}: ${nodes.map((n) => n.title).join(' to ')}`}>
+  <svg viewBox={`0 0 ${width} ${height}`} role="img" tabindex="0" aria-label={`${name}: ${nodes.map((n) => n.title).join(' → ')}`}>
     <text class="fd-label" x="40" y="34">{label}</text>
 
     {cards.map((c) => (
@@ -164,6 +168,8 @@ const label = `${name.toLowerCase()} · ${kind}`;
       const cards = [...root.querySelectorAll<SVGGElement>('[data-fd-step]')];
       const button = root.querySelector<HTMLButtonElement>('[data-fd-play]');
       const svg = root.querySelector<SVGSVGElement>('svg');
+      const playLabel = root.dataset.play ?? 'play';
+      const pauseLabel = root.dataset.pause ?? 'pause';
       let timer = 0;
       let current = -1;
 
@@ -177,12 +183,12 @@ const label = `${name.toLowerCase()} · ${kind}`;
         window.clearInterval(timer);
         timer = 0;
         setActive(-1);
-        if (button) button.textContent = '▶ play';
+        if (button) button.textContent = `▶ ${playLabel}`;
       };
 
       const play = () => {
         window.clearInterval(timer);
-        if (button) button.textContent = '❚❚ pause';
+        if (button) button.textContent = `❚❚ ${pauseLabel}`;
         let i = 0;
         setActive(0);
         timer = window.setInterval(() => {
@@ -202,7 +208,7 @@ const label = `${name.toLowerCase()} · ${kind}`;
         event.preventDefault();
         window.clearInterval(timer);
         timer = 0;
-        if (button) button.textContent = '▶ play';
+        if (button) button.textContent = `▶ ${playLabel}`;
         const next = current + (event.key === 'ArrowRight' ? 1 : -1);
         if (next < 0 || next >= cards.length) {
           setActive(-1);

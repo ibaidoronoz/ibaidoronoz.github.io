@@ -1,0 +1,105 @@
+---
+import Base from '../layouts/Base.astro';
+import ProjectPoster from '../components/ProjectPoster.astro';
+import { ui } from '../data/i18n/ui';
+import { allProjects } from '../lib/projects';
+import { path, t } from '../lib/i18n';
+import type { Lang } from '../lib/i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const copy = ui[lang];
+const all = await allProjects(lang);
+const usedAreas = new Set(all.flatMap((p) => p.data.areas));
+const filters = Object.entries(copy.areas).filter(([key]) => usedAreas.has(key as keyof typeof copy.areas));
+---
+
+<Base lang={lang} title={copy.work.metaTitle} description={copy.work.metaDescription}>
+  <section class="wrap work-hero">
+    <span class="kicker">{copy.work.kicker}</span>
+    <h1>{t(copy.work.title, { count: all.length })}</h1>
+    <p class="lead">{copy.work.lead}</p>
+  </section>
+
+  <section class="wrap work-section">
+    <div class="filters" role="group" aria-label={copy.home.filterLabel}>
+      <button type="button" data-filter="all" aria-pressed="true">{t(copy.work.filterAll, { count: all.length })}</button>
+      {filters.map(([key, label]) => (
+        <button type="button" data-filter={key} aria-pressed="false">{label}</button>
+      ))}
+    </div>
+
+    <p class="tech-note" data-tech-note hidden>
+      {copy.work.filteredBy} <b data-tech-name></b> · <span data-tech-count></span> · <a href={path(lang, '/work')}>{copy.work.clear}</a>
+    </p>
+
+    <div class="work-grid" data-group>
+      {all.map((p, i) => (
+        <a
+          class="work-card reveal"
+          href={path(lang, `/projects/${p.id}/`)}
+          data-areas={p.data.areas.join(' ')}
+          data-stack={p.data.stack.join('|')}
+          style={`--accent:${p.data.accent};--d:${(i % 3) * 0.05}s`}
+        >
+          <ProjectPoster id={p.id} name={p.data.name} logo={p.data.logo} accent={p.data.accent} fact={p.data.fact} />
+          <div class="work-body">
+            <span class="area">{p.data.areas.map((area) => copy.areas[area]).join(' · ')}</span>
+            <h2>{p.data.name}</h2>
+            <p>{p.data.oneLiner}</p>
+            <span class="work-status status" data-status={p.data.status}>{copy.status[p.data.status]}</span>
+          </div>
+        </a>
+      ))}
+    </div>
+  </section>
+</Base>
+
+<script>
+  const initWork = () => {
+    const grid = document.querySelector<HTMLElement>('.work-grid');
+    if (!grid || grid.dataset.ready) return;
+    grid.dataset.ready = '1';
+
+    const buttons = [...document.querySelectorAll<HTMLButtonElement>('[data-filter]')];
+    const items = [...document.querySelectorAll<HTMLElement>('.work-card')];
+    const note = document.querySelector<HTMLElement>('[data-tech-note]');
+    const noteName = note?.querySelector<HTMLElement>('[data-tech-name]');
+    const noteCount = note?.querySelector<HTMLElement>('[data-tech-count]');
+
+    const setTech = (tech: string) => {
+      const wanted = tech.toLowerCase();
+      let count = 0;
+      for (const item of items) {
+        const stack = (item.dataset.stack ?? '').toLowerCase().split('|');
+        const match = stack.includes(wanted);
+        item.hidden = !match;
+        if (match) count += 1;
+      }
+      if (note) note.hidden = false;
+      if (noteName) noteName.textContent = tech;
+      if (noteCount) noteCount.textContent = String(count);
+    };
+
+    for (const button of buttons) {
+      button.addEventListener('click', () => {
+        if (note) note.hidden = true;
+        const filter = button.dataset.filter ?? 'all';
+        for (const other of buttons) other.setAttribute('aria-pressed', String(other === button));
+        for (const item of items) {
+          const areas = (item.dataset.areas ?? '').split(' ');
+          item.hidden = filter !== 'all' && !areas.includes(filter);
+        }
+      });
+    }
+
+    const tech = new URLSearchParams(window.location.search).get('tech');
+    if (tech) setTech(tech);
+  };
+
+  document.addEventListener('astro:page-load', initWork);
+  initWork();
+</script>

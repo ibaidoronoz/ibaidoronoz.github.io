@@ -1,41 +1,84 @@
-<svg viewBox="0 0 1200 730" role="img" aria-label="Engineering platform: Prometheus, Torii, Kagi and Festive shared by twenty repositories">
-  <text x="60" y="58" fill="#8b88a3" font-family="ui-monospace, Consolas, monospace" font-size="12" letter-spacing="2.4">ENGINEERING PLATFORM</text>
-  <text x="60" y="96" fill="#e9e8f2" font-family="system-ui, Segoe UI, sans-serif" font-size="24" font-weight="700" letter-spacing="-0.5">Four layers every repository shares.</text>
+---
+import type { Lang } from '../../lib/i18n';
+
+interface Props {
+  lang?: Lang;
+}
+
+const { lang = 'en' } = Astro.props;
+
+const T = {
+  en: {
+    aria: 'Engineering platform: Prometheus, Torii, Kagi and Festive shared by twenty repositories',
+    headline: 'Four layers every repository shares.',
+    prometheus: ['shared AI context', 'Skills, agents, flows and playbooks.'],
+    torii: ['one gateway', 'Routes every service by hostname and path.'],
+    kagi: ['single sign-on', 'One login in front of every route; identity signed.'],
+    festive: ['shared UI engine', 'Vendored into each app, with a drift check.'],
+    usedBy: 'used by every repository',
+    contract: '20 REPOSITORIES · ONE CONTRACT',
+    eachOne: 'each one',
+    context: ['starts from the same', 'tested context,', 'never a copied prompt.'],
+    more: 'and sixteen more, all validated by the same script',
+    fleet: 'entry file · git workflow · secrets · skills',
+    caption: 'a duplicate skill slug, a missing secret rule or a drifted entry file fails the build',
+  },
+  es: {
+    aria: 'Plataforma de ingeniería: Prometheus, Torii, Kagi y Festive compartidos por veinte repositorios',
+    headline: 'Cuatro capas que comparten todos los repositorios.',
+    prometheus: ['contexto de IA compartido', 'Skills, agentes, flujos y playbooks.'],
+    torii: ['una puerta de entrada', 'Enruta cada servicio por nombre y ruta.'],
+    kagi: ['acceso único', 'Un login delante de cada ruta; identidad firmada.'],
+    festive: ['motor de UI compartido', 'Vendorizado en cada app, con control de deriva.'],
+    usedBy: 'lo usa cada repositorio',
+    contract: '20 REPOSITORIOS · UN CONTRATO',
+    eachOne: 'cada uno',
+    context: ['arranca del mismo', 'contexto probado,', 'nunca un prompt copiado.'],
+    more: 'y dieciséis más, validados por el mismo script',
+    fleet: 'fichero de entrada · flujo de git · secretos · skills',
+    caption: 'un slug de skill duplicado, una regla de secreto que falta o un fichero de entrada desviado rompen el build',
+  },
+}[lang];
+---
+
+<svg viewBox="0 0 1200 730" role="img" aria-label={T.aria}>
+  <text x="60" y="58" fill="var(--dg-muted)" font-family="ui-monospace, Consolas, monospace" font-size="12" letter-spacing="2.4">ENGINEERING PLATFORM</text>
+  <text x="60" y="96" fill="var(--dg-ink)" font-family="system-ui, Segoe UI, sans-serif" font-size="24" font-weight="700" letter-spacing="-0.5">{T.headline}</text>
 
   <g font-family="system-ui, Segoe UI, sans-serif">
-    <rect x="60" y="150" width="420" height="104" rx="14" fill="#0d0d18" stroke="#8b5cf6" stroke-opacity="0.7"/>
+    <rect x="60" y="150" width="420" height="104" rx="14" fill="var(--dg-card)" stroke="#8b5cf6" stroke-opacity="0.7"/>
     <image href="/logos/prometheus.png" x="84" y="172" width="26" height="26"/>
-    <text x="122" y="186" fill="#f2f1f7" font-size="18" font-weight="700">Prometheus</text>
-    <text x="122" y="206" fill="#8b88a3" font-family="ui-monospace, Consolas, monospace" font-size="11">shared AI context</text>
-    <text x="84" y="234" fill="#b7b5c8" font-size="13">Skills, agents, flows and playbooks.</text>
+    <text x="122" y="186" fill="var(--dg-ink)" font-size="18" font-weight="700">Prometheus</text>
+    <text x="122" y="206" fill="var(--dg-muted)" font-family="ui-monospace, Consolas, monospace" font-size="11">{T.prometheus[0]}</text>
+    <text x="84" y="234" fill="var(--dg-ink-2)" font-size="13">{T.prometheus[1]}</text>
 
-    <rect x="60" y="280" width="420" height="104" rx="14" fill="#0d0d18" stroke="#22d3ee" stroke-opacity="0.55"/>
+    <rect x="60" y="280" width="420" height="104" rx="14" fill="var(--dg-card)" stroke="#22d3ee" stroke-opacity="0.55"/>
     <image href="/logos/torii.png" x="84" y="302" width="26" height="26"/>
-    <text x="122" y="316" fill="#f2f1f7" font-size="18" font-weight="700">Torii</text>
-    <text x="122" y="336" fill="#8b88a3" font-family="ui-monospace, Consolas, monospace" font-size="11">one gateway</text>
-    <text x="84" y="364" fill="#b7b5c8" font-size="13">Routes every service by hostname and path.</text>
+    <text x="122" y="316" fill="var(--dg-ink)" font-size="18" font-weight="700">Torii</text>
+    <text x="122" y="336" fill="var(--dg-muted)" font-family="ui-monospace, Consolas, monospace" font-size="11">{T.torii[0]}</text>
+    <text x="84" y="364" fill="var(--dg-ink-2)" font-size="13">{T.torii[1]}</text>
 
-    <rect x="60" y="410" width="420" height="104" rx="14" fill="#0d0d18" stroke="#ff8a00" stroke-opacity="0.7"/>
+    <rect x="60" y="410" width="420" height="104" rx="14" fill="var(--dg-card)" stroke="#ff8a00" stroke-opacity="0.7"/>
     <image href="/logos/kagi.png" x="84" y="432" width="26" height="26"/>
-    <text x="122" y="446" fill="#f2f1f7" font-size="18" font-weight="700">Kagi</text>
-    <text x="122" y="466" fill="#8b88a3" font-family="ui-monospace, Consolas, monospace" font-size="11">single sign-on</text>
-    <text x="84" y="494" fill="#b7b5c8" font-size="13">One login in front of every route; identity signed.</text>
+    <text x="122" y="446" fill="var(--dg-ink)" font-size="18" font-weight="700">Kagi</text>
+    <text x="122" y="466" fill="var(--dg-muted)" font-family="ui-monospace, Consolas, monospace" font-size="11">{T.kagi[0]}</text>
+    <text x="84" y="494" fill="var(--dg-ink-2)" font-size="13">{T.kagi[1]}</text>
 
-    <rect x="60" y="540" width="420" height="104" rx="14" fill="#0d0d18" stroke="#e04fb8" stroke-opacity="0.55"/>
+    <rect x="60" y="540" width="420" height="104" rx="14" fill="var(--dg-card)" stroke="#e04fb8" stroke-opacity="0.55"/>
     <image href="/logos/festive.png" x="84" y="562" width="26" height="26"/>
-    <text x="122" y="576" fill="#f2f1f7" font-size="18" font-weight="700">Festive</text>
-    <text x="122" y="596" fill="#8b88a3" font-family="ui-monospace, Consolas, monospace" font-size="11">shared UI engine</text>
-    <text x="84" y="624" fill="#b7b5c8" font-size="13">Vendored into each app, with a drift check.</text>
+    <text x="122" y="576" fill="var(--dg-ink)" font-size="18" font-weight="700">Festive</text>
+    <text x="122" y="596" fill="var(--dg-muted)" font-family="ui-monospace, Consolas, monospace" font-size="11">{T.festive[0]}</text>
+    <text x="84" y="624" fill="var(--dg-ink-2)" font-size="13">{T.festive[1]}</text>
   </g>
 
-  <line x1="480" y1="397" x2="690" y2="397" stroke="#ffffff" stroke-opacity="0.25" stroke-width="1.5"/>
-  <path d="M682 392 L692 397 L682 402" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5"/>
-  <text x="486" y="386" fill="#6f6c85" font-family="ui-monospace, Consolas, monospace" font-size="10.5">used by every repository</text>
+  <line x1="480" y1="397" x2="690" y2="397" stroke="var(--dg-line-strong)" stroke-width="1.5"/>
+  <path d="M682 392 L692 397 L682 402" fill="none" stroke="var(--dg-line-strong)" stroke-width="1.5"/>
+  <text x="486" y="386" fill="var(--dg-muted-soft)" font-family="ui-monospace, Consolas, monospace" font-size="10.5">{T.usedBy}</text>
 
-  <rect x="700" y="150" width="440" height="494" rx="16" fill="#0b0b14" stroke="#ffffff" stroke-opacity="0.1"/>
-  <text x="724" y="186" fill="#8b88a3" font-family="ui-monospace, Consolas, monospace" font-size="11" letter-spacing="1.8">20 REPOSITORIES · ONE CONTRACT</text>
+  <rect x="700" y="150" width="440" height="494" rx="16" fill="var(--dg-panel)" stroke="var(--dg-line)"/>
+  <text x="724" y="186" fill="var(--dg-muted)" font-family="ui-monospace, Consolas, monospace" font-size="11" letter-spacing="1.8">{T.contract}</text>
 
-  <g fill="#161622" stroke="#ffffff" stroke-opacity="0.14">
+  <g fill="var(--dg-tile)" stroke="var(--dg-line)">
     <rect x="724" y="210" width="30" height="30" rx="6"/>
     <rect x="768" y="210" width="30" height="30" rx="6"/>
     <rect x="812" y="210" width="30" height="30" rx="6"/>
@@ -58,24 +101,24 @@
   </g>
   <rect x="900" y="342" width="30" height="30" rx="6" fill="#8b5cf6" fill-opacity="0.28" stroke="#8b5cf6" stroke-opacity="0.8"/>
 
-  <text x="960" y="222" fill="#6f6c85" font-family="ui-monospace, Consolas, monospace" font-size="10.5">each one</text>
-  <text x="960" y="240" fill="#b7b5c8" font-family="system-ui, Segoe UI, sans-serif" font-size="12">starts from the same</text>
-  <text x="960" y="258" fill="#b7b5c8" font-family="system-ui, Segoe UI, sans-serif" font-size="12">tested context,</text>
-  <text x="960" y="276" fill="#b7b5c8" font-family="system-ui, Segoe UI, sans-serif" font-size="12">never a copied prompt.</text>
+  <text x="960" y="222" fill="var(--dg-muted-soft)" font-family="ui-monospace, Consolas, monospace" font-size="10.5">{T.eachOne}</text>
+  <text x="960" y="240" fill="var(--dg-ink-2)" font-family="system-ui, Segoe UI, sans-serif" font-size="12">{T.context[0]}</text>
+  <text x="960" y="258" fill="var(--dg-ink-2)" font-family="system-ui, Segoe UI, sans-serif" font-size="12">{T.context[1]}</text>
+  <text x="960" y="276" fill="var(--dg-ink-2)" font-family="system-ui, Segoe UI, sans-serif" font-size="12">{T.context[2]}</text>
 
-  <g font-family="ui-monospace, Consolas, monospace" font-size="10.5" fill="#b7b5c8">
-    <rect x="724" y="420" width="96" height="32" rx="8" fill="#0d0d18" stroke="#ffffff" stroke-opacity="0.14"/>
+  <g font-family="ui-monospace, Consolas, monospace" font-size="10.5" fill="var(--dg-ink-2)">
+    <rect x="724" y="420" width="96" height="32" rx="8" fill="var(--dg-chip)" stroke="var(--dg-line)"/>
     <text x="740" y="440">kizuna</text>
-    <rect x="830" y="420" width="96" height="32" rx="8" fill="#0d0d18" stroke="#ffffff" stroke-opacity="0.14"/>
+    <rect x="830" y="420" width="96" height="32" rx="8" fill="var(--dg-chip)" stroke="var(--dg-line)"/>
     <text x="846" y="440">plutus</text>
-    <rect x="936" y="420" width="96" height="32" rx="8" fill="#0d0d18" stroke="#ffffff" stroke-opacity="0.14"/>
+    <rect x="936" y="420" width="96" height="32" rx="8" fill="var(--dg-chip)" stroke="var(--dg-line)"/>
     <text x="952" y="440">atlas</text>
-    <rect x="1042" y="420" width="76" height="32" rx="8" fill="#0d0d18" stroke="#ffffff" stroke-opacity="0.14"/>
+    <rect x="1042" y="420" width="76" height="32" rx="8" fill="var(--dg-chip)" stroke="var(--dg-line)"/>
     <text x="1058" y="440">txango</text>
   </g>
-  <text x="724" y="540" fill="#6f6c85" font-family="ui-monospace, Consolas, monospace" font-size="10.5">and sixteen more, all validated by the same script</text>
-  <text x="724" y="590" fill="#6f6c85" font-family="ui-monospace, Consolas, monospace" font-size="10.5">check.py --fleet</text>
-  <text x="724" y="610" fill="#6f6c85" font-family="ui-monospace, Consolas, monospace" font-size="10.5">entry file · git workflow · secrets · skills</text>
+  <text x="724" y="540" fill="var(--dg-muted-soft)" font-family="ui-monospace, Consolas, monospace" font-size="10.5">{T.more}</text>
+  <text x="724" y="590" fill="var(--dg-muted-soft)" font-family="ui-monospace, Consolas, monospace" font-size="10.5">check.py --fleet</text>
+  <text x="724" y="610" fill="var(--dg-muted-soft)" font-family="ui-monospace, Consolas, monospace" font-size="10.5">{T.fleet}</text>
 
-  <text x="60" y="700" fill="#6f6c85" font-family="ui-monospace, Consolas, monospace" font-size="11">a duplicate skill slug, a missing secret rule or a drifted entry file fails the build</text>
+  <text x="60" y="700" fill="var(--dg-muted-soft)" font-family="ui-monospace, Consolas, monospace" font-size="11">{T.caption}</text>
 </svg>

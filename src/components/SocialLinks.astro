@@ -1,0 +1,24 @@
+---
+import Icon from './Icon.astro';
+import { getSite } from '../data/site';
+import type { Lang } from '../lib/i18n';
+
+interface Props {
+  lang: Lang;
+  compact?: boolean;
+}
+
+const { lang, compact = false } = Astro.props;
+const { links } = getSite(lang);
+---
+
+<div class:list={['social', { compact }]}>
+  <a class="social-link" href={links.github} rel="me noopener" target="_blank" aria-label="GitHub" title="GitHub">
+    <Icon name="github" size={18} />
+    <span class="social-text">GitHub</span>
+  </a>
+  <a class="social-link" href={links.linkedin} rel="me noopener" target="_blank" aria-label="LinkedIn" title="LinkedIn">
+    <Icon name="linkedin" size={18} />
+    <span class="social-text">LinkedIn</span>
+  </a>
+</div>

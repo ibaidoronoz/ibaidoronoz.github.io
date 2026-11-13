@@ -3,6 +3,8 @@ import KizunaDiagram from './diagrams/Kizuna.astro';
 import PlatformDiagram from './diagrams/Platform.astro';
 import OracleDiagram from './diagrams/Oracle.astro';
 import FlowDiagram from './FlowDiagram.astro';
+import type { UI } from '../data/i18n/ui';
+import type { Lang } from '../lib/i18n';
 
 interface DiagramSpec {
   kind: 'flow' | 'fork' | 'layers' | 'loop';
@@ -14,9 +16,11 @@ interface Props {
   diagram: string | DiagramSpec;
   accent: string;
   name: string;
+  labels?: UI['flow'];
+  lang?: Lang;
 }
 
-const { diagram, accent, name } = Astro.props;
+const { diagram, accent, name, labels, lang = 'en' } = Astro.props;
 const named: Record<string, typeof KizunaDiagram> = {
   kizuna: KizunaDiagram,
   'engineering-platform': PlatformDiagram,
@@ -27,7 +31,7 @@ if (typeof diagram === 'string' && !Component) throw new Error(`Unknown diagram:
 ---
 
 {Component ? (
-  <Component />
+  <Component lang={lang} />
 ) : (
   <FlowDiagram
     kind={(diagram as DiagramSpec).kind}
@@ -35,5 +39,6 @@ if (typeof diagram === 'string' && !Component) throw new Error(`Unknown diagram:
     highlight={(diagram as DiagramSpec).highlight}
     accent={accent}
     name={name}
+    labels={labels}
   />
 )}

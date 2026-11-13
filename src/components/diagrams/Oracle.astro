@@ -1,89 +1,138 @@
-<svg viewBox="0 0 1200 640" role="img" aria-label="Oracle: services report to an agent, a catalogue and a panel, with bounded recovery">
+---
+import type { Lang } from '../../lib/i18n';
+
+interface Props {
+  lang?: Lang;
+}
+
+interface OracleText {
+  aria: string;
+  headline: string;
+  agent: { kicker: string; l1: string; l2: string; items: string[] };
+  catalogue: { kicker: string; l1: string; l2: string; items: string[] };
+  panel: { kicker: string; l1: string; l2: string; items: string[] };
+  recovery: string;
+  chips: string[];
+  recoveryNote: string;
+  caption: string;
+}
+
+const { lang = 'en' } = Astro.props;
+
+const TEXTS: Record<Lang, OracleText> = {
+  en: {
+    aria: 'Oracle: services report to an agent, a catalogue and a panel, with bounded recovery',
+    headline: 'Status, logs and a restart with limits.',
+    agent: { kicker: 'AGENT', l1: 'Runs beside each', l2: 'service.', items: ['health', 'stdout · stderr', 'metrics', 'deploys'] },
+    catalogue: { kicker: 'CATALOGUE', l1: 'One row per', l2: 'service.', items: ['shared by the', 'agent and', 'the panel'] },
+    panel: { kicker: 'PANEL', l1: 'Tray app and', l2: 'React view.', items: ['status', 'restart history', 'deploy trigger'] },
+    recovery: 'BOUNDED RECOVERY · ADR 0007',
+    chips: ['detect', 'dependencies up?', 'restart', 'cooldown', 'give up'],
+    recoveryNote: 'window · attempts · cooldown',
+    caption: 'a service that keeps dying needs a person, not a faster loop',
+  },
+  es: {
+    aria: 'Oracle: los servicios reportan a un agente, un catálogo y un panel, con recuperación acotada',
+    headline: 'Estado, logs y un reinicio con límites.',
+    agent: { kicker: 'AGENTE', l1: 'Corre junto a cada', l2: 'servicio.', items: ['salud', 'stdout · stderr', 'métricas', 'despliegues'] },
+    catalogue: { kicker: 'CATÁLOGO', l1: 'Una fila por', l2: 'servicio.', items: ['compartido por el', 'agente y', 'el panel'] },
+    panel: { kicker: 'PANEL', l1: 'App de bandeja y', l2: 'vista React.', items: ['estado', 'historial de reinicios', 'disparador de deploy'] },
+    recovery: 'RECUPERACIÓN ACOTADA · ADR 0007',
+    chips: ['detectar', '¿dependencias arriba?', 'reiniciar', 'enfriamiento', 'rendirse'],
+    recoveryNote: 'ventana · intentos · enfriamiento',
+    caption: 'un servicio que muere una y otra vez necesita a una persona, no un bucle más rápido',
+  },
+};
+
+const T = TEXTS[lang];
+---
+
+<svg viewBox="0 0 1200 640" role="img" aria-label={T.aria}>
   <image href="/logos/oracle.png" x="60" y="30" width="30" height="30"/>
-  <text x="102" y="51" fill="#8b88a3" font-family="ui-monospace, Consolas, monospace" font-size="12" letter-spacing="2.4">ORACLE · SERVICE CONTROL</text>
-  <text x="60" y="96" fill="#e9e8f2" font-family="system-ui, Segoe UI, sans-serif" font-size="24" font-weight="700" letter-spacing="-0.5">Status, logs and a restart with limits.</text>
+  <text x="102" y="51" fill="var(--dg-muted)" font-family="ui-monospace, Consolas, monospace" font-size="12" letter-spacing="2.4">ORACLE · SERVICE CONTROL</text>
+  <text x="60" y="96" fill="var(--dg-ink)" font-family="system-ui, Segoe UI, sans-serif" font-size="24" font-weight="700" letter-spacing="-0.5">{T.headline}</text>
 
   <g font-family="system-ui, Segoe UI, sans-serif">
-    <rect x="60" y="170" width="300" height="52" rx="11" fill="#0d0d18" stroke="#ffffff" stroke-opacity="0.14"/>
-    <circle cx="84" cy="196" r="4" fill="#34d399"/>
+    <rect x="60" y="170" width="300" height="52" rx="11" fill="var(--dg-card)" stroke="var(--dg-line)"/>
+    <circle cx="84" cy="196" r="4" fill="var(--dg-ok)"/>
     <image href="/logos/kizuna.png" x="98" y="184" width="24" height="24"/>
-    <text x="134" y="201" fill="#f2f1f7" font-size="14" font-weight="600">kizuna</text>
+    <text x="134" y="201" fill="var(--dg-ink)" font-size="14" font-weight="600">kizuna</text>
 
-    <rect x="60" y="230" width="300" height="52" rx="11" fill="#0d0d18" stroke="#ffffff" stroke-opacity="0.14"/>
-    <circle cx="84" cy="256" r="4" fill="#34d399"/>
+    <rect x="60" y="230" width="300" height="52" rx="11" fill="var(--dg-card)" stroke="var(--dg-line)"/>
+    <circle cx="84" cy="256" r="4" fill="var(--dg-ok)"/>
     <image href="/logos/plutus.png" x="98" y="244" width="24" height="24"/>
-    <text x="134" y="261" fill="#f2f1f7" font-size="14" font-weight="600">plutus</text>
+    <text x="134" y="261" fill="var(--dg-ink)" font-size="14" font-weight="600">plutus</text>
 
-    <rect x="60" y="290" width="300" height="52" rx="11" fill="#0d0d18" stroke="#fbbf24" stroke-opacity="0.6"/>
-    <circle cx="84" cy="316" r="4" fill="#fbbf24"/>
+    <rect x="60" y="290" width="300" height="52" rx="11" fill="var(--dg-card)" stroke="var(--dg-warn)" stroke-opacity="0.6"/>
+    <circle cx="84" cy="316" r="4" fill="var(--dg-warn)"/>
     <image href="/logos/atlas.png" x="98" y="304" width="24" height="24"/>
-    <text x="134" y="321" fill="#f2f1f7" font-size="14" font-weight="600">atlas</text>
+    <text x="134" y="321" fill="var(--dg-ink)" font-size="14" font-weight="600">atlas</text>
 
-    <rect x="60" y="350" width="300" height="52" rx="11" fill="#0d0d18" stroke="#ffffff" stroke-opacity="0.14"/>
-    <circle cx="84" cy="376" r="4" fill="#34d399"/>
+    <rect x="60" y="350" width="300" height="52" rx="11" fill="var(--dg-card)" stroke="var(--dg-line)"/>
+    <circle cx="84" cy="376" r="4" fill="var(--dg-ok)"/>
     <image href="/logos/kairos.png" x="98" y="364" width="24" height="24"/>
-    <text x="134" y="381" fill="#f2f1f7" font-size="14" font-weight="600">kairos</text>
+    <text x="134" y="381" fill="var(--dg-ink)" font-size="14" font-weight="600">kairos</text>
 
-    <rect x="60" y="410" width="300" height="52" rx="11" fill="#0d0d18" stroke="#ffffff" stroke-opacity="0.14"/>
-    <circle cx="84" cy="436" r="4" fill="#34d399"/>
+    <rect x="60" y="410" width="300" height="52" rx="11" fill="var(--dg-card)" stroke="var(--dg-line)"/>
+    <circle cx="84" cy="436" r="4" fill="var(--dg-ok)"/>
     <image href="/logos/tanko.png" x="98" y="424" width="24" height="24"/>
-    <text x="134" y="441" fill="#f2f1f7" font-size="14" font-weight="600">tanko</text>
+    <text x="134" y="441" fill="var(--dg-ink)" font-size="14" font-weight="600">tanko</text>
   </g>
 
-  <line x1="360" y1="316" x2="410" y2="316" stroke="#ffffff" stroke-opacity="0.25" stroke-width="1.5"/>
-  <path d="M402 311 L412 316 L402 321" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5"/>
-  <line x1="630" y1="316" x2="670" y2="316" stroke="#ffffff" stroke-opacity="0.25" stroke-width="1.5"/>
-  <path d="M662 311 L672 316 L662 321" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5"/>
-  <line x1="870" y1="316" x2="910" y2="316" stroke="#ffffff" stroke-opacity="0.25" stroke-width="1.5"/>
-  <path d="M902 311 L912 316 L902 321" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5"/>
+  <line x1="360" y1="316" x2="410" y2="316" stroke="var(--dg-line-strong)" stroke-width="1.5"/>
+  <path d="M402 311 L412 316 L402 321" fill="none" stroke="var(--dg-line-strong)" stroke-width="1.5"/>
+  <line x1="630" y1="316" x2="670" y2="316" stroke="var(--dg-line-strong)" stroke-width="1.5"/>
+  <path d="M662 311 L672 316 L662 321" fill="none" stroke="var(--dg-line-strong)" stroke-width="1.5"/>
+  <line x1="870" y1="316" x2="910" y2="316" stroke="var(--dg-line-strong)" stroke-width="1.5"/>
+  <path d="M902 311 L912 316 L902 321" fill="none" stroke="var(--dg-line-strong)" stroke-width="1.5"/>
 
   <g font-family="system-ui, Segoe UI, sans-serif">
-    <rect x="420" y="170" width="210" height="292" rx="14" fill="#0b0b14" stroke="#ffffff" stroke-opacity="0.1"/>
-    <text x="444" y="206" fill="#38bdf8" font-family="ui-monospace, Consolas, monospace" font-size="11" letter-spacing="1.8">AGENT</text>
-    <text x="444" y="234" fill="#b7b5c8" font-size="13">Runs beside each</text>
-    <text x="444" y="252" fill="#b7b5c8" font-size="13">service.</text>
-    <text x="444" y="292" fill="#6f6c85" font-family="ui-monospace, Consolas, monospace" font-size="10.5">health</text>
-    <text x="444" y="316" fill="#6f6c85" font-family="ui-monospace, Consolas, monospace" font-size="10.5">stdout · stderr</text>
-    <text x="444" y="340" fill="#6f6c85" font-family="ui-monospace, Consolas, monospace" font-size="10.5">metrics</text>
-    <text x="444" y="364" fill="#6f6c85" font-family="ui-monospace, Consolas, monospace" font-size="10.5">deploys</text>
+    <rect x="420" y="170" width="210" height="292" rx="14" fill="var(--dg-panel)" stroke="var(--dg-line)"/>
+    <text x="444" y="206" fill="var(--dg-accent)" font-family="ui-monospace, Consolas, monospace" font-size="11" letter-spacing="1.8">{T.agent.kicker}</text>
+    <text x="444" y="234" fill="var(--dg-ink-2)" font-size="13">{T.agent.l1}</text>
+    <text x="444" y="252" fill="var(--dg-ink-2)" font-size="13">{T.agent.l2}</text>
+    <text x="444" y="292" fill="var(--dg-muted-soft)" font-family="ui-monospace, Consolas, monospace" font-size="10.5">{T.agent.items[0]}</text>
+    <text x="444" y="316" fill="var(--dg-muted-soft)" font-family="ui-monospace, Consolas, monospace" font-size="10.5">{T.agent.items[1]}</text>
+    <text x="444" y="340" fill="var(--dg-muted-soft)" font-family="ui-monospace, Consolas, monospace" font-size="10.5">{T.agent.items[2]}</text>
+    <text x="444" y="364" fill="var(--dg-muted-soft)" font-family="ui-monospace, Consolas, monospace" font-size="10.5">{T.agent.items[3]}</text>
 
-    <rect x="680" y="170" width="190" height="292" rx="14" fill="#0b0b14" stroke="#ffffff" stroke-opacity="0.1"/>
-    <text x="704" y="206" fill="#38bdf8" font-family="ui-monospace, Consolas, monospace" font-size="11" letter-spacing="1.8">CATALOGUE</text>
-    <text x="704" y="234" fill="#b7b5c8" font-size="13">One row per</text>
-    <text x="704" y="252" fill="#b7b5c8" font-size="13">service.</text>
-    <text x="704" y="292" fill="#6f6c85" font-family="ui-monospace, Consolas, monospace" font-size="10.5">shared by the</text>
-    <text x="704" y="310" fill="#6f6c85" font-family="ui-monospace, Consolas, monospace" font-size="10.5">agent and</text>
-    <text x="704" y="328" fill="#6f6c85" font-family="ui-monospace, Consolas, monospace" font-size="10.5">the panel</text>
+    <rect x="680" y="170" width="190" height="292" rx="14" fill="var(--dg-panel)" stroke="var(--dg-line)"/>
+    <text x="704" y="206" fill="var(--dg-accent)" font-family="ui-monospace, Consolas, monospace" font-size="11" letter-spacing="1.8">{T.catalogue.kicker}</text>
+    <text x="704" y="234" fill="var(--dg-ink-2)" font-size="13">{T.catalogue.l1}</text>
+    <text x="704" y="252" fill="var(--dg-ink-2)" font-size="13">{T.catalogue.l2}</text>
+    <text x="704" y="292" fill="var(--dg-muted-soft)" font-family="ui-monospace, Consolas, monospace" font-size="10.5">{T.catalogue.items[0]}</text>
+    <text x="704" y="310" fill="var(--dg-muted-soft)" font-family="ui-monospace, Consolas, monospace" font-size="10.5">{T.catalogue.items[1]}</text>
+    <text x="704" y="328" fill="var(--dg-muted-soft)" font-family="ui-monospace, Consolas, monospace" font-size="10.5">{T.catalogue.items[2]}</text>
 
-    <rect x="920" y="170" width="220" height="292" rx="14" fill="#0b0b14" stroke="#ffffff" stroke-opacity="0.1"/>
-    <text x="944" y="206" fill="#38bdf8" font-family="ui-monospace, Consolas, monospace" font-size="11" letter-spacing="1.8">PANEL</text>
-    <text x="944" y="234" fill="#b7b5c8" font-size="13">Tray app and</text>
-    <text x="944" y="252" fill="#b7b5c8" font-size="13">React view.</text>
-    <text x="944" y="292" fill="#6f6c85" font-family="ui-monospace, Consolas, monospace" font-size="10.5">status</text>
-    <text x="944" y="316" fill="#6f6c85" font-family="ui-monospace, Consolas, monospace" font-size="10.5">restart history</text>
-    <text x="944" y="340" fill="#6f6c85" font-family="ui-monospace, Consolas, monospace" font-size="10.5">deploy trigger</text>
+    <rect x="920" y="170" width="220" height="292" rx="14" fill="var(--dg-panel)" stroke="var(--dg-line)"/>
+    <text x="944" y="206" fill="var(--dg-accent)" font-family="ui-monospace, Consolas, monospace" font-size="11" letter-spacing="1.8">{T.panel.kicker}</text>
+    <text x="944" y="234" fill="var(--dg-ink-2)" font-size="13">{T.panel.l1}</text>
+    <text x="944" y="252" fill="var(--dg-ink-2)" font-size="13">{T.panel.l2}</text>
+    <text x="944" y="292" fill="var(--dg-muted-soft)" font-family="ui-monospace, Consolas, monospace" font-size="10.5">{T.panel.items[0]}</text>
+    <text x="944" y="316" fill="var(--dg-muted-soft)" font-family="ui-monospace, Consolas, monospace" font-size="10.5">{T.panel.items[1]}</text>
+    <text x="944" y="340" fill="var(--dg-muted-soft)" font-family="ui-monospace, Consolas, monospace" font-size="10.5">{T.panel.items[2]}</text>
   </g>
 
-  <rect x="60" y="500" width="1080" height="84" rx="14" fill="#0b0b14" stroke="#ffffff" stroke-opacity="0.1"/>
-  <text x="84" y="528" fill="#8b88a3" font-family="ui-monospace, Consolas, monospace" font-size="11" letter-spacing="1.8">BOUNDED RECOVERY · ADR 0007</text>
+  <rect x="60" y="500" width="1080" height="84" rx="14" fill="var(--dg-panel)" stroke="var(--dg-line)"/>
+  <text x="84" y="528" fill="var(--dg-muted)" font-family="ui-monospace, Consolas, monospace" font-size="11" letter-spacing="1.8">{T.recovery}</text>
 
-  <g font-family="ui-monospace, Consolas, monospace" font-size="10.5" fill="#b7b5c8">
-    <rect x="84" y="544" width="104" height="30" rx="8" fill="#12121c" stroke="#ffffff" stroke-opacity="0.14"/>
-    <text x="100" y="563">detect</text>
-    <text x="198" y="563" fill="#6f6c85">›</text>
-    <rect x="216" y="544" width="170" height="30" rx="8" fill="#12121c" stroke="#ffffff" stroke-opacity="0.14"/>
-    <text x="232" y="563">dependencies up?</text>
-    <text x="396" y="563" fill="#6f6c85">›</text>
-    <rect x="414" y="544" width="104" height="30" rx="8" fill="#12121c" stroke="#ffffff" stroke-opacity="0.14"/>
-    <text x="430" y="563">restart</text>
-    <text x="528" y="563" fill="#6f6c85">›</text>
-    <rect x="546" y="544" width="118" height="30" rx="8" fill="#12121c" stroke="#ffffff" stroke-opacity="0.14"/>
-    <text x="562" y="563">cooldown</text>
-    <text x="674" y="563" fill="#6f6c85">›</text>
-    <rect x="692" y="544" width="110" height="30" rx="8" fill="#1a1408" stroke="#fbbf24" stroke-opacity="0.55"/>
-    <text x="708" y="563" fill="#fbbf24">give up</text>
+  <g font-family="ui-monospace, Consolas, monospace" font-size="10.5" fill="var(--dg-ink-2)">
+    <rect x="84" y="544" width="104" height="30" rx="8" fill="var(--dg-chip)" stroke="var(--dg-line)"/>
+    <text x="100" y="563">{T.chips[0]}</text>
+    <text x="198" y="563" fill="var(--dg-muted-soft)">›</text>
+    <rect x="216" y="544" width="170" height="30" rx="8" fill="var(--dg-chip)" stroke="var(--dg-line)"/>
+    <text x="232" y="563">{T.chips[1]}</text>
+    <text x="396" y="563" fill="var(--dg-muted-soft)">›</text>
+    <rect x="414" y="544" width="104" height="30" rx="8" fill="var(--dg-chip)" stroke="var(--dg-line)"/>
+    <text x="430" y="563">{T.chips[2]}</text>
+    <text x="528" y="563" fill="var(--dg-muted-soft)">›</text>
+    <rect x="546" y="544" width="118" height="30" rx="8" fill="var(--dg-chip)" stroke="var(--dg-line)"/>
+    <text x="562" y="563">{T.chips[3]}</text>
+    <text x="674" y="563" fill="var(--dg-muted-soft)">›</text>
+    <rect x="692" y="544" width="110" height="30" rx="8" fill="var(--dg-warn-bg)" stroke="var(--dg-warn)" stroke-opacity="0.55"/>
+    <text x="708" y="563" fill="var(--dg-warn)">{T.chips[4]}</text>
   </g>
-  <text x="830" y="563" fill="#6f6c85" font-family="ui-monospace, Consolas, monospace" font-size="10.5">window · attempts · cooldown</text>
+  <text x="830" y="563" fill="var(--dg-muted-soft)" font-family="ui-monospace, Consolas, monospace" font-size="10.5">{T.recoveryNote}</text>
 
-  <text x="60" y="620" fill="#6f6c85" font-family="ui-monospace, Consolas, monospace" font-size="11">a service that keeps dying needs a person, not a faster loop</text>
+  <text x="60" y="620" fill="var(--dg-muted-soft)" font-family="ui-monospace, Consolas, monospace" font-size="11">{T.caption}</text>
 </svg>

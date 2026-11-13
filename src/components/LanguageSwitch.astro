@@ -1,0 +1,26 @@
+---
+import { LANGS, LANG_LABEL, LANG_NAME, HTML_LANG, altPath } from '../lib/i18n';
+import type { Lang } from '../lib/i18n';
+import { ui } from '../data/i18n/ui';
+import { t } from '../lib/i18n';
+
+interface Props {
+  lang: Lang;
+  pathname: string;
+}
+
+const { lang, pathname } = Astro.props;
+const copy = ui[lang].language;
+---
+
+<nav class="seg lang-switch" aria-label={copy.label}>
+  {LANGS.map((code) => (
+    <a
+      href={altPath(pathname, code)}
+      hreflang={HTML_LANG[code]}
+      lang={HTML_LANG[code]}
+      aria-current={code === lang ? 'page' : undefined}
+      title={t(copy.switchTo, { language: LANG_NAME[code] })}
+    >{LANG_LABEL[code]}</a>
+  ))}
+</nav>

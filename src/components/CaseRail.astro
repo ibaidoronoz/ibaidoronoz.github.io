@@ -1,17 +1,22 @@
 ---
+import type { UI } from '../data/i18n/ui';
+
 interface Props {
   headings: { depth: number; slug: string; text: string }[];
   nodes?: { title: string }[];
+  labels: UI['rail'];
+  exclude?: string;
 }
 
-const { headings, nodes = [] } = Astro.props;
-const items = headings.filter((h) => h.depth === 2 && h.text.toLowerCase() !== 'key decisions');
+const { headings, nodes = [], labels, exclude = '' } = Astro.props;
+const skip = exclude.toLowerCase();
+const items = headings.filter((h) => h.depth === 2 && h.text.toLowerCase() !== skip);
 ---
 
-<nav class="case-rail" aria-label="Sections" data-rail>
+<nav class="case-rail" aria-label={labels.aria} data-rail>
   {nodes.length > 0 && (
     <div class="rail-flow">
-      <span class="eyebrow">Flow</span>
+      <span class="eyebrow">{labels.flow}</span>
       <ol>
         {nodes.map((node, i) => (
           <li data-rail-node={i}>
@@ -23,7 +28,7 @@ const items = headings.filter((h) => h.depth === 2 && h.text.toLowerCase() !== '
     </div>
   )}
 
-  <span class="eyebrow">On this page</span>
+  <span class="eyebrow">{labels.onThisPage}</span>
   {items.map((h) => (
     <a href={`#${h.slug}`} data-rail-link={h.slug}>{h.text}</a>
   ))}

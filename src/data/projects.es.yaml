@@ -1,0 +1,265 @@
+# Spanish text for every project. Structure, logos and stack stay in projects.yaml.
+# One entry per id in the same order. `highlights`, `underTheHood`, `fact.label` and
+# `components.role` are optional: whatever is missing falls back to the English value.
+# Nothing here may reveal LAN hosts, real financial data, secrets or employer information.
+
+- id: kizuna
+  oneLiner: "Agentes de IA que resuelven un ticket de principio a fin: planificado, con puerta humana y auditable."
+  highlights:
+    - "Cada ejecución sigue un playbook versionado, no un prompt que alguien olvidó"
+    - "Un puerto para ocho runtimes de agentes; el flujo nunca sabe cuál ejecutó"
+    - "Puertas humanas por coste, tamaño del diff, rutas sensibles y tests en rojo"
+  underTheHood:
+    - "Orquestador duradero sobre SQLite: una entrada de journal por transición, presupuesto por ejecución, cancelación cooperativa"
+    - "Contratos Zod en dominio, adaptadores e integraciones; un proceso Fastify sirve API y UI"
+    - "La salida del agente se valida contra un esquema y se repara antes de que corra el siguiente nodo"
+    - "Nueve playbooks de auditoría de solo lectura aplicados al propio sistema: 164 hallazgos priorizados"
+  fact: { label: "hallazgos en una auditoría" }
+
+- id: crypto-market
+  diagram:
+    nodes:
+      - { title: Post, sub: 'menú del moderador' }
+      - { title: Dashboard, sub: 'muchos tokens' }
+      - { title: Ficha de token, sub: 'un solo token' }
+      - { title: Cron, sub: 'refresco cada 15 min' }
+  oneLiner: "Dashboards de cripto dentro de Reddit, actualizados cada quince minutos y configurados por comunidad."
+  highlights:
+    - "Publicado en la plataforma de desarrollo de Reddit e instalable subreddit a subreddit"
+    - "Dos tipos de post: dashboard multi-token y ficha de un solo token"
+    - "Escrito a mano en 2025, reconstruido en Devvit Web con agentes en 2026"
+    - "Los niveles free, demo y pro marcan el refresco de quince a cinco minutos"
+  underTheHood:
+    - "Devvit Web 0.12: React 19 y Vite en cliente, Express en servidor, Redis como almacenamiento y cron cada quince minutos"
+    - "Permisos de red limitados a los dos hosts de CoinGecko"
+    - "Sparklines calculadas en servidor y cacheadas, para que un post popular no machaque la API"
+  fact: { label: "refresco sin clave" }
+
+- id: plutus
+  diagram:
+    nodes:
+      - { title: Fuentes, sub: '6 exchanges · 17 cadenas' }
+      - { title: Importadores, sub: 'API + CSV' }
+      - { title: Conciliación, sub: 'emparejar transferencias' }
+      - { title: FIFO, sub: 'lotes fiscales' }
+      - { title: Informes, sub: 'IRPF · Modelo 721' }
+  oneLiner: "Seis exchanges, diecisiete blockchains, un informe FIFO correcto para Hacienda."
+  highlights:
+    - "APIs y CSV de seis exchanges, más carteras en diecisiete cadenas"
+    - "Coste FIFO para IRPF y modelo 721"
+    - "Auditorías con agentes sobre una copia aislada de la base encontraron bugs críticos del motor"
+  underTheHood:
+    - "SQLAlchemy asíncrono sobre SQLite; FastAPI en backend y React en frontend"
+    - "Un pipeline de conciliación con un parser por fuente y un único libro de coste"
+    - "Las auditorías corren contra una copia de la base, nunca la de producción"
+  fact: { label: "blockchains conciliadas" }
+
+- id: engineering-platform
+  oneLiner: "Veinte repositorios, un estándar de ingeniería y la automatización que lo mantiene honesto."
+  highlights:
+    - "Un solo hogar por skill: un slug duplicado rompe el validador de la flota"
+    - "Cada repositorio arranca del mismo contexto, probado"
+    - "La puerta de entrada y el panel de operaciones comparten un catálogo de servicios"
+  underTheHood:
+    - "check.py --fleet valida puntos de entrada de agentes, flujo de git y reglas de secretos en cada repositorio hermano"
+    - "Por defecto solo carga la descripción corta de cada skill; el cuerpo se carga cuando hace falta"
+  fact: { label: "repositorios, un contrato" }
+  components:
+    - { name: Prometheus, role: contexto de IA compartido }
+    - { name: Torii, role: una puerta de entrada }
+    - { name: Kagi, role: acceso único }
+    - { name: Festive, role: motor de UI compartido }
+
+- id: txango
+  diagram:
+    nodes:
+      - { title: Mapa, sub: 'vector · sin conexión' }
+      - { title: Ruta, sub: 'catálogo o GPX' }
+      - { title: Marcha, sub: 'GPS · avisos' }
+      - { title: Traza, sub: 'sobrevive al cierre' }
+      - { title: Copia, sub: 'un fichero zip' }
+  oneLiner: "Navegación de senderismo con el mapa dentro: sin cobertura, sin cuenta y sin servicios de Google."
+  highlights:
+    - "2.034 rutas, 6.404 cumbres y 19.737 puntos de interés incluidos sin conexión"
+    - "Mapas vectoriales con sombreado, más fotos aéreas guardadas antes de salir"
+    - "Avisos repetidos de fuera de ruta, aviso de puesta de sol y 112 a un toque"
+    - "108 tests unitarios; castellano, euskera e inglés"
+  underTheHood:
+    - "Kotlin y Compose Material 3, Mapsforge vía AndroidView, Room con esquemas exportados"
+    - "Solo LocationManager: sin Play Services en ninguna parte de la app"
+    - "Generadores en Python reconstruyen el catálogo, los POI, las teselas de terreno y el índice del mapa"
+  fact: { label: "rutas sin conexión" }
+
+- id: kairos
+  diagram:
+    nodes:
+      - { title: Datos, sub: '5 fuentes de precio' }
+      - { title: Régimen, sub: 'VIX · curva' }
+      - { title: Puntuación, sub: 'por activo' }
+      - { title: Plan, sub: 'DCA mensual' }
+  oneLiner: "Cuándo comprar, respaldado por un backtest, y la disciplina de borrar lo que no lo pasó."
+  highlights:
+    - "Detección de régimen por reglas sobre VIX, curva de tipos y liquidez"
+    - "Backtesting walk-forward contra DCA simple"
+    - "Recortó su función estrella cuando los números dijeron que no"
+  underTheHood:
+    - "Pipeline en Python a SQLite, API en FastAPI y gráficos en React con Plotly"
+    - "Cada señal reproducible desde las entradas guardadas; sin look-ahead en el backtest"
+    - "Asistente en modelo local por defecto; nube solo con aviso explícito"
+  fact: { label: "de DCA con backtest" }
+
+- id: oracle
+  oneLiner: "Todos los servicios en una pantalla: estado, logs, métricas y un reinicio que sabe parar."
+  highlights:
+    - "App de bandeja para Windows y un agente que corre junto a cada servicio"
+    - "Autorrecuperación acotada por ventana, intentos y enfriamiento"
+    - "Despliegues e historial de reinicios desde el mismo panel"
+  underTheHood:
+    - "Bandeja WinForms, agente ASP.NET Core y panel React; 80 ficheros de test"
+    - "La recuperación acotada es un ADR, no un bucle de reintentos"
+  fact: { label: "ficheros de test" }
+
+- id: forge
+  oneLiner: "Una app de gimnasio que lleva toda la sesión: 45 programas, retos de 30 días, récords y copias."
+  highlights:
+    - "45 programas y tres retos de abdominales de 30 días, serie a serie"
+    - "Migrada de PWA a Kotlin nativo con un ADR escrito"
+    - "Local primero: sin cuentas, sin backend, sin analítica y sin IA"
+  underTheHood:
+    - "Kotlin, Compose Material 3 y Room; los programas se generan desde datos, nunca a mano"
+    - "Integración con Health Connect y copias JSON/CSV; la versión React antigua sigue publicándose"
+  fact: { label: "programas, serie a serie" }
+
+- id: atlas
+  diagram:
+    nodes:
+      - { title: Fuentes, sub: '~100 instrumentos · 4 clases' }
+      - { title: Almacén, sub: 'SQLite · velas 5m a 1S' }
+      - { title: Vistas, sub: 'gráficos · amplitud · régimen' }
+  oneLiner: "Cabina de mercado para 100 instrumentos, de velas de cinco minutos a semanales, con amplitud y régimen."
+  highlights:
+    - "Marcos temporales de 5m a 1S con indicadores y herramientas de dibujo"
+    - "Vistas de correlación, amplitud, régimen y estacionalidad"
+  underTheHood:
+    - "Colector en Python a SQLite; frontend TypeScript sobre lightweight-charts"
+  fact: { label: "instrumentos" }
+
+- id: fortuna
+  diagram:
+    nodes:
+      - { title: Señal, sub: 'XGBoost · LightGBM' }
+      - { title: Decisión, sub: 'comprar · vender · mantener' }
+      - { title: Puerta, sub: 'GO / NO-GO' }
+      - { title: Diario, sub: 'cada decisión' }
+  oneLiner: "Un motor de trading que se niega a salir a producción hasta que la auditoría lo autoriza."
+  highlights:
+    - "Núcleo headless 24/7 con IPC, un puente FastAPI y una cabina en PyQt6"
+    - "Modelos XGBoost y LightGBM ajustados con Optuna"
+    - "Una auditoría paró la salida a producción con seis problemas bloqueantes"
+  underTheHood:
+    - "Checklist GO/NO-GO estricta antes de arriesgar capital real; nada se mueve sin ella"
+    - "Incluye trading-bot, la versión anterior solo para Kraken"
+  fact: { label: "problemas bloqueantes antes de producción" }
+
+- id: striker
+  diagram:
+    nodes:
+      - { title: Fuentes, sub: '40+ ligas' }
+      - { title: Emparejar, sub: 'identidad del jugador' }
+      - { title: Predecir, sub: 'puntuación esperada' }
+      - { title: Alineación, sub: 'once óptimo' }
+  oneLiner: "Predicciones de fantasy y alineaciones óptimas, con datos de más de cuarenta ligas."
+  highlights:
+    - "Emparejamiento de jugadores con varias señales en más de 40 ligas"
+    - "Alineaciones óptimas semanales a partir de puntuaciones previstas"
+    - "App de escritorio con base local, sin cuenta"
+  underTheHood:
+    - "Tauri 2 con un sidecar de Node y SQLite"
+  fact: { label: "ligas seguidas" }
+
+- id: tanko
+  diagram:
+    nodes:
+      - { title: Catálogo, sub: 'AniList · ComicVine · Metron' }
+      - { title: Progreso, sub: 'por capítulo, no por volumen' }
+      - { title: Asistente, sub: 'Groq o modelo local' }
+  oneLiner: "Tracker de manga y cómics que sabe exactamente dónde lo dejaste, capítulo a capítulo."
+  highlights:
+    - "Busca en AniList, ComicVine y Metron"
+    - "Funciones de LLM con Groq y respaldo en LM Studio local"
+  underTheHood:
+    - "Next.js, Prisma y SQLite; progreso por unidad, no por volumen"
+  fact: { label: "fuentes de catálogo" }
+
+- id: monban
+  diagram:
+    nodes:
+      - { title: Vigilar, sub: 'carpetas' }
+      - { title: Clasificar, sub: 'ruta · bytes · firma' }
+      - { title: Avisar, sub: 'alto, una vez' }
+      - { title: Cuarentena, sub: 'opcional' }
+  oneLiner: "App de bandeja que avisa cuando algo ejecutable aparece en tus carpetas, aunque vaya disfrazado."
+  highlights:
+    - "Detecta ejecutables disfrazados de archivos multimedia"
+    - "Un único binario autocontenido, sin permisos de administrador"
+  underTheHood:
+    - "C# y .NET con WinForms y WPF; xUnit para las reglas de detección"
+  fact: { label: "binario autocontenido" }
+
+- id: kitto
+  diagram:
+    nodes:
+      - { title: Importar, sub: 'XLS · XLSX' }
+      - { title: Parsear, sub: 'uno por banco' }
+      - { title: Categorizar, sub: 'comercio · categoría' }
+      - { title: Repartir, sub: 'por ingresos' }
+  oneLiner: "Gastos de casa repartidos por ingresos, importando los extractos del banco tal como llegan."
+  fact: { label: "gastos repartidos por ingresos" }
+
+- id: yojo
+  diagram:
+    nodes:
+      - { title: Registro, sub: 'comida · síntomas' }
+      - { title: Local, sub: 'funciona sin backend' }
+      - { title: Sincronizar, sub: 'servidor opcional' }
+      - { title: Dispositivos, sub: 'un historial compartido' }
+  oneLiner: "Tracker de dieta compartido entre dispositivos, servido por un proceso Node sin dependencias."
+  fact: { label: "dependencias en el servidor" }
+
+- id: folia
+  diagram:
+    nodes:
+      - { title: Escanear, sub: 'carpeta recursiva' }
+      - { title: Precargar, sub: 'siguiente fotograma' }
+      - { title: Fundido, sub: 'sin perder fotogramas' }
+      - { title: Reproducir, sub: 'imagen · vídeo' }
+  oneLiner: "Pase de diapositivas de escritorio para imagen y vídeo, con fundidos que no se atascan."
+  fact: { label: "imagen y vídeo" }
+
+- id: lethe
+  diagram:
+    nodes:
+      - { title: Clic, sub: 'popup' }
+      - { title: Permisos, sub: 'cookies · browsingData' }
+      - { title: Borrar, sub: 'caché + cookies' }
+  oneLiner: "Un clic para borrar cookies y caché del sitio en el que estás."
+  fact: { label: "cookies y caché" }
+
+- id: argus
+  diagram:
+    nodes:
+      - { title: Clic, sub: 'icono de la barra' }
+      - { title: Analizar, sub: 'motor' }
+      - { title: Resultado, sub: 'panel' }
+  oneLiner: "Caja de herramientas para desarrollo en la barra del navegador, sin paso de compilación."
+  fact: { label: "MV3 sin build" }
+
+- id: aether
+  diagram:
+    nodes:
+      - { title: Tema, sub: 'qss · iconos' }
+      - { title: qrc, sub: 'recursos' }
+      - { title: rcc, sub: 'Qt 5.15' }
+      - { title: Paquete, sub: '.qbtheme' }
+  oneLiner: "Cuatro temas para qBittorrent, generados y comprobados por un pequeño pipeline en Python."
+  fact: { label: "temas generados" }

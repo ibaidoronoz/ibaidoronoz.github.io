@@ -1,0 +1,25 @@
+---
+import Icon from './Icon.astro';
+import { ui } from '../data/i18n/ui';
+import { t } from '../lib/i18n';
+import type { Lang } from '../lib/i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const copy = ui[lang].theme;
+---
+
+<div class="seg theme-toggle" role="group" aria-label={copy.label} data-theme-toggle>
+  <button type="button" class="i-auto" data-mode="auto" aria-pressed="true" aria-label={t(copy.switchTo, { mode: copy.auto })} title={copy.auto}>
+    <Icon name="monitor" size={14} />
+  </button>
+  <button type="button" class="i-light" data-mode="light" aria-pressed="false" aria-label={t(copy.switchTo, { mode: copy.light })} title={copy.light}>
+    <Icon name="sun" size={14} />
+  </button>
+  <button type="button" class="i-dark" data-mode="dark" aria-pressed="false" aria-label={t(copy.switchTo, { mode: copy.dark })} title={copy.dark}>
+    <Icon name="moon" size={14} />
+  </button>
+</div>

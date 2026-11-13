@@ -1,9 +1,12 @@
 ---
+import type { UI } from '../data/i18n/ui';
+
 interface Props {
   items: { title: string; body: string; why?: string }[];
+  labels: UI['decisions'];
 }
 
-const { items } = Astro.props;
+const { items, labels } = Astro.props;
 const pad = (n: number) => String(n).padStart(2, '0');
 ---
 
@@ -13,7 +16,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
       <summary>
         <span class="d-idx">{pad(i + 1)}</span>
         <span class="d-title">{item.title}</span>
-        <span class="d-toggle">{item.why ? 'Why' : 'Open'}</span>
+        <span class="d-toggle">{item.why ? labels.why : labels.open}</span>
       </summary>
       <p class="d-body">{item.body}</p>
       {item.why && <p class="d-why">{item.why}</p>}
