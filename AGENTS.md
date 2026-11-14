@@ -78,10 +78,16 @@ docs/design-system.md            tokens, motion budget, accessibility and perf f
 
 ## Theme
 
-- Light is the CSS default, so the page follows the system with JS disabled. The toggle
-  writes `data-theme="light|dark"` on `<html>` and stores the choice (`auto` removes it).
-- Every colour comes from a token in `:root`; the dark values are declared twice (the
-  `[data-theme='dark']` block and the `prefers-color-scheme` block). Keep both in sync.
+- Dark is the CSS default (`:root`) and what a first visit gets; light is `[data-theme='light']`.
+  The toggle writes `data-theme` plus `data-theme-mode` and stores the choice (`auto` removes it).
+- `auto` is resolved against `prefers-color-scheme` in `Base.astro` before paint. Do not add a
+  `prefers-color-scheme` block to `global.css`: that is the drift it was removed for. No JS means
+  dark.
+- Every colour comes from a token; a hardcoded hex or `rgba()` dark value is what made light look
+  dirty (near-black step buttons, a violet fog over the hero).
+- Light builds with surfaces, not light: white cards on `--bg`, `--shadow-card` for the lift, and
+  `--glow` (100% dark, 40% light) on every coloured shadow. `--wash` (1 / 0) turns the decorative
+  accent washes off and the aurora is off in light. Keep it that way when adding a glow.
 - Inline SVGs paint with `--dg-*` tokens (`--dg-ink`, `--dg-card`, `--dg-line`, ...). Never
   hardcode a hex in a diagram or it will disappear in one of the two themes.
 - Social cards in `og/*.png.ts` are rendered dark on purpose: an image does not follow the
