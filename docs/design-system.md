@@ -24,28 +24,37 @@ font stack in a component.
 | `--card`, `--card-strong` | Glass surfaces |
 | `--ink`, `--ink-2`, `--muted` | Text hierarchy |
 | `--rule` | Hairlines and borders |
-| `--cyan`, `--violet`, `--pink` | Brand ramp, used in `--grad`; darker in light mode |
+| `--cyan`, `--violet`, `--pink` | Brand ramp, used in `--grad`; retuned in light mode |
 | `--accent` | Per-project hex from `projects.yaml` |
+| `--glow`, `--wash` | How much colour a shadow (`--glow`) or a decorative wash (`--wash`) may carry |
+| `--shadow-card`, `--shadow-panel`, `--step-bg` | Elevation and step surfaces; `none`/tuned in dark |
 | `--dg-*` | Diagram palette for inline SVG, per theme |
 
-The site started dark-only; it now ships two themes with the same identity.
+The site started dark-only; it ships two themes with the same identity, and dark is the
+default.
 
 ## Theme
 
-Light is the CSS default so the page follows the system with JavaScript disabled. The toggle
-writes `data-theme="light"` or `"dark"` on `<html>`; `auto` removes the attribute and the
-`prefers-color-scheme` block decides.
+Dark is the CSS default and what a first visit gets. The toggle writes `data-theme="light"`
+or `"dark"` on `<html>` plus `data-theme-mode="light" | "dark" | "auto"`; `auto` is resolved
+against `prefers-color-scheme` in `Base.astro` before paint.
 
-- Tokens are declared three times: `:root` (light), `[data-theme='dark']` and the
-  `prefers-color-scheme: dark` block for readers who never chose. Keep the two dark blocks
-  identical; a drifted copy of that block is the most likely bug in this file.
+- Tokens are declared twice: `:root` (dark) and `[data-theme='light']`. There is no
+  `prefers-color-scheme` block in the stylesheet, and adding one brings back the drift this
+  replaced.
+- Without JavaScript the page is dark: only the pre-paint script can read the choice.
+- Light is not an inversion of dark. It builds with surfaces (white cards on a cool grey
+  page) where dark glows. `--glow` (100% dark, 40% light) scales every coloured shadow and
+  `--wash` (1 / 0) turns the decorative accent washes off; the aurora is off in light
+  (`--aurora-1..3`). A new coloured shadow that ignores `--glow` will read as a stain on
+  white.
 - Diagram tokens (`--dg-ink`, `--dg-card`, `--dg-panel`, `--dg-chip`, `--dg-tile`,
   `--dg-line`, `--dg-line-strong`, `--dg-muted`, `--dg-muted-soft`, `--dg-ok`, `--dg-warn`,
   `--dg-accent`) exist for inline SVG. A hardcoded hex inside a diagram survives in exactly
   one theme and disappears in the other.
-- Text keeps a 4.5:1 contrast on its own surface in both themes. The light palette darkens
-  the brand ramp (`--violet`, `--cyan`, `--pink`) for that reason; do not reuse the dark
-  values in light.
+- Text keeps a 4.5:1 contrast on its own surface in both themes. Light retunes the brand
+  ramp for that reason (`--cyan` becomes a real blue, so the three-stop `--grad` does not
+  collapse into a single hue); do not reuse the dark values in light.
 - Social cards (`src/lib/og.ts`) are rendered dark on purpose: an image does not follow the
   theme of the page.
 - `@media print` forces a light palette and hides the chrome, so `/cv` prints to a clean A4
