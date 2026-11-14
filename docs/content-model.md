@@ -14,7 +14,7 @@ they never own copy. If a sentence needs to change, it changes in the data file.
 | Areas and status keys | `src/data/taxonomy.ts` | keys are typed; labels live in `ui.ts` |
 | Case study body, stats, flow | `src/content/case-studies/<id>.md` and `es/<id>.md` | stats ≤ 4, flow ≤ 6 |
 | CV | `src/data/cv.ts` | one object per language |
-| Design tokens, layout, motion | `src/styles/global.css` | light and dark blocks kept in sync |
+| Design tokens, layout, motion | `src/styles/global.css` | one block per theme, no `prefers-color-scheme` copy |
 
 The Zod schema in `src/content.config.ts` is the contract. It runs at build time, so an
 invalid field fails `npm run verify` instead of shipping a broken card.

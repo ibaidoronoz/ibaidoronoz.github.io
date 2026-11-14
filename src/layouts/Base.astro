@@ -75,23 +75,23 @@ const person = {
     <meta name="twitter:title" content={fullTitle} />
     <meta name="twitter:description" content={description ?? site.tagline} />
     <meta name="twitter:image" content={ogImage} />
-    <meta name="theme-color" content="#f7f6fb" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#07070c" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#07070c" />
     <link rel="icon" href="/favicon-64.png" sizes="64x64" type="image/png" />
     <link rel="icon" href="/icon-512.png" sizes="512x512" type="image/png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <script type="application/ld+json" set:html={JSON.stringify(person)} />
     <script is:inline>
-      // Theme before paint: stored choice, or the system when nobody chose.
+      // Theme before paint: stored choice, else dark. `auto` follows the system;
+      // resolving it here keeps one token block per theme in global.css.
       (function () {
         var root = document.documentElement;
-        var mode = 'auto';
+        var mode = 'dark';
         try {
           var saved = localStorage.getItem('theme');
           if (saved === 'light' || saved === 'dark' || saved === 'auto') mode = saved;
         } catch (e) {}
-        if (mode === 'auto') root.removeAttribute('data-theme');
-        else root.setAttribute('data-theme', mode);
+        var dark = mode === 'dark' || (mode === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        root.setAttribute('data-theme', dark ? 'dark' : 'light');
         root.dataset.themeMode = mode;
         root.classList.add('js');
       })();
@@ -165,14 +165,18 @@ const person = {
     </footer>
 
     <script>
-      const syncThemeColor = (mode: string) => {
-        const metas = [...document.querySelectorAll<HTMLMetaElement>('meta[name="theme-color"]')];
-        if (!metas.length) return;
-        const dark = mode === 'dark' || (mode === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches);
-        const color = dark ? '#07070c' : '#f7f6fb';
-        metas.forEach((meta) => meta.removeAttribute('media'));
-        metas[0].content = color;
-        metas.slice(1).forEach((meta) => meta.remove());
+      const prefersDark = () => window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const themeMedia = window.matchMedia('(prefers-color-scheme: dark)');
+      let applyTheme: ((mode: string) => void) | null = null;
+
+      // `auto` keeps following the system after the first paint.
+      themeMedia.addEventListener('change', () => {
+        if (document.documentElement.dataset.themeMode === 'auto') applyTheme?.('auto');
+      });
+
+      const syncThemeColor = (dark: boolean) => {
+        const meta = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');
+        if (meta) meta.content = dark ? '#07070c' : '#f7f7fa';
       };
 
       const initTheme = () => {
@@ -181,26 +185,24 @@ const person = {
         if (!toggle) return;
 
         const buttons = [...toggle.querySelectorAll<HTMLButtonElement>('[data-mode]')];
-        const mode = (localStorage.getItem('theme') as string) || root.dataset.themeMode || 'auto';
+        const mode = (localStorage.getItem('theme') as string) || root.dataset.themeMode || 'dark';
 
         const apply = (next: string) => {
+          const dark = next === 'dark' || (next === 'auto' && prefersDark());
           root.dataset.themeMode = next;
-          if (next === 'auto') {
-            root.removeAttribute('data-theme');
-            localStorage.removeItem('theme');
-          } else {
-            root.setAttribute('data-theme', next);
-            localStorage.setItem('theme', next);
-          }
+          root.setAttribute('data-theme', dark ? 'dark' : 'light');
+          if (next === 'auto') localStorage.removeItem('theme');
+          else localStorage.setItem('theme', next);
           buttons.forEach((button) => button.setAttribute('aria-pressed', String(button.dataset.mode === next)));
-          syncThemeColor(next);
+          syncThemeColor(dark);
         };
 
         buttons.forEach((button) =>
-          button.addEventListener('click', () => apply(button.dataset.mode ?? 'auto')),
+          button.addEventListener('click', () => apply(button.dataset.mode ?? 'dark')),
         );
 
         apply(mode);
+        applyTheme = apply;
       };
 
       const initBase = () => {
