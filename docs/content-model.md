@@ -34,8 +34,8 @@ study points at a non-featured project.
 
 - `format: 'long'` (default): prose, decision cards from `decisions`, sticky section rail.
 - `format: 'short'`: three `blocks` (problem, decision, proof) and the diagram. No prose.
-- `diagram`: either a name (`kizuna`, `engineering-platform`, `oracle`) or `{ kind, nodes, highlight }`
-  with `kind` in `flow | fork | layers | loop` and 3–6 nodes.
+- `diagram`: either a name (`kizuna`, `engineering-platform`, `oracle`, `nakama`) or
+  `{ kind, nodes, highlight }` with `kind` in `flow | fork | layers | loop` and 3–6 nodes.
 - `decisions`: max 6, each `{ title, body, why? }`, rendered as expandable cards.
 - `blocks`: max 4, each `{ label, title, body }`; keep each body to two lines.
 

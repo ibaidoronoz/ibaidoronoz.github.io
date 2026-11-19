@@ -90,8 +90,8 @@ text, more than the two stack marquee rows.
 ## Layout
 
 - `--wrap: 72rem`, fluid gutters, no horizontal scroll at 320 px.
-- Featured work uses a bento grid: two large cards, four medium. Do not give six cards the
-  same weight; hierarchy is the point.
+- Featured work uses a bento grid: two large cards, four medium, and a closing wide card when
+  the count is odd. Do not give every card the same weight; hierarchy is the point.
 - Case studies: prose max 46rem, with a sticky rail for sections on wide screens.
 - Breakpoints at 44rem and 52rem only.
 
@@ -99,8 +99,8 @@ text, more than the two stack marquee rows.
 
 - Every project has a diagram, defined in `projects.yaml` as `diagram: { kind, nodes }`:
   `flow`, `fork`, `layers` or `loop`. `FlowDiagram.astro` renders it with the project accent.
-- The three complex ones (Kizuna, Engineering Platform, Oracle) are hand-made inline SVG in
-  `src/components/diagrams/` and are referenced by name.
+- The four complex ones (Kizuna, Engineering Platform, Oracle, Nakama) are hand-made inline SVG
+  in `src/components/diagrams/` and are referenced by name.
 - No screenshots. A local app with demo data reads as a half-finished capture, and the light
   UI of most tools breaks the dark surface.
 - Below 52rem the SVG hides and the same nodes render as a vertical list, so the text stays
