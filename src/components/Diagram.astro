@@ -2,6 +2,7 @@
 import KizunaDiagram from './diagrams/Kizuna.astro';
 import PlatformDiagram from './diagrams/Platform.astro';
 import OracleDiagram from './diagrams/Oracle.astro';
+import NakamaDiagram from './diagrams/Nakama.astro';
 import FlowDiagram from './FlowDiagram.astro';
 import type { UI } from '../data/i18n/ui';
 import type { Lang } from '../lib/i18n';
@@ -25,6 +26,7 @@ const named: Record<string, typeof KizunaDiagram> = {
   kizuna: KizunaDiagram,
   'engineering-platform': PlatformDiagram,
   oracle: OracleDiagram,
+  nakama: NakamaDiagram,
 };
 const Component = typeof diagram === 'string' ? named[diagram] : null;
 if (typeof diagram === 'string' && !Component) throw new Error(`Unknown diagram: ${diagram}`);

@@ -170,6 +170,30 @@
     - "Assistant on a local model by default; cloud only with an explicit notice"
   stack: [Python, FastAPI, SQLAlchemy, SQLite, React, Vite, Plotly]
 
+- id: nakama
+  logo: /logos/nakama.png
+  accent: '#f0a53a'
+  name: Nakama
+  tier: featured
+  order: 7
+  areas: [ai-agents, mobile-desktop]
+  status: personal-production
+  oneLiner: "A desktop mascot that watches six of my own apps and interrupts only when it is worth it."
+  fact: { value: '6/h', label: 'interruptions, at most' }
+  diagram: nakama
+  aiRole: { spec: Me, impl: Me, audit: Me }
+  highlights:
+    - "An interruption policy with a budget: duplicates, quiet hours, cooldowns, six events an hour"
+    - "The mascot never queries an app: the brain curates, the character only paints"
+    - "The agent proposes; nothing runs until a human confirms, and the audit keeps before and after"
+    - "One catalogue of 29 tools serves the chat and the MCP server"
+  underTheHood:
+    - "FastAPI and stdlib SQLite on loopback; the token comes from a file and the API fails closed without it"
+    - "Own WinForms layered window with per-pixel alpha: 3.6k lines of C# and no vendor engine left"
+    - "Frames are 240 px RGBA declared by a manifest and checked by a validator in CI"
+    - "Panel without a build: HTML, CSS and ES modules over SSE, served by the same process"
+  stack: [Python, FastAPI, SQLite, C#, .NET, WinForms, WebView2, JavaScript]
+
 # ───────────── Selected ─────────────
 - id: oracle
   logo: /logos/oracle.png

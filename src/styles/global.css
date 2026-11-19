@@ -996,6 +996,24 @@ h3 {
   transform: translateX(6px);
 }
 
+/* An odd number of featured cards closes the grid with one wide card, not a hole. */
+@media (min-width: 52.001rem) {
+  .featured > .feature:last-child:nth-child(odd) {
+    grid-column: span 12;
+    flex-direction: row;
+    gap: 1.1rem;
+  }
+  .featured > .feature:last-child:nth-child(odd) .poster {
+    flex: 0 0 42%;
+    aspect-ratio: auto;
+    min-height: 18rem;
+  }
+  .featured > .feature:last-child:nth-child(odd) .feature-body {
+    justify-content: center;
+    padding: 0.9rem 0.9rem 0.6rem 0.4rem;
+  }
+}
+
 /* â”€â”€ Project poster â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */.poster {
   position: relative;
   overflow: hidden;
@@ -1937,6 +1955,48 @@ h3 {
 .fd-arrow {
   fill: var(--accent);
   opacity: 0.75;
+}
+
+/* Hand-made diagrams: a readable summary replaces the SVG on a phone. */
+.nk-compact {
+  display: none;
+}
+@media (max-width: 52rem) {
+  .shot-frame .nk-svg {
+    display: none;
+  }
+  .nk-compact {
+    display: grid;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 1.1rem 1.2rem;
+    list-style: none;
+  }
+  .nk-compact li {
+    display: flex;
+    gap: 0.8rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--rule);
+  }
+  .nk-compact li:last-child {
+    padding-bottom: 0;
+    border-bottom: 0;
+  }
+  .nk-compact .nk-idx {
+    padding-top: 0.15rem;
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    color: var(--accent);
+  }
+  .nk-compact b {
+    display: block;
+    font-size: 0.92rem;
+  }
+  .nk-compact span {
+    display: block;
+    font-size: 0.82rem;
+    color: var(--ink-2);
+  }
 }
 .fd-compact {
   display: none;
