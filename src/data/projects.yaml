@@ -361,6 +361,38 @@
     - "C# and .NET with WinForms and WPF; xUnit for the detection rules"
   stack: [C#, .NET, WinForms, WPF, xUnit]
 
+- id: kagi
+  logo: /logos/kagi.png
+  accent: '#ff8a00'
+  name: Kagi
+  tier: selected
+  order: 17
+  areas: [platform]
+  status: personal-production
+  oneLiner: "One login, one cookie and a signed identity for every app I self-host, plus the home page that ties them together."
+  fact: { value: '280', label: 'tests on one gate' }
+  aiRole: { spec: Me, impl: Me, audit: Me }
+  diagram:
+    kind: flow
+    highlight: 2
+    nodes:
+      - { title: Request, sub: 'to any app' }
+      - { title: Gate, sub: 'asks Kagi first' }
+      - { title: Session, sub: 'cookie · argon2id' }
+      - { title: Signature, sub: 'HMAC-SHA256' }
+      - { title: App, sub: 'knows who you are' }
+  highlights:
+    - "One session cookie covers every app; the proxy asks Kagi before each request"
+    - "Identity travels as signed headers, so no app keeps a password table of its own"
+    - "argon2id logins, per-session CSRF and an audit log of access and admin actions"
+    - "The same service is the home page: command palette, live status and local weather"
+  underTheHood:
+    - "Python and FastAPI over SQLite in WAL mode, with the schema versioned by PRAGMA user_version"
+    - "Opaque session tokens stored hashed, with sliding TTL, revocation and purge on login"
+    - "Fail closed: when the gate cannot answer, the proxy lets nothing through"
+    - "280 tests across login, sessions, CSRF, policy, portal and weather; CI runs pytest, Ruff and the panel build"
+  stack: [Python, FastAPI, SQLite, React, Caddy, HMAC, Argon2id]
+
 # ───────────── Archive ─────────────
 - id: kitto
   accent: '#0dd8b0'
