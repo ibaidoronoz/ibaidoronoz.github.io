@@ -72,7 +72,7 @@ const en: Cv = {
     { value: '10+', label: 'years in payments' },
     { value: '20', label: 'repositories, one contract' },
     { value: '164', label: 'audit findings, prioritised' },
-    { value: '20', label: 'products of my own' },
+    { value: '21', label: 'products of my own' },
   ],
   roles: [
     {
@@ -198,7 +198,7 @@ const es: Cv = {
     { value: '10+', label: 'años en pagos' },
     { value: '20', label: 'repositorios, un contrato' },
     { value: '164', label: 'hallazgos priorizados' },
-    { value: '20', label: 'productos propios' },
+    { value: '21', label: 'productos propios' },
   ],
   roles: [
     {

@@ -220,6 +220,27 @@
     - "C# y .NET con WinForms y WPF; xUnit para las reglas de detección"
   fact: { label: "binario autocontenido" }
 
+- id: kagi
+  diagram:
+    nodes:
+      - { title: Petición, sub: 'a cualquier app' }
+      - { title: Puerta, sub: 'pregunta a Kagi antes' }
+      - { title: Sesión, sub: 'cookie · argon2id' }
+      - { title: Firma, sub: 'HMAC-SHA256' }
+      - { title: App, sub: 'sabe quién eres' }
+  oneLiner: "Un login, una cookie y una identidad firmada para cada app que autoalojo, más la portada que las une."
+  highlights:
+    - "Una sola cookie de sesión cubre todas las apps; el proxy pregunta a Kagi antes de cada petición"
+    - "La identidad viaja en cabeceras firmadas: ninguna app guarda su propia tabla de contraseñas"
+    - "Login con argon2id, CSRF por sesión y auditoría de accesos y acciones de administración"
+    - "El mismo servicio es la portada: paleta de comandos, estado en vivo y clima local"
+  underTheHood:
+    - "Python y FastAPI sobre SQLite en modo WAL, con el esquema versionado por PRAGMA user_version"
+    - "Tokens de sesión opacos guardados en hash, con TTL deslizante, revocación y purga al entrar"
+    - "Falla cerrada: si la puerta no responde, el proxy no deja pasar nada"
+    - "280 tests entre login, sesiones, CSRF, política, portada y clima; CI corre pytest, Ruff y el build del panel"
+  fact: { label: "tests en una puerta" }
+
 - id: kitto
   diagram:
     nodes:
