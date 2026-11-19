@@ -69,7 +69,7 @@ const en: Site = {
   })),
   stats: [
     { value: '10+', label: 'years in payments' },
-    { value: '19', label: 'products built' },
+    { value: '20', label: 'products built' },
     { value: '4', label: 'domains: payments · AI · mobile · tools' },
     { value: '164', label: 'findings in one audit' },
   ],
@@ -85,7 +85,7 @@ const en: Site = {
       { label: 'AI agents', sub: 'Governed workflows', stack: ['TypeScript', 'Claude Code'] },
     ],
   },
-  ownProducts: '19 products of my own, built alongside the job',
+  ownProducts: '20 products of my own, built alongside the job',
   models: [
     {
       title: 'Context is the product',
@@ -255,7 +255,7 @@ const es: Site = {
   })),
   stats: [
     { value: '10+', label: 'años en pagos' },
-    { value: '19', label: 'productos propios' },
+    { value: '20', label: 'productos propios' },
     { value: '4', label: 'dominios: pagos · IA · móvil · herramientas' },
     { value: '164', label: 'hallazgos en una auditoría' },
   ],
@@ -271,7 +271,7 @@ const es: Site = {
       { label: 'Agentes de IA', sub: 'Flujos gobernados', stack: ['TypeScript', 'Claude Code'] },
     ],
   },
-  ownProducts: '19 productos propios, construidos en paralelo al trabajo',
+  ownProducts: '20 productos propios, construidos en paralelo al trabajo',
   models: [
     {
       title: 'El contexto es el producto',

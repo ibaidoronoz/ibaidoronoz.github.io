@@ -107,7 +107,7 @@ docs/design-system.md            tokens, motion budget, accessibility and perf f
 - A case study's frontmatter `flow` is ignored when the project has a `diagram`: the diagram
   already shows the architecture.
 - Every project has a diagram, never a screenshot: `flow`, `fork`, `layers` or `loop`, defined
-  in `projects.yaml`. The three complex ones stay hand-made in `src/components/diagrams/`.
+  in `projects.yaml`. The four complex ones stay hand-made in `src/components/diagrams/`.
 
 ## Tiers
 
