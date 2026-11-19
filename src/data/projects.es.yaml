@@ -108,6 +108,20 @@
     - "Asistente en modelo local por defecto; nube solo con aviso explícito"
   fact: { label: "de DCA con backtest" }
 
+- id: nakama
+  oneLiner: "Una mascota de escritorio que vigila seis de mis apps y solo interrumpe cuando merece la pena."
+  highlights:
+    - "Política de interrupción con presupuesto: duplicados, horario de silencio, enfriamientos y seis avisos por hora"
+    - "La mascota nunca consulta una app: el cerebro cura, el personaje solo pinta"
+    - "El agente propone; nada corre hasta que una persona confirma, y la auditoría guarda el antes y el después"
+    - "Un catálogo de 29 herramientas sirve al chat y al servidor MCP"
+  underTheHood:
+    - "FastAPI y SQLite de la stdlib en loopback; el token sale de un fichero y sin él la API falla cerrada"
+    - "Ventana por capas propia en WinForms con alfa real: 3.600 líneas de C# y ningún motor ajeno"
+    - "Los frames son RGBA de 240 px declarados en un manifiesto y validados en CI"
+    - "Panel sin build: HTML, CSS y módulos ES sobre SSE, servidos por el mismo proceso"
+  fact: { label: "interrupciones como máximo" }
+
 - id: oracle
   oneLiner: "Todos los servicios en una pantalla: estado, logs, métricas y un reinicio que sabe parar."
   highlights:

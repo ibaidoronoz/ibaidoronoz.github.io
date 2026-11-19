@@ -1,0 +1,253 @@
+---
+import type { Lang } from '../../lib/i18n';
+
+interface Props {
+  lang?: Lang;
+}
+
+interface NakamaText {
+  aria: string;
+  headline: string;
+  sources: { kicker: string; items: { name: string; sub: string }[] };
+  brain: {
+    kicker: string;
+    sub: string;
+    rows: { title: string; sub: string }[];
+    note: string;
+  };
+  mascot: { kicker: string; bubble: string[]; note: string };
+  panel: { kicker: string; note: string };
+  mcp: { kicker: string; note: string };
+  loop: { kicker: string; chips: string[]; note: string };
+  caption: string;
+  compact: { title: string; sub: string }[];
+}
+
+const { lang = 'en' } = Astro.props;
+
+const TEXTS: Record<Lang, NakamaText> = {
+  en: {
+    aria: 'Nakama: six apps feed a local brain that decides what is worth interrupting, and a mascot, a panel and an MCP server read it',
+    headline: 'One face for the fleet, and a budget for its interruptions.',
+    sources: {
+      kicker: '6 SOURCES · PUSH AND POLL',
+      items: [
+        { name: 'oracle', sub: 'status' },
+        { name: 'atlas', sub: 'market' },
+        { name: 'kairos', sub: 'plan' },
+        { name: 'plutus', sub: 'tax' },
+        { name: 'tanko', sub: 'reading' },
+        { name: '…', sub: 'one more' },
+      ],
+    },
+    brain: {
+      kicker: 'BRAIN',
+      sub: 'local process · token from a file',
+      rows: [
+        { title: 'policy', sub: 'pure · table-tested' },
+        { title: 'inbox', sub: 'one bubble at a time' },
+        { title: 'agent', sub: '29 tools · one catalogue' },
+      ],
+      note: 'every rejection kept with its reason',
+    },
+    mascot: { kicker: 'MASCOT', bubble: ['3 waiting', 'one at a time'], note: 'own layered window · chat in WebView2' },
+    panel: { kicker: 'PANEL', note: '6 views · SSE · no build' },
+    mcp: { kicker: 'MCP', note: 'stdio · read-only' },
+    loop: {
+      kicker: 'AGENT PROPOSES · HUMAN CONFIRMS',
+      chips: ['propose', 'confirm', 'execute', 'audit'],
+      note: 'before and after in the log',
+    },
+    caption: 'the character never queries an app: the brain curates, the mascot paints',
+    compact: [
+      { title: '6 sources', sub: 'six of my own apps, push and poll' },
+      { title: 'Brain', sub: 'policy, inbox and 29 tools in one local process' },
+      { title: 'Mascot', sub: 'own layered window, chat in WebView2' },
+      { title: 'Panel', sub: 'six views over SSE, no build' },
+      { title: 'MCP', sub: 'stdio server, read-only tools' },
+      { title: 'Propose, confirm, audit', sub: 'nothing is written without the card' },
+    ],
+  },
+  es: {
+    aria: 'Nakama: seis apps alimentan un cerebro local que decide qué merece una interrupción, y una mascota, un panel y un servidor MCP lo leen',
+    headline: 'Una cara para la flota, y un presupuesto para sus interrupciones.',
+    sources: {
+      kicker: '6 FUENTES · PUSH Y SONDEO',
+      items: [
+        { name: 'oracle', sub: 'estado' },
+        { name: 'atlas', sub: 'mercado' },
+        { name: 'kairos', sub: 'plan' },
+        { name: 'plutus', sub: 'fiscal' },
+        { name: 'tanko', sub: 'lectura' },
+        { name: '…', sub: 'una más' },
+      ],
+    },
+    brain: {
+      kicker: 'CEREBRO',
+      sub: 'proceso local · token en un fichero',
+      rows: [
+        { title: 'política', sub: 'pura · probada por tabla' },
+        { title: 'bandeja', sub: 'una burbuja cada vez' },
+        { title: 'agente', sub: '29 herramientas · un catálogo' },
+      ],
+      note: 'cada rechazo guarda su motivo',
+    },
+    mascot: { kicker: 'MASCOTA', bubble: ['3 en cola', 'de una en una'], note: 'ventana por capas propia · chat en WebView2' },
+    panel: { kicker: 'PANEL', note: '6 vistas · SSE · sin build' },
+    mcp: { kicker: 'MCP', note: 'stdio · solo lectura' },
+    loop: {
+      kicker: 'EL AGENTE PROPONE · LA PERSONA CONFIRMA',
+      chips: ['proponer', 'confirmar', 'ejecutar', 'auditar'],
+      note: 'antes y después en el registro',
+    },
+    caption: 'el personaje nunca consulta una app: el cerebro cura, la mascota pinta',
+    compact: [
+      { title: '6 fuentes', sub: 'seis apps propias, push y sondeo' },
+      { title: 'Cerebro', sub: 'política, bandeja y 29 herramientas en un proceso local' },
+      { title: 'Mascota', sub: 'ventana por capas propia, chat en WebView2' },
+      { title: 'Panel', sub: 'seis vistas sobre SSE, sin build' },
+      { title: 'MCP', sub: 'servidor stdio, herramientas de solo lectura' },
+      { title: 'Proponer, confirmar, auditar', sub: 'nada se escribe sin la tarjeta' },
+    ],
+  },
+};
+
+const T = TEXTS[lang];
+
+const sources = T.sources.items;
+const logos = ['oracle', 'atlas', 'kairos', 'plutus', 'tanko'];
+
+const sourceY = (index: number) => 170 + index * 52;
+const brainX = 420;
+const brainW = 330;
+const brainY = 170;
+const brainH = 304;
+const rightX = 820;
+const rightW = 320;
+---
+
+<svg class="nk-svg" viewBox="0 0 1200 640" role="img" aria-label={T.aria}>
+  <defs>
+    <radialGradient id="nakama-glow" cx="0.5" cy="0.72" r="0.55">
+      <stop offset="0" stop-color="var(--accent)" stop-opacity="0.42"/>
+      <stop offset="0.6" stop-color="var(--accent)" stop-opacity="0.12"/>
+      <stop offset="1" stop-color="var(--accent)" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <image href="/logos/nakama.png" x="60" y="30" width="30" height="30"/>
+  <text x="102" y="51" fill="var(--dg-muted)" font-family="ui-monospace, Consolas, monospace" font-size="12" letter-spacing="2.4">NAKAMA · ONE FACE, ONE BRAIN</text>
+  <text x="60" y="96" fill="var(--dg-ink)" font-family="system-ui, Segoe UI, sans-serif" font-size="24" font-weight="700" letter-spacing="-0.5">{T.headline}</text>
+
+  <text x="60" y="150" fill="var(--dg-muted)" font-family="ui-monospace, Consolas, monospace" font-size="11" letter-spacing="1.8">{T.sources.kicker}</text>
+
+  <g font-family="system-ui, Segoe UI, sans-serif">
+    {sources.map((source, i) => (
+      <g>
+        <rect
+          x="60"
+          y={sourceY(i)}
+          width="300"
+          height="44"
+          rx="10"
+          fill="var(--dg-card)"
+          stroke={i === sources.length - 1 ? 'var(--dg-line-strong)' : 'var(--dg-line)'}
+          stroke-dasharray={i === sources.length - 1 ? '5 4' : undefined}
+        />
+        <circle cx="78" cy={sourceY(i) + 22} r="4" fill={i === 3 ? 'var(--dg-warn)' : i === sources.length - 1 ? 'var(--dg-muted-soft)' : 'var(--dg-ok)'}/>
+        {i < logos.length && (
+          <image href={`/logos/${logos[i]}.png`} x="92" y={sourceY(i) + 12} width="20" height="20"/>
+        )}
+        <text x={i < logos.length ? 124 : 92} y={sourceY(i) + 27} fill={i === sources.length - 1 ? 'var(--dg-muted)' : 'var(--dg-ink)'} font-size="14" font-weight="600">{source.name}</text>
+        <text x="340" y={sourceY(i) + 27} text-anchor="end" fill="var(--dg-muted-soft)" font-family="ui-monospace, Consolas, monospace" font-size="10.5">{source.sub}</text>
+      </g>
+    ))}
+  </g>
+
+  <g stroke="var(--dg-line-strong)" stroke-width="1.5" fill="none">
+    {sources.map((_, i) => (
+      <line x1="360" y1={sourceY(i) + 22} x2="390" y2={sourceY(i) + 22}/>
+    ))}
+    <line x1="390" y1={sourceY(0) + 22} x2="390" y2={sourceY(sources.length - 1) + 22}/>
+    <line x1="390" y1="322" x2="410" y2="322"/>
+    <path d="M404 317 L414 322 L404 327"/>
+  </g>
+
+  <g font-family="system-ui, Segoe UI, sans-serif">
+    <rect x={brainX} y={brainY} width={brainW} height={brainH} rx="14" fill="var(--dg-panel)" stroke="var(--dg-line)"/>
+    <text x="444" y="206" fill="var(--dg-accent)" font-family="ui-monospace, Consolas, monospace" font-size="11" letter-spacing="1.8">{T.brain.kicker}</text>
+    <text x="444" y="224" fill="var(--dg-muted-soft)" font-family="ui-monospace, Consolas, monospace" font-size="10.5">{T.brain.sub}</text>
+
+    {T.brain.rows.map((row, i) => (
+      <g>
+        <rect x="444" y={240 + i * 70} width="282" height="62" rx="10" fill="var(--dg-card)" stroke="var(--dg-line)"/>
+        <text x="462" y={266 + i * 70} fill="var(--dg-ink)" font-size="14" font-weight="600">{row.title}</text>
+        <text x="462" y={286 + i * 70} fill="var(--dg-muted-soft)" font-family="ui-monospace, Consolas, monospace" font-size="10.5">{row.sub}</text>
+      </g>
+    ))}
+
+    <text x="444" y="462" fill="var(--dg-muted-soft)" font-family="ui-monospace, Consolas, monospace" font-size="10.5">{T.brain.note}</text>
+  </g>
+
+  <g stroke="var(--dg-line-strong)" stroke-width="1.5" fill="none">
+    <line x1="750" y1="322" x2="790" y2="322"/>
+    <line x1="790" y1="268" x2="790" y2="452"/>
+    <line x1="790" y1="268" x2="816" y2="268"/>
+    <line x1="790" y1="400" x2="816" y2="400"/>
+    <line x1="790" y1="452" x2="816" y2="452"/>
+    <path d="M810 263 L820 268 L810 273"/>
+    <path d="M810 395 L820 400 L810 405"/>
+    <path d="M810 447 L820 452 L810 457"/>
+  </g>
+
+  <g font-family="system-ui, Segoe UI, sans-serif">
+    <rect x={rightX} y="170" width={rightW} height="196" rx="14" fill="var(--dg-panel)" stroke="var(--accent)" stroke-opacity="0.35"/>
+    <ellipse cx="980" cy="290" rx="150" ry="92" fill="url(#nakama-glow)"/>
+    <text x="844" y="192" fill="var(--dg-accent)" font-family="ui-monospace, Consolas, monospace" font-size="11" letter-spacing="1.8">{T.mascot.kicker}</text>
+    <image href="/art/nakama/idle.png" x="846" y="198" width="140" height="140"/>
+    <rect x="1000" y="214" width="116" height="60" rx="12" fill="var(--dg-card)" stroke="var(--dg-line)"/>
+    <text x="1016" y="238" fill="var(--dg-ink)" font-size="12">{T.mascot.bubble[0]}</text>
+    <text x="1016" y="257" fill="var(--dg-muted-soft)" font-family="ui-monospace, Consolas, monospace" font-size="10.5">{T.mascot.bubble[1]}</text>
+    <text x="846" y="352" fill="var(--dg-muted-soft)" font-family="ui-monospace, Consolas, monospace" font-size="10.5">{T.mascot.note}</text>
+
+    <rect x={rightX} y="378" width={rightW} height="44" rx="10" fill="var(--dg-card)" stroke="var(--dg-line)"/>
+    <text x="844" y="405" fill="var(--dg-accent)" font-family="ui-monospace, Consolas, monospace" font-size="11" letter-spacing="1.8">{T.panel.kicker}</text>
+    <text x="1116" y="405" text-anchor="end" fill="var(--dg-muted-soft)" font-family="ui-monospace, Consolas, monospace" font-size="10.5">{T.panel.note}</text>
+
+    <rect x={rightX} y="430" width={rightW} height="44" rx="10" fill="var(--dg-card)" stroke="var(--dg-line)"/>
+    <text x="844" y="457" fill="var(--dg-accent)" font-family="ui-monospace, Consolas, monospace" font-size="11" letter-spacing="1.8">{T.mcp.kicker}</text>
+    <text x="1116" y="457" text-anchor="end" fill="var(--dg-muted-soft)" font-family="ui-monospace, Consolas, monospace" font-size="10.5">{T.mcp.note}</text>
+  </g>
+
+  <rect x="60" y="500" width="1080" height="84" rx="14" fill="var(--dg-panel)" stroke="var(--dg-line)"/>
+  <text x="84" y="528" fill="var(--dg-muted)" font-family="ui-monospace, Consolas, monospace" font-size="11" letter-spacing="1.8">{T.loop.kicker}</text>
+
+  <g font-family="ui-monospace, Consolas, monospace" font-size="10.5" fill="var(--dg-ink-2)">
+    <rect x="84" y="544" width="104" height="30" rx="8" fill="var(--dg-chip)" stroke="var(--dg-line)"/>
+    <text x="100" y="563">{T.loop.chips[0]}</text>
+    <text x="198" y="563" fill="var(--dg-muted-soft)">›</text>
+    <rect x="214" y="544" width="116" height="30" rx="8" fill="var(--dg-warn-bg)" stroke="var(--dg-warn)" stroke-opacity="0.55"/>
+    <text x="230" y="563" fill="var(--dg-warn)">{T.loop.chips[1]}</text>
+    <text x="344" y="563" fill="var(--dg-muted-soft)">›</text>
+    <rect x="360" y="544" width="100" height="30" rx="8" fill="var(--dg-chip)" stroke="var(--dg-line)"/>
+    <text x="376" y="563">{T.loop.chips[2]}</text>
+    <text x="474" y="563" fill="var(--dg-muted-soft)">›</text>
+    <rect x="490" y="544" width="88" height="30" rx="8" fill="var(--dg-chip)" stroke="var(--dg-line)"/>
+    <text x="506" y="563">{T.loop.chips[3]}</text>
+  </g>
+  <text x="600" y="563" fill="var(--dg-muted-soft)" font-family="ui-monospace, Consolas, monospace" font-size="10.5">{T.loop.note}</text>
+
+  <text x="60" y="620" fill="var(--dg-muted-soft)" font-family="ui-monospace, Consolas, monospace" font-size="11">{T.caption}</text>
+</svg>
+
+<ol class="nk-compact">
+  {T.compact.map((item, i) => (
+    <li>
+      <span class="nk-idx">{String(i + 1).padStart(2, '0')}</span>
+      <div>
+        <b>{item.title}</b>
+        <span>{item.sub}</span>
+      </div>
+    </li>
+  ))}
+</ol>
