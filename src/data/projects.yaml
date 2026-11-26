@@ -393,6 +393,36 @@
     - "280 tests across login, sessions, CSRF, policy, portal and weather; CI runs pytest, Ruff and the panel build"
   stack: [Python, FastAPI, SQLite, React, Caddy, HMAC, Argon2id]
 
+- id: bifrost
+  logo: /logos/bifrost.png
+  accent: '#6e7bff'
+  name: Bifrost gateway
+  tier: selected
+  order: 18
+  areas: [platform]
+  status: personal-production
+  oneLiner: "One AI gateway for every app I self-host: one key per app, and the ones that touch my finances can never reach the cloud."
+  fact: { value: '5', label: 'apps behind one gateway' }
+  diagram:
+    kind: flow
+    highlight: 2
+    nodes:
+      - { title: App, sub: 'asks for an alias' }
+      - { title: Virtual key, sub: 'one per app' }
+      - { title: Policy, sub: 'allow-list · limits' }
+      - { title: Model, sub: 'Ollama · Groq' }
+  highlights:
+    - "One virtual key per app with a provider allow-list; a local-only key asking for Groq gets a 403 before anything leaves the machine"
+    - "Apps ask for an alias, not a model, so a retired model is a one-line change"
+    - "A daily audit reads request metadata only and raises an alert if a local-only app ever reached the cloud"
+    - "Per-key rate limits on the cloud provider and an opt-in semantic cache"
+  underTheHood:
+    - "Built on the open-source Bifrost binary (Maxim, Apache 2.0), pinned by version and SHA256; this repo is the config generator, service install, tests and decision record"
+    - "The whole config is generated from one YAML with a drift check; content logging is off globally and per key"
+    - "Daily smoke test, per-alias evals before changing a model, and a weekly notice when a new release appears"
+    - "Fallback from local to cloud only for keys allowed to use it; the block applies to the fallback too"
+  stack: [Bifrost, Python, PowerShell, Ollama, Groq, pytest]
+
 # ───────────── Archive ─────────────
 - id: kitto
   accent: '#0dd8b0'
