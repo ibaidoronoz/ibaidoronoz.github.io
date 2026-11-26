@@ -248,14 +248,14 @@
       - { title: Clave virtual, sub: 'una por app' }
       - { title: Política, sub: 'lista blanca · límites' }
       - { title: Modelo, sub: 'Ollama · Groq' }
-  oneLiner: "Una pasarela de IA para todas mis apps autoalojadas: una clave por app, y las que tocan mis finanzas nunca llegan a la nube."
+  oneLiner: "Mi montaje alrededor del Bifrost abierto de Maxim: una pasarela de IA, una clave por app y apps de finanzas que nunca llegan a la nube."
   highlights:
+    - "No es código mío: el binario de Bifrost es de Maxim y corre sin modificar. Lo mío es todo lo que lo rodea: política de claves, generador de configuración, auditoría de privacidad y pruebas"
     - "Una clave virtual por app con lista blanca de proveedores; una clave solo local que pide Groq recibe un 403 antes de que nada salga del equipo"
     - "Las apps piden un alias, no un modelo, así que retirar un modelo es cambiar una línea"
     - "Una auditoría diaria lee solo metadatos de las peticiones y avisa si una app solo local llegó alguna vez a la nube"
-    - "Límites por clave hacia el proveedor en la nube y una caché semántica de adhesión voluntaria"
   underTheHood:
-    - "Construida sobre el binario abierto de Bifrost (Maxim, Apache 2.0), fijado por versión y SHA256; este repo es el generador de configuración, la instalación del servicio, las pruebas y el registro de decisiones"
+    - "El binario oficial de Bifrost (Apache 2.0) va fijado por versión y SHA256; mi repo guarda el generador de configuración, la instalación del servicio, las pruebas y el registro de decisiones"
     - "Toda la configuración se genera desde un YAML con comprobación de deriva; el registro de contenido está apagado global y por clave"
     - "Prueba de humo diaria, evals por alias antes de cambiar un modelo y un aviso semanal cuando sale una versión nueva"
     - "Respaldo de local a nube solo para las claves que pueden usarla; el bloqueo también vale para el respaldo"
